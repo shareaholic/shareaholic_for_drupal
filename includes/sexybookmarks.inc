@@ -15,7 +15,7 @@ function sexybookmarks_default_sexybookmarks_profile() {
   $profile->api_version = 2;
   $profile->name = 'default';
   $profile->config = array(
-    'service' => '5,7,88,2,3,257,74,52,207,191,236,54',
+    'service' => '5,7,88,2,3,74,52,191,236,54',
     'fbLikeButton' => '0',
     'fbButtonPos' => 'bottom-right',
     'dontShowShareCount' => '0',
@@ -30,6 +30,9 @@ function sexybookmarks_default_sexybookmarks_profile() {
     'expand' => 1,
     'center' => TRUE,
     'spaced' => FALSE,
+    'perfOptionSetting' => '1', 
+    'changethis' => '1',  
+    'classic_options'=>'32'  
   );
   $export['default'] = $profile;
 
