@@ -1,5 +1,5 @@
-name = SexyBookmarks
-description = SexyBookmarks for Drupal
+name = Shareaholic
+description = Shareaholic for Drupal
 configure = admin/config/content/sexybookmarks/list/default/edit
 dependencies[] = ctools
 core = 7.x
