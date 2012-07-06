@@ -1,0 +1,105 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the SexyBookmarks module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function sexybookmarks_schema() {
+  $schema = array();
+
+  $schema['sexybookmarks_profiles'] = array(
+    'export' => array(
+      'key' => 'name',
+      'key name' => 'Name',
+      'primary key' => 'name',
+      'identifier' => 'profile',
+      'default hook' => 'default_sexybookmarks_profile',
+      'api' => array(
+        'owner' => 'sexybookmarks',
+        'api' => 'default_sexybookmarks_profiles',
+        'minimum_version' => 2,
+        'current_version' => 2,
+      ),
+    ),
+    'fields' => array(
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => '', // @TODO
+      ),
+      'config' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+        'serialize' => TRUE,
+        'description' => '', // @TODO
+      ),
+    ),
+    'unique keys' => array(
+      'name' => array('name')
+    ),
+    'primary key' => array('name'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function sexybookmarks_uninstall() {
+  db_delete('variable')
+    ->condition('name', '%' . db_like('sexybookmarks') . '%', 'LIKE')
+    ->execute();
+}
+
+/**
+ * Add 'sexybookmarks_profiles' database table.
+ */
+function sexybookmarks_update_6200(&$sandbox) {
+  if (!db_table_exists('sexybookmarks_profiles')) {
+    db_create_table('sexybookmarks_profiles', array(
+      'fields' => array(
+        'name' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+          'description' => '', // @TODO
+        ),
+        'config' => array(
+          'type' => 'text',
+          'size' => 'medium',
+          'not null' => TRUE,
+          'serialize' => TRUE,
+          'description' => '', // @TODO
+        ),
+      ),
+      'unique keys' => array(
+        'name' => array('name')
+      ),
+      'primary key' => array('name'),
+    ));
+    variable_del('sexybookmarks');
+    return t('Added SexyBookmarks profile table.');
+  }
+}
+
+/**
+ * Update block cache type.
+ */
+function sexybookmarks_update_7200() {
+  db_update('block')
+    ->fields(array(
+      'cache' => -1,
+    ))
+    ->condition('module', 'sexybookmarks')
+    ->execute();
+
+  return t('Updated Block cache type.');
+}

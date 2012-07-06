@@ -1,0 +1,4 @@
+SexyBookmarks 7.x-2.x-dev, xxxx-xx-xx (development release)
+--------------------------------------------------------------------------------
+
+- Initial 7.x release.
