@@ -1,24 +1,10 @@
-The SexyBookmarks for Drupal module is a port of the WordPress plug-in by the
-same name.
-
-The sole aim was to stray away from the "in the box" thinking behind most social
-bookmarking plugins, and add a little flair that would entice your readers,
-rather than deterring them with microscopic icons that get lost in pages heavy
-laden with content.
-
-SexyBookmarks for Drupal was ported and is maintained by Stuart Clark
-(deciphered).
-- http://stuar.tc/lark
-
-SexyBookmarks is owned and operated by Shareaholic.
-- http://sexybookmarks.shareaholic.com/
+Shareaholic enables your users to easily find and share your content online. Shareaholic for Drupal is the same amazing sharing plugin used by over 200,000 Publishers, custom built for your Drupal site. Shareaholic includes two sharing button form factors, Sexy Bookmarks and Classic Bookmarks, and is loaded with options to ensure that your content is highlighted when shared to grab more clicks.
 
 
 Features
 --------------------------------------------------------------------------------
 
-* Support for more than 80 social bookmarking services.
-* Multiple configuration profiles - Features exportable.
+* Support for more than 200 social services, like Facebook, Twitter, LinkedIn and Delicious.
 * Multiple display options:
   * Node item/Psuedo field for Nodes.
   * Field/Views formatters:
@@ -50,13 +36,6 @@ Recommended Modules
 Configuration
 --------------------------------------------------------------------------------
 
-* Setting up profiles:
-
-  Profiles can be managed at:
-    Administration > Configuration > Content authoring > SexyBookmarks
-    http://[www.yoursite.com/path/to/drupal]/admin/config/content/sexybookmarks
-
-
 * Displaying via Nodes (pseudo field):
 
   The profile for each Content type can be set at:
@@ -70,6 +49,8 @@ Configuration
 
 Help
 --------------------------------------------------------------------------------
+
+You can contact Shareaholic directly for issues or questions at: http://support.shareaholic.com
 
 More help can be found via the Help module:
   Administration > Help > sexybookmarks
