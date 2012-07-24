@@ -69,7 +69,7 @@ function shareaholic_profiles_export_ui_form(&$form, &$form_state) {
       '#default_value' => isset($config['changethis']) ? $config['changethis'] : 1,
       '#parents' => array('config', 'changethis'),
       '#options' => array(
-          1 => 'Shareaholic',
+          1 => 'SexyBookmarks',
           2 => 'Classic Bookmarks',
       ),
   );
@@ -399,7 +399,7 @@ function theme_formfactors_select($variables) {
 
   return '<div class="form-item form-type-radios form-item-config-changethis" style="margin-top: 100px;">
  <div class="form-radios" id="edit-config-changethis"><div class="form-item form-type-radio form-item-config-changethis">
- <input type="radio" class="form-radio"' . $checked1 . ' value="1" name="config[changethis]" id="edit-config-changethis-1">  <label for="edit-config-changethis-1" class="option">Shareaholic </label>
+ <input type="radio" class="form-radio"' . $checked1 . ' value="1" name="config[changethis]" id="edit-config-changethis-1">  <label for="edit-config-changethis-1" class="option">SexyBookmarks </label>
 
 </div>
 <div class="form-item form-type-radio form-item-config-changethis" style="margin-left: 50px;">
