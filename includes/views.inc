@@ -7,21 +7,21 @@
 /**
  * Implements hook_views_api().
  */
-function sexybookmarks_views_api() {
+function shareaholic_views_api() {
   return array('api' => 2.0);
 }
 
 /**
  * Implements hook_views_data().
  */
-function sexybookmarks_views_data() {
+function shareaholic_views_data() {
   $data = array();
 
-  $data['node']['sexybookmarks'] = array(
+  $data['node']['shareaholic'] = array(
     'field' => array(
-      'title' => t('SexyBookmarks'),
-      'help' => t('SexyBookmarks'),
-      'handler' => 'views_handler_field_node_sexybookmarks',
+      'title' => t('Shareaholic'),
+      'help' => t('Shareaholic'),
+      'handler' => 'views_handler_field_node_shareaholic',
     ),
   );
 

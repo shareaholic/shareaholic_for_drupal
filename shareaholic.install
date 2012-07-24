@@ -1,25 +1,25 @@
 <?php
 /**
  * @file
- * Install, update and uninstall functions for the SexyBookmarks module.
+ * Install, update and uninstall functions for the Shareaholic module.
  */
 
 /**
  * Implements hook_schema().
  */
-function sexybookmarks_schema() {
+function shareaholic_schema() {
   $schema = array();
 
-  $schema['sexybookmarks_profiles'] = array(
+  $schema['shareaholic_profiles'] = array(
     'export' => array(
       'key' => 'name',
       'key name' => 'Name',
       'primary key' => 'name',
       'identifier' => 'profile',
-      'default hook' => 'default_sexybookmarks_profile',
+      'default hook' => 'default_shareaholic_profile',
       'api' => array(
-        'owner' => 'sexybookmarks',
-        'api' => 'default_sexybookmarks_profiles',
+        'owner' => 'shareaholic',
+        'api' => 'default_shareaholic_profiles',
         'minimum_version' => 2,
         'current_version' => 2,
       ),
@@ -52,18 +52,18 @@ function sexybookmarks_schema() {
 /**
  * Implements hook_uninstall().
  */
-function sexybookmarks_uninstall() {
+function shareaholic_uninstall() {
   db_delete('variable')
-    ->condition('name', '%' . db_like('sexybookmarks') . '%', 'LIKE')
+    ->condition('name', '%' . db_like('shareaholic') . '%', 'LIKE')
     ->execute();
 }
 
 /**
- * Add 'sexybookmarks_profiles' database table.
+ * Add 'shareaholic_profiles' database table.
  */
-function sexybookmarks_update_6200(&$sandbox) {
-  if (!db_table_exists('sexybookmarks_profiles')) {
-    db_create_table('sexybookmarks_profiles', array(
+function shareaholic_update_6200(&$sandbox) {
+  if (!db_table_exists('shareaholic_profiles')) {
+    db_create_table('shareaholic_profiles', array(
       'fields' => array(
         'name' => array(
           'type' => 'varchar',
@@ -85,20 +85,20 @@ function sexybookmarks_update_6200(&$sandbox) {
       ),
       'primary key' => array('name'),
     ));
-    variable_del('sexybookmarks');
-    return t('Added SexyBookmarks profile table.');
+    variable_del('shareaholic');
+    return t('Added Shareaholic profile table.');
   }
 }
 
 /**
  * Update block cache type.
  */
-function sexybookmarks_update_7200() {
+function shareaholic_update_7200() {
   db_update('block')
     ->fields(array(
       'cache' => -1,
     ))
-    ->condition('module', 'sexybookmarks')
+    ->condition('module', 'shareaholic')
     ->execute();
 
   return t('Updated Block cache type.');

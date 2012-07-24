@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * SexyBookmarks module integration.
+ * Shareaholic module integration.
  */
 
 /**
- * Implementation of hook_default_sexybookmarks_profile().
+ * Implementation of hook_default_shareaholic_profile().
  */
-function sexybookmarks_default_sexybookmarks_profile() {
+function shareaholic_default_shareaholic_profile() {
   $export = array();
 
   $profile = new stdClass;

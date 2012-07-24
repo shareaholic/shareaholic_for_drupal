@@ -2,35 +2,35 @@
 
 /**
  * @file
- * CTools Export UI plugin for SexyBookmarks profiles.
+ * CTools Export UI plugin for Shareaholic profiles.
  */
 $plugin = array(
-    'schema' => 'sexybookmarks_profiles',
-    'access' => 'administer sexybookmarks',
+    'schema' => 'shareaholic_profiles',
+    'access' => 'administer shareaholic',
     'menu' => array(
         'menu prefix' => 'admin/config/content',
-        'menu item' => 'sexybookmarks',
-        'menu title' => 'SexyBookmarks',
-        'menu description' => 'Administer SexyBookmarks profiles.',
+        'menu item' => 'shareaholic',
+        'menu title' => 'Shareaholic',
+        'menu description' => 'Administer Shareaholic profiles.',
     ),
     'title singular' => t('profile'),
     'title singular proper' => t('Profile'),
     'title plural' => t('profiles'),
     'title plural proper' => t('Profiles'),
     'form' => array(
-        'settings' => 'sexybookmarks_profiles_export_ui_form',
-        'submit' => 'sexybookmarks_profiles_export_ui_form_submit',
+        'settings' => 'shareaholic_profiles_export_ui_form',
+        'submit' => 'shareaholic_profiles_export_ui_form_submit',
     ),
 );
 
 /**
- * SexyBookmarks profiles settings form.
+ * Shareaholic profiles settings form.
  */
-function sexybookmarks_profiles_export_ui_form(&$form, &$form_state) {
+function shareaholic_profiles_export_ui_form(&$form, &$form_state) {
   drupal_add_library('system', 'farbtastic');
   drupal_add_js('jQuery(document).ready(jQuery("document").delegate("#replace_textfield_div","click", function(event){alert(jQuery(this).text());}));', array('type' => 'inline', 'scope' => 'footer', 'weight' => 5));
   $config = $form_state['item']->config;
-  $icons_proj_path = drupal_get_path('module', 'sexybookmarks');
+  $icons_proj_path = drupal_get_path('module', 'shareaholic');
   $icons_path = file_create_url("{$icons_proj_path}/images/glyphicons-halflings.png");
 
   $form['config'] = array(
@@ -69,7 +69,7 @@ function sexybookmarks_profiles_export_ui_form(&$form, &$form_state) {
       '#default_value' => isset($config['changethis']) ? $config['changethis'] : 1,
       '#parents' => array('config', 'changethis'),
       '#options' => array(
-          1 => 'Sexybookmarks',
+          1 => 'Shareaholic',
           2 => 'Classic Bookmarks',
       ),
   );
@@ -96,7 +96,7 @@ function sexybookmarks_profiles_export_ui_form(&$form, &$form_state) {
   $form['config']['service'] = array(
       '#type' => 'textarea',
       '#default_value' => isset($config['service']) ? $config['service'] : '5,7,88,2,3,257,74,52,207,191,236,54',
-      '#theme' => 'sexybookmarks_services',
+      '#theme' => 'shareaholic_services',
       '#prefix' => '<div id="replace_service_div">',
       '#suffix' => '</div>',
       '#states' => array(
@@ -327,9 +327,9 @@ function ajax_example_simplest2_callback($form, $form_state) {
 }
 
 /**
- * SexyBookmarks profiles settings form; submit callback.
+ * Shareaholic profiles settings form; submit callback.
  */
-function sexybookmarks_profiles_export_ui_form_submit(&$form, &$form_state) {
+function shareaholic_profiles_export_ui_form_submit(&$form, &$form_state) {
   $form_state['values']['config']['center'] = $form_state['values']['config']['positioning'] == 'center';
   $form_state['values']['config']['spaced'] = $form_state['values']['config']['positioning'] == 'spaced';
   unset($form_state['values']['config']['positioning']);
@@ -399,7 +399,7 @@ function theme_formfactors_select($variables) {
 
   return '<div class="form-item form-type-radios form-item-config-changethis" style="margin-top: 100px;">
  <div class="form-radios" id="edit-config-changethis"><div class="form-item form-type-radio form-item-config-changethis">
- <input type="radio" class="form-radio"' . $checked1 . ' value="1" name="config[changethis]" id="edit-config-changethis-1">  <label for="edit-config-changethis-1" class="option">Sexybookmarks </label>
+ <input type="radio" class="form-radio"' . $checked1 . ' value="1" name="config[changethis]" id="edit-config-changethis-1">  <label for="edit-config-changethis-1" class="option">Shareaholic </label>
 
 </div>
 <div class="form-item form-type-radio form-item-config-changethis" style="margin-left: 50px;">
@@ -440,7 +440,7 @@ function shrsb_truncate_text($text, $nbrChar, $append='..') {
      return $text;
 }
 
-function theme_sexybookmarks_services($variables) {
+function theme_shareaholic_services($variables) {
   $services_list =array(
     "1" => "Buzzster!",
     "2"=>"Delicious",
@@ -755,7 +755,7 @@ function theme_sexybookmarks_services($variables) {
 );
   $output = '';
   $form_element = $variables['form_element'];
-  // List of SexyBookmarks services.
+  // List of Shareaholic services.
   $services = array(
       2, 3, 5, 6, 7, 10, 24, 38, 39, 40, 52, 54, 74, 88, 201, 219,
       27, 33, 41, 43, 45, 46, 53, 78, 195, 196, 205, 210, 236, 247, 264,
@@ -767,10 +767,10 @@ function theme_sexybookmarks_services($variables) {
 
   // Attach Javascript and Styles.
   $api = 'http://www.shareaholic.com/api/sprite/?v=2&apikey=' . SB_APIKEY . '&service=' . implode(',', $services);
-  drupal_add_css(sexybookmarks_get_file($api, "{$directory}/sprite.css"));
+  drupal_add_css(shareaholic_get_file($api, "{$directory}/sprite.css"));
   drupal_add_css('
     li.shareaholic {
-      background-image: url("' . file_create_url(sexybookmarks_get_file("{$api}&apitype=png", "{$directory}/sprite.png")) . '");
+      background-image: url("' . file_create_url(shareaholic_get_file("{$api}&apitype=png", "{$directory}/sprite.png")) . '");
       
     }
 
@@ -780,7 +780,7 @@ function theme_sexybookmarks_services($variables) {
       text-align:center;
     }
   ', 'inline');
-  drupal_add_js(drupal_get_path('module', 'sexybookmarks') . '/scripts/sexybookmarks.admin.js');
+  drupal_add_js(drupal_get_path('module', 'shareaholic') . '/scripts/shareaholic.admin.js');
   drupal_add_library('system', 'ui.sortable');
 
   // Active services list.
@@ -789,7 +789,7 @@ function theme_sexybookmarks_services($variables) {
     $text_to_show =shrsb_truncate_text(end(explode('-', $services_list[$item])), 9);
     $active[] = array('data' => '<div style="margin-top:26px;"></div>'.$text_to_show, 'id' => "shr-{$item}", 'class' => array("shr-{$item}", 'shareaholic'));
   }
-  $output .= '<div class="shr-bookmarks clearfix">' . theme('item_list', array('title' => t('Active services- Drag services to \'Inactive Services\' to add/remove services'), 'items' => $active, 'attributes' => array('id' => 'sexybookmarks-active', 'class' => array('shr-socials')))) . '</div>';
+  $output .= '<div class="shr-bookmarks clearfix">' . theme('item_list', array('title' => t('Active services- Drag services to \'Inactive Services\' to add/remove services'), 'items' => $active, 'attributes' => array('id' => 'shareaholic-active', 'class' => array('shr-socials')))) . '</div>';
 
   // Inactive services list.
   $inactive = array();
@@ -797,7 +797,7 @@ function theme_sexybookmarks_services($variables) {
     $text_to_show =shrsb_truncate_text(end(explode('-', $services_list[$item])), 9);
     $inactive[] = array('data' => '<div style="margin-top:26px;"></div>'.$text_to_show, 'id' => "shr-{$item}", 'class' => array("shr-{$item}", 'shareaholic'));
   }
-  $output .= '<div class="shr-bookmarks clearfix">' . theme('item_list', array('title' => t('Inactive services'), 'items' => $inactive, 'attributes' => array('id' => 'sexybookmarks-inactive', 'class' => array('shr-socials')))) . '</div>';
+  $output .= '<div class="shr-bookmarks clearfix">' . theme('item_list', array('title' => t('Inactive services'), 'items' => $inactive, 'attributes' => array('id' => 'shareaholic-inactive', 'class' => array('shr-socials')))) . '</div>';
 
   // Hidden field.
   element_set_attributes($form_element, array('id', 'name', 'value', 'size', 'maxlength'));

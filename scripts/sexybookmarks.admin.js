@@ -5,12 +5,12 @@
 (function($) {
   Drupal.behaviors.sexyBookmarksAdmin = {
     attach: function(context) {
-      // Drag'n'Drop sorting of SexyBookmarks services.
-      $('#sexybookmarks-active, #sexybookmarks-inactive').sortable({
+      // Drag'n'Drop sorting of Shareaholic services.
+      $('#shareaholic-active, #shareaholic-inactive').sortable({
         connectWith: '.shr-socials',
         stop: function(event, ui) {
           services = Array();
-          $('#sexybookmarks-active li').each(function() {
+          $('#shareaholic-active li').each(function() {
             services.push($(this).attr('id').substr(4));
           });
           $('#edit-config-service').val(services.join(','));
