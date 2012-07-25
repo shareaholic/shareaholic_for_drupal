@@ -5,7 +5,7 @@
 (function($) {
   Drupal.behaviors.sexyBookmarksAdmin = {
     attach: function(context) {
-      // Drag'n'Drop sorting of Shareaholic services.
+      // Drag'n'Drop sorting of SexyBookmarks services.
       $('#shareaholic-active, #shareaholic-inactive').sortable({
         connectWith: '.shr-socials',
         stop: function(event, ui) {

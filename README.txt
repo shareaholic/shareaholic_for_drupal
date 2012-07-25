@@ -42,7 +42,7 @@ Configuration
     Administration > Structure > Content types > [content type] > Edit
     http://[www.yoursite.com/path/to/drupal]/admin/structure/types/manage/[content-type]
 
-  The position of the SexyBookmarks widget can be set at:
+  The position of the Shareaholic widget can be set at:
     Administration > Structure > Content types > [content type] > Manage display > [view mode]
     http://[www.yoursite.com/path/to/drupal]/admin/structure/types/manage/[content-type]/display/[view-mode]
 
@@ -53,5 +53,5 @@ Help
 You can contact Shareaholic directly for issues or questions at: http://support.shareaholic.com
 
 More help can be found via the Help module:
-  Administration > Help > sexybookmarks
-  http://[www.yoursite.com/path/to/drupal]/admin/help/sexybookmarks
+  Administration > Help > shareaholic
+  http://[www.yoursite.com/path/to/drupal]/admin/help/shareaholic

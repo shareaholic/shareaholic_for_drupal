@@ -5,20 +5,20 @@
  */
 
 /**
- * Implements hook_sexybookmarks_field_formatter_info() on behalf of node_reference.module.
+ * Implements hook_shareaholic_field_formatter_info() on behalf of node_reference.module.
  */
-function node_reference_sexybookmarks_field_formatter_info() {
+function node_reference_shareaholic_field_formatter_info() {
   return array(
     'node_reference' => array(
-      'callback' => 'node_reference_sexybookmarks_field_formatter_data'
+      'callback' => 'node_reference_shareaholic_field_formatter_data'
     ),
   );
 }
 
 /**
- * Callback for Link module SexyBookmarks formatter.
+ * Callback for Link module Shareaholic formatter.
  */
-function node_reference_sexybookmarks_field_formatter_data($item) {
+function node_reference_shareaholic_field_formatter_data($item) {
   $node = node_load($item['nid']);
 
   return array(
