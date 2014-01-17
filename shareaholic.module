@@ -7,6 +7,10 @@
 
  /**
   * Implementation of hook_menu()
+  *
+  * Establish a link to the Shareaholic Admin settings page
+  *
+  * @return The menu structure containing link to settings page
   */
  function shareaholic_menu() {
   // Path to the shareaholic settings page
@@ -24,6 +28,8 @@
 
  /**
   * Form builder for the shareaholic settings page
+  *
+  * @return The form structure for the settings page
   */
  function shareaholic_admin_settings() {
    $form['name'] = array(

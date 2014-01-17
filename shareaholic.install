@@ -2,6 +2,9 @@
 /**
  * @file
  * Install and uninstall functions for the Shareaholic module.
+ *
+ * When the module is uninstalled, we need to clear any data we store in the
+ * in the database.
  */
 
 
