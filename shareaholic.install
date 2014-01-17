@@ -1,105 +1,13 @@
 <?php
 /**
  * @file
- * Install, update and uninstall functions for the Shareaholic module.
+ * Install and uninstall functions for the Shareaholic module.
  */
 
-/**
- * Implements hook_schema().
- */
-function shareaholic_schema() {
-  $schema = array();
-
-  $schema['shareaholic_profiles'] = array(
-    'export' => array(
-      'key' => 'name',
-      'key name' => 'Name',
-      'primary key' => 'name',
-      'identifier' => 'profile',
-      'default hook' => 'default_shareaholic_profile',
-      'api' => array(
-        'owner' => 'shareaholic',
-        'api' => 'default_shareaholic_profiles',
-        'minimum_version' => 2,
-        'current_version' => 2,
-      ),
-    ),
-    'fields' => array(
-      'name' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => '', // @TODO
-      ),
-      'config' => array(
-        'type' => 'text',
-        'size' => 'medium',
-        'not null' => TRUE,
-        'serialize' => TRUE,
-        'description' => '', // @TODO
-      ),
-    ),
-    'unique keys' => array(
-      'name' => array('name')
-    ),
-    'primary key' => array('name'),
-  );
-
-  return $schema;
-}
 
 /**
  * Implements hook_uninstall().
  */
 function shareaholic_uninstall() {
-  db_delete('variable')
-    ->condition('name', '%' . db_like('shareaholic') . '%', 'LIKE')
-    ->execute();
 }
 
-/**
- * Add 'shareaholic_profiles' database table.
- */
-function shareaholic_update_6200(&$sandbox) {
-  if (!db_table_exists('shareaholic_profiles')) {
-    db_create_table('shareaholic_profiles', array(
-      'fields' => array(
-        'name' => array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'default' => '',
-          'description' => '', // @TODO
-        ),
-        'config' => array(
-          'type' => 'text',
-          'size' => 'medium',
-          'not null' => TRUE,
-          'serialize' => TRUE,
-          'description' => '', // @TODO
-        ),
-      ),
-      'unique keys' => array(
-        'name' => array('name')
-      ),
-      'primary key' => array('name'),
-    ));
-    variable_del('shareaholic');
-    return t('Added Shareaholic profile table.');
-  }
-}
-
-/**
- * Update block cache type.
- */
-function shareaholic_update_7200() {
-  db_update('block')
-    ->fields(array(
-      'cache' => -1,
-    ))
-    ->condition('module', 'shareaholic')
-    ->execute();
-
-  return t('Updated Block cache type.');
-}

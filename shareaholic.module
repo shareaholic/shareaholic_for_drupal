@@ -2,224 +2,34 @@
 
 /**
  * @file
- * Contains core functions for the Shareaholic module.
+ * Allows site owner to add share buttons/recommendations on their website
  */
-// Shareaholic API key.
-define('SB_APIKEY', '19afe428dd0d6406b366252cf4204ec6e');
 
-/**
- * Include additional files.
- */
-foreach (module_list() as $module) {
-  if (file_exists($file = dirname(__FILE__) . "/includes/{$module}.inc")) {
-    require_once $file;
-  }
-}
-
-/**
- * Implements hook_init().
- */
-function shareaholic_init() {
-  $globals = array(
-      'perfoption' => '1',
+ /**
+  * Implementation of hook_menu()
+  */
+ function shareaholic_menu() {
+  // Path to the shareaholic settings page
+  $items['admin/config/content/shareaholic/settings'] = array(
+    'title' => 'Shareaholic Settings',
+    'description' => 'Configure the Shareaholic share buttons on your site',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('shareaholic_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
   );
-
-  drupal_add_js('SHRSB_Globals = ' . drupal_json_encode($globals) . ';', 'inline');
-  drupal_add_js('SHRSB_Settings = {};', 'inline');
-  drupal_add_js('SHRCB_Globals = ' . drupal_json_encode($globals) . ';', 'inline');
-  drupal_add_js('SHRCB_Settings = {};', 'inline');
-}
-
-/**
- * Implements hook_flush_caches().
- */
-function shareaholic_flush_caches() {
-  // Only flush cache if we can ping Shareaholic.
-  $request = drupal_http_request('http://www.shareaholic.com');
-  if ($request->code == 200) {
-    file_unmanaged_delete_recursive('public://shareaholic');
-  }
-  return array();
-}
-
-/**
- * Implements hook_permission().
- */
-function shareaholic_permission() {
-  return array(
-      'administer shareaholic' => array(
-          'title' => t('Administer Shareaholic'),
-          'description' => t('Manage Shareaholic profiles.'),
-      ),
-  );
-}
-
-/**
- * Implements hook_theme().
- */
-function shareaholic_theme($existing, $type, $theme, $path) {
-  $items = array();
-
-  $items['shareaholic'] = array(
-      'variables' => array(
-          'id' => NULL,
-          'url' => NULL,
-          'title' => NULL,
-          'text' => NULL,
-          'profile' => NULL,
-          'config' => NULL,
-      ),
-  );
-
-  $items['shareaholic_services'] = array(
-      'render element' => 'form_element',
-      'file' => 'shareaholic_profiles.inc',
-      'path' => drupal_get_path('module', 'shareaholic') . '/plugins/export_ui'
-  );
-
-  $items['formfactors_select'] = array(
-      'render element' => 'form_element',
-      'file' => 'shareaholic_profiles.inc',
-      'path' => drupal_get_path('module', 'shareaholic') . '/plugins/export_ui'
-  );
-
-  $items['classic_formfactor'] = array(
-      'render element' => 'form_element',
-      'file' => 'shareaholic_profiles.inc',
-      'path' => drupal_get_path('module', 'shareaholic') . '/plugins/export_ui'
-  );
-
-  $items['perfoption'] = array(
-      'render element' => 'form_element',
-      'file' => 'shareaholic_profiles.inc',
-      'path' => drupal_get_path('module', 'shareaholic') . '/plugins/export_ui'
-  );
-
 
   return $items;
-}
+ }
 
-/**
- * Theme callback for Shareaholic.
- */
-function theme_shareaholic($variables) {
-
-  if (($config = shareaholic_get_config($variables))) {
-    if ($config['changethis'] == 1) {
-      $id = isset($variables['id']) ? $variables['id'] : "{$variables['profile']}-" . rand(1000, 9999);
-      $directory = md5($config['service']);
-      $api = 'http://www.shareaholic.com/api/sprite/?v=2&apikey=' . SB_APIKEY . '&service=' . urlencode($config['service']);
-      $settings = drupal_json_encode(array(
-          "shareaholic-{$id}" => array_merge(
-                  $config, array(
-              'apikey' => SB_APIKEY,
-              'src' => file_create_url("public://shareaholic/{$directory}"),
-              'link' => isset($variables['url']) ? $variables['url'] : '',
-              'title' => isset($variables['title']) ? $variables['title'] : (
-                      drupal_get_title() ? strip_tags(drupal_get_title()) : check_plain(variable_get('site_name', 'Drupal'))
-                      ),
-              'notes' => isset($variables['text']) ? $variables['text'] : '',
-              'localize' => TRUE,
-                  )
-          )
-              ));
-
-      drupal_add_js("jQuery.extend(SHRSB_Settings, {$settings});", 'inline');
-      drupal_add_js(shareaholic_get_file('http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-sb.min.js'));
-      drupal_add_css(shareaholic_get_file($api, "{$directory}/sprite.css"), array('basename' => "{$directory}.css"));
-      drupal_add_css("
-      .shareaholic-{$id} ul.shr-socials li.shareaholic {
-        background-image: url('" . file_create_url(shareaholic_get_file("{$api}&apitype=png", "{$directory}/sprite.png")) . "') !important;
-      }
-    ", 'inline');
-      return "<div class='shareaholic-{$id}'></div>";
-    } else {
-      $config['service'] = "5,7,313,309,78,304,88";
-      $config['size'] = $config['classic_options'];
-      $id = isset($variables['id']) ? $variables['id'] : "{$variables['profile']}-" . rand(1000, 9999);
-      $settings = drupal_json_encode(array(
-          "shr_classic-{$id}" => array_merge(
-                  $config, array(
-              'apikey' => SB_APIKEY,
-              'link' => isset($variables['url']) ? $variables['url'] : '',
-              'title' => isset($variables['title']) ? $variables['title'] : (
-                      drupal_get_title() ? strip_tags(drupal_get_title()) : check_plain(variable_get('site_name', 'Drupal'))
-                      ),
-              'notes' => isset($variables['text']) ? $variables['text'] : '',
-              'localize' => TRUE,
-                  )
-          )
-              ));
-      drupal_add_js("jQuery.extend(SHRCB_Settings, {$settings});", 'inline');
-      drupal_add_js(shareaholic_get_file('http://www.shareaholic.com/media/js/jquery.shareaholic-publishers-cb.min.js'));
-      return "<div style='clear:both'></div><div class='shr_classic-{$id} shareaholic-show-on-load'></div><div style='clear:both'></div>";
-    }
-  }
-  return '';
-}
-
-/**
- * Prepare configuration for Shareaholic theme callback.
- */
-function shareaholic_get_config(&$variables) {
-  $config = NULL;
-  if (!empty($variables['profile'])) {
-    ctools_include('export');
-    if (($profile = ctools_export_crud_load('shareaholic_profiles', $variables['profile']))) {
-      if (empty($profile->disabled)) {
-        $config = $profile->config;
-        if (isset($variables['config'])) {
-          $config = array_merge($config, $variables['config']);
-        }
-      } else {
-        watchdog('shareaholic', 'Provided profile disabled (!profile).', array('!profile' => $variables['profile']), WATCHDOG_ERROR);
-      }
-    } else {
-      watchdog('shareaholic', 'Invalid profile provided (!profile).', array('!profile' => $variables['profile']), WATCHDOG_ERROR);
-    }
-  } elseif (isset($variables['config'])) {
-    $config = $variables['config'];
-  } else {
-    watchdog('shareaholic', 'No profile or configuration provided.', array(), WATCHDOG_ERROR);
-  }
-
-  // Convert certain strings to boolean values.
-  $string_to_bool = array('fbLikeButton', 'dontShowShareCount', 'designer_toolTips', 'shrlink', 'expand');
-  foreach ($string_to_bool as $key) {
-    if (isset($config[$key])) {
-      $config[$key] = (bool) $config[$key];
-    }
-  }
-  if ($config['perfOptionSetting'] == '1') {
-    drupal_add_js('SHRSB_Globals.perfoption=1', 'inline');
-    drupal_add_js('SHRCB_Globals.perfoption=1', 'inline');
-  }
-
-
-  // Allow other modules to alter configuration.
-  drupal_alter('shareaholic_config', $config, $variables);
-  return $config;
-}
-
-/**
- * Return cached version of request URL.
- */
-function shareaholic_get_file($url, $destination = NULL) {
-  $md5 = md5($url);
-  $pathinfo = pathinfo($url);
-  $destination = isset($destination) ? $destination : $pathinfo['basename'];
-  $file = "public://shareaholic/{$destination}";
-
-  if (!file_exists($file)) {
-    $request = drupal_http_request($url);
-    $pathinfo = pathinfo($file);
-    if ($request->code == 200) {
-      if (file_prepare_directory($pathinfo['dirname'], FILE_CREATE_DIRECTORY)) {
-        file_unmanaged_save_data($request->data, $file);
-      }
-    } else {
-      return $url;
-    }
-  }
-  return $file;
-}
+ /**
+  * Form builder for the shareaholic settings page
+  */
+ function shareaholic_admin_settings() {
+   $form['name'] = array(
+     '#title' => t('Test'),
+     '#type' => 'fieldset',
+     '#description' => t('Hello World!')
+   );
+  return $form;
+ }
