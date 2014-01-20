@@ -1,0 +1,25 @@
+<?php
+/**
+ * @file
+ * Tests for the shareaholic module
+ */
+class ShareaholicTestCase extends DrupalWebTestCase {
+
+  public static function getInfo(){
+    return array(
+      'name' => 'shareaholic module functionality',
+      'description' => 'Tests hooks in the shareaholic module',
+      'group' => 'shareaholic',
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('shareaholic');
+  }
+
+  public function testMenu() {
+    $items = module_invoke('shareaholic', 'menu');
+    $this->assertNotNull($items['admin/config/content/shareaholic/settings'], 'The configure settings should exist');
+  }
+
+}
