@@ -5,6 +5,13 @@
  * Allows site owner to add share buttons/recommendations on their website
  */
 
+define('SHAREAHOLIC_URL', 'https://shareaholic.com');
+define('MODULE_PATH', drupal_get_path('module', 'shareaholic'));
+define('SHAREAHOLIC_ASSET_DIR', MODULE_PATH . '/assets/');
+
+module_load_include('php', 'shareaholic', 'utilities');
+module_load_include('php', 'shareaholic', 'admin');
+
 /**
  * Implementation of hook_menu()
  *
@@ -16,9 +23,8 @@ function shareaholic_menu() {
   // Path to the shareaholic settings page
   $items['admin/config/content/shareaholic/settings'] = array(
     'title' => 'Shareaholic Settings',
-    'description' => 'Configure the Shareaholic share buttons on your site',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('shareaholic_admin_settings'),
+    'description' => 'Settings for the Shareaholic Plugin',
+    'page callback' => 'shareaholic_admin_settings',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
   );
@@ -27,43 +33,65 @@ function shareaholic_menu() {
 
 
 /**
- * Form builder for the shareaholic settings page
+ * Renders page for shareaholic admin settings
  *
- * @return The form structure for the settings page
+ * @return The theme to render the settings page
  */
 function shareaholic_admin_settings() {
-  $module_path = drupal_get_path('module', 'shareaholic');
-
-  $form['name'] = array(
-    '#title' => t('Shareaholic Settings'),
-    '#type' => 'fieldset',
-    '#description' => t('Configure your Shareaholic Settings')
-  );
-
-  $form['#attached']['css'] = array(
-    $module_path . '/assets/css/main.css' => array('group' => CSS_DEFAULT)
-  );
-  $form['#attached']['js'] = array(
-    $module_path . '/assets/js/jquery_custom.js' => array('group' => JS_DEFAULT),
-    $module_path . '/assets/js/main.js' => array('group' => JS_DEFAULT)
-  );
-
-  $form['#theme'] = 'shareaholic_admin_settings';
-  return $form;
+  return theme('shareaholic_admin_settings');
 }
 
 
 /**
  * Implements hook_theme().
- * Add the theme (JS, CSS) files for the shareaholic admin settings page
+ * Defines the themes available for the
  *
- * @return array An array that includes theme rules for the settings page
+ * @return array An array that includes themes implemented for shareaholic
+ * admin pages
  */
 function shareaholic_theme() {
   return array(
     'shareaholic_admin_settings' => array(
+      'path' => MODULE_PATH . '/templates',
+      'template' => 'shareaholic_admin_settings',
+    ),
+    'terms_of_service_modal' => array(
       'render element' => 'form',
-      'template' => 'templates/shareaholic_admin_settings',
+      'path' => MODULE_PATH . '/templates',
+      'template' => 'terms_of_service_modal',
     ),
   );
+}
+
+/**
+ * Returns the form for the terms of service modal popup
+ */
+function tos_modal_form() {
+  $form['#theme'] = 'terms_of_service_modal';
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Get Started »'),
+  );
+  $form['submit']['#attributes']['class'][] = 'btn_main';
+  return $form;
+}
+
+function tos_modal_form_submit($form, &$form_state) {
+  ShareaholicUtilities::accept_terms_of_service();
+}
+
+function template_preprocess_terms_of_service_modal(&$variables) {
+  $variables['tos_modal'] = array();
+  $hidden = array();
+  foreach (element_children($variables['form']) as $key) {
+    $type = $variables['form'][$key]['#type'];
+    if ($type == 'hidden' || $type == 'token') {
+      $hidden[] = drupal_render($variables['form'][$key]);
+    }
+    else {
+      $variables['tos_modal'][$key] = drupal_render($variables['form'][$key]);
+    }
+  }
+  $variables['tos_modal']['hidden'] = implode($hidden);
+  $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
 }

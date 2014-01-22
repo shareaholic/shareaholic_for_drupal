@@ -365,3 +365,9 @@ margin: 10px 0px;
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
   background-color:#f6f6f6;
 }
+
+input#edit-submit {
+  margin-bottom: 0;
+  margin-right: 0;
+  border: 0;
+}

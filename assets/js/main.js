@@ -9,14 +9,5 @@
       topPosition: 50
     });
 
-    $('#get_started').on('click', function(e) {
-      //e.preventDefault();
-      //data = {action: 'shareaholic_accept_terms_of_service'};
-      // $('#terms_of_service_modal').trigger('reveal:close');
-      //Shareaholic.submit_to_admin(data, function(){
-      //  location.reload();
-      //});
-    })
-
   });
 })(sQuery);
