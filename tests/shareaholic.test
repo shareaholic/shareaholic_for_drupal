@@ -9,7 +9,7 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     return array(
       'name' => 'shareaholic module functionality',
       'description' => 'Tests hooks in the shareaholic module',
-      'group' => 'shareaholic',
+      'group' => 'Shareaholic',
     );
   }
 

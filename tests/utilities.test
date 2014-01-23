@@ -1,0 +1,121 @@
+<?php
+/**
+ * @file
+ * Tests for the shareaholic utilities class
+ */
+class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
+
+  public static function getInfo(){
+    return array(
+      'name' => 'ShareaholicUtilities tests',
+      'description' => 'Tests the individual functions of ShareaholicUtilities',
+      'group' => 'Shareaholic',
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('shareaholic');
+  }
+
+  public function testHasAcceptedTermsOfService() {
+    $db_value = variable_get('shareaholic_has_accepted_tos');
+    $this->assertEqual($db_value, ShareaholicUtilities::has_accepted_terms_of_service(), 'Should match what is in the database');
+  }
+
+  public function testAcceptTermsOfService() {
+    ShareaholicUtilities::accept_terms_of_service();
+    $this->assertNotNull(ShareaholicUtilities::has_accepted_terms_of_service(), 'The terms of service value should be true');
+  }
+
+  public function testGetSettings() {
+    $settings = ShareaholicUtilities::get_settings();
+    $this->assertNotNull($settings, 'Settings should not be null');
+    $this->assertTrue(is_array($settings), 'Settings should be an array');
+  }
+
+  public function testGetOption() {
+    $api_key = ShareaholicUtilities::get_option('api_key');
+    $invalid_key = ShareaholicUtilities::get_option('this is not a valid key');
+    $this->assertTrue(isset($api_key), 'The api key should be returned');
+    $this->assertTrue(is_array($invalid_key) && empty($invalid_key), 'An empty array is returned for non-existent options');
+  }
+
+  public function testUpdateOptions() {
+    ShareaholicUtilities::update_options(array(
+      'test' => 'test'
+    ));
+    $this->assertEqual('test', ShareaholicUtilities::get_option('test'), 'It should set a new key with a new value');
+    ShareaholicUtilities::update_options(array(
+      'api_key' => 'api_key'
+    ));
+    $this->assertEqual('api_key', ShareaholicUtilities::get_option('api_key'), 'It should override a value if key exists');
+    ShareaholicUtilities::update_options(array(
+      'api_key' => 'changed',
+      'test' => 'changed'
+    ));
+    $result = (ShareaholicUtilities::get_option('api_key') === ShareaholicUtilities::get_option('test'));
+    $this->assertTrue($result, 'It should update more than one option');
+  }
+
+  public function testSiteUrl() {
+    $site_url = ShareaholicUtilities::site_url();
+    $this->assertEqual(0, preg_match('/https?:/', $site_url), 'The site url should have protocol stripped');
+  }
+
+
+  public function testSiteName() {
+    $site_name = ShareaholicUtilities::site_name();
+    $this->assertNotNull($site_name, 'The site name should not be null');
+  }
+
+  public function testSiteLanguage() {
+    $GLOBALS['language']->language = 'this is a joke';
+    $language_id = ShareaholicUtilities::site_language();
+    $this->assertNull($language_id, 'It should return null for unknown language');
+
+    $GLOBALS['language']->language = 'en';
+    $language_id = ShareaholicUtilities::site_language();
+    $this->assertEqual(9, $language_id, 'When the language is English, language id should be 9');
+  }
+
+  // TODO: need to figure out how to mock http request in this framework
+  // public function testGetOrCreateApiKey() {
+  //
+  //}
+
+  public function testHasBadResponse() {
+    $response = NULL;
+    $type = 'test';
+    $result = ShareaholicUtilities::has_bad_response($response, $type);
+    $this->assertTrue($result, 'It returns true when the response is null');
+
+    $response = new stdClass;
+    $response->error = 'There is an error';
+    $result = ShareaholicUtilities::has_bad_response($response, $type);
+    $this->assertTrue($result, 'It returns true when the response has an error');
+
+    $response = new stdClass;
+    $response->code = 500;
+    $result = ShareaholicUtilities::has_bad_response($response, $type);
+    $this->assertTrue($result, 'It returns true when the response code is not between 200-210');
+
+
+    $response = new stdClass;
+    $response->code = 200;
+    $response->data = 'This is not a json response';
+    $result = ShareaholicUtilities::has_bad_response($response, $type, true);
+    $this->assertTrue($result, 'It returns true when the expected json response is not valid json');
+
+
+    $response = new stdClass;
+    $response->code = 200;
+    $response->data = '{"test": "test"}';
+    $result = ShareaholicUtilities::has_bad_response($response, $type, true);
+    $this->assertFalse($result, 'It returns false when the json response parses correctly');
+
+  }
+
+  private function testNotATest() {
+    echo 'Not a test';
+  }
+}
