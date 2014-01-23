@@ -60,6 +60,11 @@ function shareaholic_theme() {
       'path' => MODULE_PATH . '/templates',
       'template' => 'terms_of_service_modal',
     ),
+    'failed_to_create_api_key_modal' => array(
+      'render element' => 'form',
+      'path' => MODULE_PATH . '/templates',
+      'template' => 'failed_to_create_api_key_modal',
+    ),
   );
 }
 
@@ -80,6 +85,22 @@ function tos_modal_form_submit($form, &$form_state) {
   ShareaholicUtilities::accept_terms_of_service();
 }
 
+/**
+ * Returns the form for the failed to create api key modal popup
+ */
+function failed_to_create_api_key_form() {
+  $form['#theme'] = 'failed_to_create_api_key_modal';
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Retry'),
+  );
+  $form['submit']['#attributes']['class'][] = 'btn_main';
+  return $form;
+}
+
+function failed_to_create_api_key_form_submit($form, &$form_state) {
+}
+
 function template_preprocess_terms_of_service_modal(&$variables) {
   $variables['tos_modal'] = array();
   $hidden = array();
@@ -95,3 +116,19 @@ function template_preprocess_terms_of_service_modal(&$variables) {
   $variables['tos_modal']['hidden'] = implode($hidden);
   $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
 }
+
+function template_preprocess_failed_to_create_api_key_modal(&$variables) {
+  $variables['failed_api_key_modal'] = array();
+  $hidden = array();
+  foreach (element_children($variables['form']) as $key) {
+    $type = $variables['form'][$key]['#type'];
+    if ($type == 'hidden' || $type == 'token') {
+      $hidden[] = drupal_render($variables['form'][$key]);
+    }
+    else {
+      $variables['failed_api_key_modal'][$key] = drupal_render($variables['form'][$key]);
+    }
+  }
+  $variables['failed_api_key_modal']['hidden'] = implode($hidden);
+}
+

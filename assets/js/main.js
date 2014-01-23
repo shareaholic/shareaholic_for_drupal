@@ -9,5 +9,11 @@
       topPosition: 50
     });
 
+    $('#failed_to_create_api_key').reveal({
+      closeonbackgroundclick: false,
+      closeonescape: false,
+      topPosition: 50
+    });
+
   });
 })(sQuery);
