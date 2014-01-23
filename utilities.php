@@ -7,8 +7,9 @@
 class ShareaholicUtilities {
   /**
    * Returns whether the user has accepted our terms of service.
+   * If the user has accepted, return true otherwise return NULL
    *
-   * @return bool
+   * @return mixed (true or NULL)
    */
   public static function has_accepted_terms_of_service() {
     return variable_get('shareaholic_has_accepted_tos');
@@ -16,7 +17,7 @@ class ShareaholicUtilities {
 
 
   /**
-   * Accepts the terms of service.
+   * Accepts the terms of service by setting the variable to true
    */
   public static function accept_terms_of_service() {
     variable_set('shareaholic_has_accepted_tos', true);
@@ -136,7 +137,8 @@ class ShareaholicUtilities {
       "uk" => 35,    // Ukrainian
       "vi" => 36,    // Vietnamese
     );
-    return $language_id_map[$GLOBALS['language']->language];
+    $language = $GLOBALS['language']->language;
+    return isset($language_id_map[$language]) ? $language_id_map[$language] : NULL;
   }
 
   /**
@@ -225,13 +227,9 @@ class ShareaholicUtilities {
       self::log($type . ': The server responded with code ' . $response['code']);
       return true;
     }
-    if($json_parse) {
-      try {
-        json_decode($response['data']);
-      } catch (Exception $e) {
-        self::log($type . ': Could not parse JSON. The response was: ' . $response['data']);
-        return true;
-      }
+    if($json_parse && json_decode($response['data']) === NULL) {
+      self::log($type . ': Could not parse JSON. The response was: ' . $response['data']);
+      return true;
     }
     return false;
   }
