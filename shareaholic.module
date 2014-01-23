@@ -5,9 +5,10 @@
  * Allows site owner to add share buttons/recommendations on their website
  */
 
-define('SHAREAHOLIC_URL', 'https://shareaholic.com');
+define('SHAREAHOLIC_URL', 'http://spreadaholic.com:8080');
 define('MODULE_PATH', drupal_get_path('module', 'shareaholic'));
 define('SHAREAHOLIC_ASSET_DIR', MODULE_PATH . '/assets/');
+define('SHAREAHOLIC_DEBUG', true);
 
 module_load_include('php', 'shareaholic', 'utilities');
 module_load_include('php', 'shareaholic', 'admin');
@@ -83,6 +84,7 @@ function tos_modal_form() {
 
 function tos_modal_form_submit($form, &$form_state) {
   ShareaholicUtilities::accept_terms_of_service();
+  ShareaholicUtilities::get_or_create_api_key();
 }
 
 /**
@@ -99,6 +101,7 @@ function failed_to_create_api_key_form() {
 }
 
 function failed_to_create_api_key_form_submit($form, &$form_state) {
+  ShareaholicUtilities::get_or_create_api_key();
 }
 
 function template_preprocess_terms_of_service_modal(&$variables) {
