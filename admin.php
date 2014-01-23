@@ -14,9 +14,12 @@ class ShareaholicAdmin {
 
 
   /**
-   * Outputs the actual html for the terms of service modal
+   * Outputs the actual html for either the terms_of_service modal or the
+   * failed_create_api_key modal depending on what is in the database
+   *
+   * @return String html output for the modals
    */
-  public static function draw_tos_block() {
+  public static function draw_modal_popup() {
     if(!ShareaholicUtilities::has_accepted_terms_of_service()) {
       print(drupal_render(drupal_get_form('tos_modal_form')));
     } else if (!ShareaholicUtilities::get_option('api_key')) {

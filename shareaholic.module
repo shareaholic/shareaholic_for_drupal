@@ -15,7 +15,7 @@ module_load_include('php', 'shareaholic', 'admin');
 /**
  * Implementation of hook_menu()
  *
- * Establish a link to the Shareaholic Admin settings page
+ * Establishes "routes" for the Shareaholic module
  *
  * @return The menu structure containing link to settings page
  */
@@ -44,10 +44,10 @@ function shareaholic_admin_settings() {
 
 /**
  * Implements hook_theme().
- * Defines the themes available for the
+ * Defines the themes for each template in this module
  *
  * @return array An array that includes themes implemented for shareaholic
- * admin pages
+ * templates
  */
 function shareaholic_theme() {
   return array(
@@ -102,23 +102,21 @@ function failed_to_create_api_key_form_submit($form, &$form_state) {
 }
 
 function template_preprocess_terms_of_service_modal(&$variables) {
-  $variables['tos_modal'] = array();
-  $hidden = array();
-  foreach (element_children($variables['form']) as $key) {
-    $type = $variables['form'][$key]['#type'];
-    if ($type == 'hidden' || $type == 'token') {
-      $hidden[] = drupal_render($variables['form'][$key]);
-    }
-    else {
-      $variables['tos_modal'][$key] = drupal_render($variables['form'][$key]);
-    }
-  }
-  $variables['tos_modal']['hidden'] = implode($hidden);
+  _prepare_template_form_variables($variables, 'tos_modal');
   $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
 }
 
 function template_preprocess_failed_to_create_api_key_modal(&$variables) {
-  $variables['failed_api_key_modal'] = array();
+  _prepare_template_form_variables($variables, 'failed_api_key_modal');
+}
+
+/**
+ * Prepares the form for use in the templates
+ * by storing the form as strings in the $variables object
+ * that can be printed in the template
+ */
+function _prepare_template_form_variables(&$variables, $form_id) {
+  $variables[$form_id] = array();
   $hidden = array();
   foreach (element_children($variables['form']) as $key) {
     $type = $variables['form'][$key]['#type'];
@@ -126,9 +124,9 @@ function template_preprocess_failed_to_create_api_key_modal(&$variables) {
       $hidden[] = drupal_render($variables['form'][$key]);
     }
     else {
-      $variables['failed_api_key_modal'][$key] = drupal_render($variables['form'][$key]);
+      $variables[$form_id][$key] = drupal_render($variables['form'][$key]);
     }
   }
-  $variables['failed_api_key_modal']['hidden'] = implode($hidden);
+  $variables[$form_id]['hidden'] = implode($hidden);
 }
 
