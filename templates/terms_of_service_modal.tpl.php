@@ -17,8 +17,8 @@
   </div>
   </div>
   <div class="pvl">
-    <?= $variables['tos_modal']['hidden'] ?>
-    <?= $variables['tos_modal']['submit'] ?>
+    <?= $variables['shareaholic_tos_modal']['hidden'] ?>
+    <?= $variables['shareaholic_tos_modal']['submit'] ?>
     <p><small><?= sprintf(t('By clicking "Get Started" you agree to Shareholic\'s %sTerms of Service%s and %sPrivacy Policy%s.'), '<a href="https://shareaholic.com/terms/?src=wp_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/privacy/?src=wp_admin" target="_new">', '</a>'); ?></p>
   </div>
   </div>

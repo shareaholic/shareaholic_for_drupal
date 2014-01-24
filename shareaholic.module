@@ -57,12 +57,12 @@ function shareaholic_theme() {
       'path' => MODULE_PATH . '/templates',
       'template' => 'shareaholic_admin_settings',
     ),
-    'terms_of_service_modal' => array(
+    'shareaholic_terms_of_service_modal' => array(
       'render element' => 'form',
       'path' => MODULE_PATH . '/templates',
       'template' => 'terms_of_service_modal',
     ),
-    'failed_to_create_api_key_modal' => array(
+    'shareaholic_failed_to_create_api_key_modal' => array(
       'render element' => 'form',
       'path' => MODULE_PATH . '/templates',
       'template' => 'failed_to_create_api_key_modal',
@@ -85,8 +85,8 @@ function shareaholic_html_head_alter() {
 /**
  * Returns the form for the terms of service modal popup
  */
-function tos_modal_form() {
-  $form['#theme'] = 'terms_of_service_modal';
+function shareaholic_tos_modal_form() {
+  $form['#theme'] = 'shareaholic_terms_of_service_modal';
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Get Started »'),
@@ -101,7 +101,7 @@ function tos_modal_form() {
  * and get or create an api key if it does not already exists
  *
  */
-function tos_modal_form_submit($form, &$form_state) {
+function shareaholic_tos_modal_form_submit($form, &$form_state) {
   ShareaholicUtilities::accept_terms_of_service();
   ShareaholicUtilities::get_or_create_api_key();
 }
@@ -109,8 +109,8 @@ function tos_modal_form_submit($form, &$form_state) {
 /**
  * Returns the form for the failed to create api key modal popup
  */
-function failed_to_create_api_key_form() {
-  $form['#theme'] = 'failed_to_create_api_key_modal';
+function shareaholic_failed_to_create_api_key_form() {
+  $form['#theme'] = 'shareaholic_failed_to_create_api_key_modal';
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Retry'),
@@ -120,11 +120,11 @@ function failed_to_create_api_key_form() {
 }
 
 /**
- * Submit handler for the failed_to_create_api_key modal
+ * Submit handler for the shareaholic_failed_to_create_api_key modal
  * When submitted, try to create an api key for the user
  *
  */
-function failed_to_create_api_key_form_submit($form, &$form_state) {
+function shareaholic_failed_to_create_api_key_form_submit($form, &$form_state) {
   ShareaholicUtilities::get_or_create_api_key();
 }
 
@@ -133,17 +133,17 @@ function failed_to_create_api_key_form_submit($form, &$form_state) {
  * Prepare variables to be used in the terms_of_service_modal
  * template
  */
-function template_preprocess_terms_of_service_modal(&$variables) {
-  _prepare_template_form_variables($variables, 'tos_modal');
+function template_preprocess_shareaholic_terms_of_service_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'shareaholic_tos_modal');
   $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
 }
 
 
 /**
- * Prepare variables to be used in the failed_to_create_api_key_modal
+ * Prepare variables to be used in the shareaholic_failed_to_create_api_key_modal
  * template
  */
-function template_preprocess_failed_to_create_api_key_modal(&$variables) {
+function template_preprocess_shareaholic_failed_to_create_api_key_modal(&$variables) {
   _prepare_template_form_variables($variables, 'failed_api_key_modal');
 }
 
@@ -153,7 +153,7 @@ function template_preprocess_failed_to_create_api_key_modal(&$variables) {
  * - disable analytics (checkbox, default unchecked)
  *
  */
-function advanced_settings_form() {
+function shareaholic_advanced_settings_form() {
   $form['advanced_settings'] = array(
     '#title' => t('Advanced'),
     '#type' => 'fieldset',
