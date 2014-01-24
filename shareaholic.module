@@ -12,6 +12,7 @@ define('SHAREAHOLIC_DEBUG', true);
 
 module_load_include('php', 'shareaholic', 'utilities');
 module_load_include('php', 'shareaholic', 'admin');
+module_load_include('php', 'shareaholic', 'public');
 
 /**
  * Implementation of hook_menu()
@@ -67,6 +68,18 @@ function shareaholic_theme() {
       'template' => 'failed_to_create_api_key_modal',
     ),
   );
+}
+
+/**
+ * Implements hook_html_head_alter()
+ * Adds certain html tags to the head of the document
+ * of admin pages before it is rendered by Drupal
+ *
+ */
+function shareaholic_html_head_alter() {
+  if(!preg_match('/admin/', request_uri())) {
+    ShareaholicPublic::insert_script_tag();
+  }
 }
 
 /**

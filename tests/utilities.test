@@ -115,6 +115,11 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
 
   }
 
+  public function testAssetUrl() {
+    $asset_url = ShareaholicUtilities::asset_url('test.js');
+    $this->assertNotNull($asset_url, 'The asset url should not be null');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }
