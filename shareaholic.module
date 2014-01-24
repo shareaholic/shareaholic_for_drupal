@@ -5,37 +5,131 @@
  * Allows site owner to add share buttons/recommendations on their website
  */
 
- /**
-  * Implementation of hook_menu()
-  *
-  * Establish a link to the Shareaholic Admin settings page
-  *
-  * @return The menu structure containing link to settings page
-  */
- function shareaholic_menu() {
+define('SHAREAHOLIC_URL', 'http://spreadaholic.com:8080');
+define('MODULE_PATH', drupal_get_path('module', 'shareaholic'));
+define('SHAREAHOLIC_ASSET_DIR', MODULE_PATH . '/assets/');
+define('SHAREAHOLIC_DEBUG', true);
+
+module_load_include('php', 'shareaholic', 'utilities');
+module_load_include('php', 'shareaholic', 'admin');
+
+/**
+ * Implementation of hook_menu()
+ *
+ * Establishes "routes" for the Shareaholic module
+ *
+ * @return The menu structure containing link to settings page
+ */
+function shareaholic_menu() {
   // Path to the shareaholic settings page
   $items['admin/config/content/shareaholic/settings'] = array(
     'title' => 'Shareaholic Settings',
-    'description' => 'Configure the Shareaholic share buttons on your site',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('shareaholic_admin_settings'),
+    'description' => 'Settings for the Shareaholic Plugin',
+    'page callback' => 'shareaholic_admin_settings',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
   );
-
   return $items;
- }
+}
 
- /**
-  * Form builder for the shareaholic settings page
-  *
-  * @return The form structure for the settings page
-  */
- function shareaholic_admin_settings() {
-   $form['name'] = array(
-     '#title' => t('Test'),
-     '#type' => 'fieldset',
-     '#description' => t('Hello World!')
-   );
+
+/**
+ * Renders page for shareaholic admin settings
+ *
+ * @return The theme to render the settings page
+ */
+function shareaholic_admin_settings() {
+  return theme('shareaholic_admin_settings');
+}
+
+
+/**
+ * Implements hook_theme().
+ * Defines the themes for each template in this module
+ *
+ * @return array An array that includes themes implemented for shareaholic
+ * templates
+ */
+function shareaholic_theme() {
+  return array(
+    'shareaholic_admin_settings' => array(
+      'path' => MODULE_PATH . '/templates',
+      'template' => 'shareaholic_admin_settings',
+    ),
+    'terms_of_service_modal' => array(
+      'render element' => 'form',
+      'path' => MODULE_PATH . '/templates',
+      'template' => 'terms_of_service_modal',
+    ),
+    'failed_to_create_api_key_modal' => array(
+      'render element' => 'form',
+      'path' => MODULE_PATH . '/templates',
+      'template' => 'failed_to_create_api_key_modal',
+    ),
+  );
+}
+
+/**
+ * Returns the form for the terms of service modal popup
+ */
+function tos_modal_form() {
+  $form['#theme'] = 'terms_of_service_modal';
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Get Started »'),
+  );
+  $form['submit']['#attributes']['class'][] = 'btn_main';
   return $form;
- }
+}
+
+function tos_modal_form_submit($form, &$form_state) {
+  ShareaholicUtilities::accept_terms_of_service();
+  ShareaholicUtilities::get_or_create_api_key();
+}
+
+/**
+ * Returns the form for the failed to create api key modal popup
+ */
+function failed_to_create_api_key_form() {
+  $form['#theme'] = 'failed_to_create_api_key_modal';
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Retry'),
+  );
+  $form['submit']['#attributes']['class'][] = 'btn_main';
+  return $form;
+}
+
+function failed_to_create_api_key_form_submit($form, &$form_state) {
+  ShareaholicUtilities::get_or_create_api_key();
+}
+
+function template_preprocess_terms_of_service_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'tos_modal');
+  $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
+}
+
+function template_preprocess_failed_to_create_api_key_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'failed_api_key_modal');
+}
+
+/**
+ * Prepares the form for use in the templates
+ * by storing the form as strings in the $variables object
+ * that can be printed in the template
+ */
+function _prepare_template_form_variables(&$variables, $form_id) {
+  $variables[$form_id] = array();
+  $hidden = array();
+  foreach (element_children($variables['form']) as $key) {
+    $type = $variables['form'][$key]['#type'];
+    if ($type == 'hidden' || $type == 'token') {
+      $hidden[] = drupal_render($variables['form'][$key]);
+    }
+    else {
+      $variables[$form_id][$key] = drupal_render($variables['form'][$key]);
+    }
+  }
+  $variables[$form_id]['hidden'] = implode($hidden);
+}
+
