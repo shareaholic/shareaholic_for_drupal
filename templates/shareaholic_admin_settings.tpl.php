@@ -6,5 +6,6 @@
   drupal_add_js($module_path . '/assets/js/jquery_ui_custom.js', array('group' => JS_DEFAULT));
   drupal_add_js($module_path . '/assets/js/jquery.reveal.modified.js', array('group' => JS_DEFAULT));
   drupal_add_js($module_path . '/assets/js/main.js', array('group' => JS_DEFAULT));
+  print(drupal_render(drupal_get_form('advanced_settings_form')));
   ShareaholicAdmin::draw_modal_popup();
 ?>
