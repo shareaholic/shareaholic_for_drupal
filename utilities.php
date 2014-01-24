@@ -276,5 +276,22 @@ class ShareaholicUtilities {
     return $merged;
   }
 
+  /**
+   * Returns the appropriate asset path for something from our
+   * rails app based on URL constant.
+   *
+   * @param string $asset
+   * @return string
+   */
+  public static function asset_url($asset) {
+    if (preg_match('/spreadaholic/', SHAREAHOLIC_URL)) {
+      return 'http://spreadaholic.com:8080/assets/' . $asset;
+    } elseif (preg_match('/stageaholic/', SHAREAHOLIC_URL)) {
+      return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
+    } else {
+      return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
+    }
+  }
+
 
 }
