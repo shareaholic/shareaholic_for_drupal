@@ -73,11 +73,13 @@ function shareaholic_theme() {
 /**
  * Implements hook_html_head_alter()
  * Adds certain html tags to the head of the document
- * before the page is rendered by Drupal
+ * of admin pages before it is rendered by Drupal
  *
  */
 function shareaholic_html_head_alter() {
-  ShareaholicPublic::insert_script_tag();
+  if(!preg_match('/admin/', request_uri())) {
+    ShareaholicPublic::insert_script_tag();
+  }
 }
 
 /**
