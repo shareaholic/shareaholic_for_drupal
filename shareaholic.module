@@ -76,9 +76,10 @@ function shareaholic_theme() {
  * of admin pages before it is rendered by Drupal
  *
  */
-function shareaholic_html_head_alter() {
+function shareaholic_html_head_alter(&$head_elements) {
   if(!preg_match('/admin/', request_uri())) {
     ShareaholicPublic::insert_script_tag();
+    ShareaholicPublic::insert_disable_analytics_meta_tag($head_elements);
   }
 }
 
@@ -154,11 +155,12 @@ function template_preprocess_shareaholic_failed_to_create_api_key_modal(&$variab
  *
  */
 function shareaholic_advanced_settings_form() {
+  $disable_analytics_checked = ShareaholicUtilities::get_option('disable_analytics');
   $form['advanced_settings'] = array(
     '#title' => t('Advanced'),
     '#type' => 'fieldset',
   );
-  $form['advanced_settings']['disable_tracking'] = array(
+  $form['advanced_settings']['disable_analytics'] = array(
     '#type' => 'checkbox',
     '#title' => 'Disable Analytics (it is recommended NOT to disable analytics)',
   );
@@ -166,7 +168,20 @@ function shareaholic_advanced_settings_form() {
     '#type' => 'submit',
     '#value' => t('Save Changes')
   );
+
+  if($disable_analytics_checked === 'on') {
+    $form['advanced_settings']['disable_analytics']['#attributes'] = array('checked' => 'checked');
+  }
   return $form;
+}
+
+function shareaholic_advanced_settings_form_submit($form, &$form_state) {
+  if(ShareaholicUtilities::has_tos_and_apikey()) {
+    $checked = ($form_state['values']['disable_analytics'] === 1) ? 'on' : 'off';
+    ShareaholicUtilities::update_options(array(
+      'disable_analytics' => $checked
+    ));
+  }
 }
 
 /**

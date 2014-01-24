@@ -17,8 +17,7 @@ class ShareaholicPublic {
    * Inserts the script code snippet into the head of the page
    */
   public static function insert_script_tag() {
-    if (ShareaholicUtilities::has_accepted_terms_of_service() &&
-        ShareaholicUtilities::get_or_create_api_key()) {
+    if (ShareaholicUtilities::has_tos_and_apikey()) {
         drupal_add_js(self::js_snippet(),
           array('type' => 'inline', 'scope' => 'header'));
     }
@@ -53,6 +52,23 @@ class ShareaholicPublic {
       //]]>
 DOC;
     return $js_snippet;
+  }
+
+  /**
+   *
+   */
+  function insert_disable_analytics_meta_tag(&$head_elements) {
+    if(ShareaholicUtilities::get_option('disable_analytics') === 'on') {
+      $head_elements['shareaholic_disable_analytics'] = array(
+        '#type' => 'html_tag',
+        '#tag' => 'meta',
+        '#attributes' => array(
+          'name' => 'shareaholic:analytics',
+          'content' => 'disabled'
+        ),
+        '#weight' => 10000,
+      );
+    }
   }
 
 }

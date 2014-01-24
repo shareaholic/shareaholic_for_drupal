@@ -31,7 +31,7 @@ class ShareaholicUtilities {
    */
   private static function defaults() {
     return array(
-      'disable_tracking' => 'off',
+      'disable_analytics' => 'off',
       'api_key' => '',
       'verification_key' => '',
     );
@@ -292,6 +292,16 @@ class ShareaholicUtilities {
       return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
     }
   }
+
+  /**
+   * Check if the installation has accepted ToS and we created an apikey
+   *
+   */
+  public static function has_tos_and_apikey() {
+    return (ShareaholicUtilities::has_accepted_terms_of_service() &&
+              ShareaholicUtilities::get_option('api_key'));
+  }
+
 
 
 }
