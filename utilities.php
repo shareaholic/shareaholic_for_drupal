@@ -76,6 +76,14 @@ class ShareaholicUtilities {
 
 
   /**
+   * Deletes the settings option
+   */
+  public static function destroy_settings() {
+    variable_del('shareaholic_settings');
+  }
+
+
+  /**
    * Returns the site's url stripped of protocol.
    *
    * @return string

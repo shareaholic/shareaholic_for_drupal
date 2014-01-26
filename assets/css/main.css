@@ -371,3 +371,8 @@ input#edit-submit {
   margin-right: 0;
   border: 0;
 }
+
+fieldset.form-fieldset {
+  float: none;
+  width: 75%;
+}

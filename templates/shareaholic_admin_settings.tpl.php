@@ -7,5 +7,6 @@
   drupal_add_js($module_path . '/assets/js/jquery.reveal.modified.js', array('group' => JS_DEFAULT));
   drupal_add_js($module_path . '/assets/js/main.js', array('group' => JS_DEFAULT));
   print(drupal_render(drupal_get_form('shareaholic_advanced_settings_form')));
+  print(drupal_render(drupal_get_form('shareaholic_reset_plugin_form')));
   ShareaholicAdmin::draw_modal_popup();
 ?>
