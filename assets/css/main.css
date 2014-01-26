@@ -366,13 +366,13 @@ margin: 10px 0px;
   background-color:#f6f6f6;
 }
 
-input#edit-submit {
+div#shareaholic-form-container input.btn_main {
   margin-bottom: 0;
   margin-right: 0;
   border: 0;
 }
 
-fieldset.form-fieldset {
+div#shareaholic-form-container fieldset.form-fieldset {
   float: none;
   width: 75%;
 }
