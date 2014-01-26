@@ -120,6 +120,17 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertNotNull($asset_url, 'The asset url should not be null');
   }
 
+  public function testHasTosAndApiKey() {
+    ShareaholicUtilities::accept_terms_of_service();
+    ShareaholicUtilities::update_options(array( 'api_key' => 'key') );
+    $result = ShareaholicUtilities::has_tos_and_apikey();
+    $this->assertTrue($result, 'It returns true when ToS and apikey are in the database');
+
+    variable_del('shareaholic_settings');
+    $result = ShareaholicUtilities::has_tos_and_apikey();
+    $this->assertFalse($result, 'It returns false when there is no apikey');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }
