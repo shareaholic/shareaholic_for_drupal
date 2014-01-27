@@ -58,7 +58,8 @@ DOC;
    *
    */
   function insert_disable_analytics_meta_tag(&$head_elements) {
-    if(ShareaholicUtilities::get_option('disable_analytics') === 'on') {
+    if(ShareaholicUtilities::has_tos_and_apikey() &&
+       ShareaholicUtilities::get_option('disable_analytics') === 'on') {
       $head_elements['shareaholic_disable_analytics'] = array(
         '#type' => 'html_tag',
         '#tag' => 'meta',
