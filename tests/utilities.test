@@ -131,6 +131,12 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertFalse($result, 'It returns false when there is no apikey');
   }
 
+  public function testDestroySettings() {
+    variable_set('shareaholic_settings', 'test');
+    ShareaholicUtilities::destroy_settings();
+    $this->assertNull(variable_get('shareaholic_settings'), 'Shareaholic settings should be destroyed');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }
