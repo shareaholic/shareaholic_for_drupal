@@ -7,10 +7,16 @@
  * in the database.
  */
 
+module_load_include('php', 'shareaholic', 'utilities');
 
 /**
  * Implements hook_uninstall().
  */
 function shareaholic_uninstall() {
+  ShareaholicUtilities::destroy_settings();
+}
+
+function shareaholic_install() {
+  ShareaholicUtilities::get_or_create_api_key();
 }
 
