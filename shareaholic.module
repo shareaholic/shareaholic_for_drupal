@@ -57,12 +57,12 @@ function shareaholic_theme() {
       'path' => MODULE_PATH . '/templates',
       'template' => 'shareaholic_admin_settings',
     ),
-    'terms_of_service_modal' => array(
+    'shareaholic_terms_of_service_modal' => array(
       'render element' => 'form',
       'path' => MODULE_PATH . '/templates',
       'template' => 'terms_of_service_modal',
     ),
-    'failed_to_create_api_key_modal' => array(
+    'shareaholic_failed_to_create_api_key_modal' => array(
       'render element' => 'form',
       'path' => MODULE_PATH . '/templates',
       'template' => 'failed_to_create_api_key_modal',
@@ -76,17 +76,19 @@ function shareaholic_theme() {
  * of admin pages before it is rendered by Drupal
  *
  */
-function shareaholic_html_head_alter() {
+function shareaholic_html_head_alter(&$head_elements) {
   if(!preg_match('/admin/', request_uri())) {
-    ShareaholicPublic::insert_script_tag();
+    $version = ShareaholicUtilities::get_version();
+    ShareaholicPublic::insert_script_tag($version);
+    ShareaholicPublic::insert_disable_analytics_meta_tag($head_elements);
   }
 }
 
 /**
  * Returns the form for the terms of service modal popup
  */
-function tos_modal_form() {
-  $form['#theme'] = 'terms_of_service_modal';
+function shareaholic_tos_modal_form() {
+  $form['#theme'] = 'shareaholic_terms_of_service_modal';
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Get Started »'),
@@ -95,7 +97,13 @@ function tos_modal_form() {
   return $form;
 }
 
-function tos_modal_form_submit($form, &$form_state) {
+/**
+ * Submit handler for the ToS modal: update values in the database
+ * By storing 'true' for shareaholic_has_accepted_tos
+ * and get or create an api key if it does not already exists
+ *
+ */
+function shareaholic_tos_modal_form_submit($form, &$form_state) {
   ShareaholicUtilities::accept_terms_of_service();
   ShareaholicUtilities::get_or_create_api_key();
 }
@@ -103,8 +111,8 @@ function tos_modal_form_submit($form, &$form_state) {
 /**
  * Returns the form for the failed to create api key modal popup
  */
-function failed_to_create_api_key_form() {
-  $form['#theme'] = 'failed_to_create_api_key_modal';
+function shareaholic_failed_to_create_api_key_form() {
+  $form['#theme'] = 'shareaholic_failed_to_create_api_key_modal';
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Retry'),
@@ -113,17 +121,95 @@ function failed_to_create_api_key_form() {
   return $form;
 }
 
-function failed_to_create_api_key_form_submit($form, &$form_state) {
+/**
+ * Submit handler for the shareaholic_failed_to_create_api_key modal
+ * When submitted, try to create an api key for the user
+ *
+ */
+function shareaholic_failed_to_create_api_key_form_submit($form, &$form_state) {
   ShareaholicUtilities::get_or_create_api_key();
 }
 
-function template_preprocess_terms_of_service_modal(&$variables) {
-  _prepare_template_form_variables($variables, 'tos_modal');
+
+/**
+ * Prepare variables to be used in the terms_of_service_modal
+ * template
+ */
+function template_preprocess_shareaholic_terms_of_service_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'shareaholic_tos_modal');
   $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
 }
 
-function template_preprocess_failed_to_create_api_key_modal(&$variables) {
+
+/**
+ * Prepare variables to be used in the shareaholic_failed_to_create_api_key_modal
+ * template
+ */
+function template_preprocess_shareaholic_failed_to_create_api_key_modal(&$variables) {
   _prepare_template_form_variables($variables, 'failed_api_key_modal');
+}
+
+/**
+ * The form object for the advanced settings
+ * The form will have input for:
+ * - disable analytics (checkbox, default unchecked)
+ *
+ */
+function shareaholic_advanced_settings_form() {
+  $disable_analytics_checked = ShareaholicUtilities::get_option('disable_analytics');
+  $form['advanced_settings'] = array(
+    '#title' => t('Advanced'),
+    '#type' => 'fieldset',
+  );
+  $form['advanced_settings']['disable_analytics'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Disable Analytics (it is recommended NOT to disable analytics)',
+  );
+  $form['advanced_settings']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Changes')
+  );
+  $form['advanced_settings']['submit']['#attributes']['class'][] = 'settings';
+  $form['advanced_settings']['#attributes']['class'][] = 'form-fieldset';
+  if($disable_analytics_checked === 'on') {
+    $form['advanced_settings']['disable_analytics']['#attributes'] = array('checked' => 'checked');
+  }
+  return $form;
+}
+
+function shareaholic_advanced_settings_form_submit($form, &$form_state) {
+  if(ShareaholicUtilities::has_tos_and_apikey()) {
+    $checked = ($form_state['values']['disable_analytics'] === 1) ? 'on' : 'off';
+    ShareaholicUtilities::update_options(array(
+      'disable_analytics' => $checked
+    ));
+  }
+}
+
+/**
+ * The form object for the reset plugin
+ * The form will have button to reset the plugin
+ *
+ */
+function shareaholic_reset_plugin_form() {
+  $form['reset'] = array(
+    '#title' => t('Reset'),
+    '#type' => 'fieldset',
+  );
+  $form['reset']['submit'] = array(
+    '#type' => 'submit',
+    '#prefix' => '<p>This will reset all of your settings and start you from scratch. This can not be undone.</p>',
+    '#value' => t('Reset Plugin')
+  );
+  $form['reset']['submit']['#attributes']['class'][] = 'settings';
+  $form['reset']['#attributes']['class'][] = 'form-fieldset';
+
+  return $form;
+}
+
+function shareaholic_reset_plugin_form_submit($form, &$form_state) {
+  ShareaholicUtilities::destroy_settings();
+  ShareaholicUtilities::get_or_create_api_key();
 }
 
 /**

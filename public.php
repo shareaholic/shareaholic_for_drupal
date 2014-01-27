@@ -16,10 +16,9 @@ class ShareaholicPublic {
   /**
    * Inserts the script code snippet into the head of the page
    */
-  public static function insert_script_tag() {
-    if (ShareaholicUtilities::has_accepted_terms_of_service() &&
-        ShareaholicUtilities::get_or_create_api_key()) {
-        drupal_add_js(self::js_snippet(),
+  public static function insert_script_tag($version_param) {
+    if (ShareaholicUtilities::has_tos_and_apikey()) {
+        drupal_add_js(self::js_snippet($version_param),
           array('type' => 'inline', 'scope' => 'header'));
     }
   }
@@ -31,9 +30,9 @@ class ShareaholicPublic {
    *
    * @return string JS block for shareaholic code
    */
-  private static function js_snippet() {
+  private static function js_snippet($version_param) {
     $api_key = ShareaholicUtilities::get_option('api_key');
-    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
+    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js') . '?ver=' . $version_param;
     $js_snippet = <<< DOC
       //<![CDATA[
         (function() {
@@ -53,6 +52,23 @@ class ShareaholicPublic {
       //]]>
 DOC;
     return $js_snippet;
+  }
+
+  /**
+   *
+   */
+  function insert_disable_analytics_meta_tag(&$head_elements) {
+    if(ShareaholicUtilities::get_option('disable_analytics') === 'on') {
+      $head_elements['shareaholic_disable_analytics'] = array(
+        '#type' => 'html_tag',
+        '#tag' => 'meta',
+        '#attributes' => array(
+          'name' => 'shareaholic:analytics',
+          'content' => 'disabled'
+        ),
+        '#weight' => 10000,
+      );
+    }
   }
 
 }

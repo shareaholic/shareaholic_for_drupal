@@ -31,7 +31,7 @@ class ShareaholicUtilities {
    */
   private static function defaults() {
     return array(
-      'disable_tracking' => 'off',
+      'disable_analytics' => 'off',
       'api_key' => '',
       'verification_key' => '',
     );
@@ -72,6 +72,14 @@ class ShareaholicUtilities {
     $old_settings = self::get_settings();
     $new_settings = self::array_merge_recursive_distinct($old_settings, $array);
     variable_set('shareaholic_settings', $new_settings);
+  }
+
+
+  /**
+   * Deletes the settings option
+   */
+  public static function destroy_settings() {
+    variable_del('shareaholic_settings');
   }
 
 
@@ -292,6 +300,25 @@ class ShareaholicUtilities {
       return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
     }
   }
+
+  /**
+   * Check if the installation has accepted ToS and we created an apikey
+   *
+   */
+  public static function has_tos_and_apikey() {
+    return (ShareaholicUtilities::has_accepted_terms_of_service() &&
+              ShareaholicUtilities::get_option('api_key'));
+  }
+
+  /**
+   *
+   */
+  function get_version() {
+    $path = drupal_get_path('module', 'shareaholic') . '/shareaholic.info';
+    $info = drupal_parse_info_file($path);
+    return $info['version'];
+  }
+
 
 
 }

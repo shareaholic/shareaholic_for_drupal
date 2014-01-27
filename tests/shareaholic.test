@@ -33,8 +33,8 @@ class ShareaholicTestCase extends DrupalWebTestCase {
   public function testShareaholicTheme() {
     $themes = module_invoke('shareaholic', 'theme');
     $result = (isset($themes['shareaholic_admin_settings']) &&
-                isset($themes['terms_of_service_modal']) &&
-                isset($themes['failed_to_create_api_key_modal']));
+                isset($themes['shareaholic_terms_of_service_modal']) &&
+                isset($themes['shareaholic_failed_to_create_api_key_modal']));
     $this->assertTrue($result, 'It should have the expected themes');
 
   }
@@ -53,6 +53,27 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     $this->drupalGet('admin/modules');
     $this->assertNoRaw('/assets/pub/shareaholic.js', 'It should not have the JS script in the page');
     $this->assertNoRaw('Shareaholic.init(apikey)', 'It should not have the JS init call in the page');
+  }
+
+
+  public function testInsertDisableAnalyticsMetaTag() {
+    ShareaholicUtilities::update_options(array(
+      'disable_analytics' => 'on'
+    ));
+
+    // Check to see if the home page has Shareaholic JS code
+    $this->drupalGet('');
+    $this->assertRaw('<meta name="shareaholic:analytics" content="disabled" />',
+                    'It should have the disable analytics metatag on the page');
+
+    ShareaholicUtilities::update_options(array(
+      'disable_analytics' => 'off'
+    ));
+
+    // check again to see if there is no disable analytics meta tag
+    $this->drupalGet('');
+    $this->assertNoRaw('<meta name="shareaholic:analytics" content="disabled" />',
+                        'It should not have the disable analytics metatag on the page');
   }
 
 

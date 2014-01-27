@@ -366,8 +366,50 @@ margin: 10px 0px;
   background-color:#f6f6f6;
 }
 
-input#edit-submit {
+div#shareaholic-form-container input[type="submit"].settings {
+  -webkit-appearance: button;
+  border: 1px solid #3F81AE;
+  border-color: #3F81AE #2E68A1 #1F5496;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 0 0 #72baeb,0 1px 2px 0 #c3c3c3;
+  box-shadow: inset 0 1px 0 0 #72baeb,0 1px 2px 0 #c3c3c3;
+  color: #fff;
+  display: inline-block;
+  font: 600 13px/1 "open sans","helvetica neue",helvetica,arial,sans-serif;
+  background-color: #52a8e8;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #52a8e8), color-stop(100%, #377ad0));
+  background-image: -webkit-linear-gradient(top, #52a8e8, #377ad0);
+  background-image: -moz-linear-gradient(top, #52a8e8, #377ad0);
+  background-image: -ms-linear-gradient(top, #52a8e8, #377ad0);
+  background-image: -o-linear-gradient(top, #52a8e8, #377ad0);
+  background-image: linear-gradient(top, #52a8e8, #377ad0);
+  line-height: 17px;
+  margin: 0;
+  padding: 8px 14px;
+  text-align: center;
+  text-shadow: 0 -1px 1px #3275BB;
+  -webkit-background-clip: padding-box;
+}
+
+div#shareaholic-form-container input[type="submit"]:hover.settings {
+  -webkit-box-shadow: inset 0 1px 0 0 #6aadd9;
+  box-shadow: inset 0 1px 0 0 #6aadd9;
+  background-color: #4b9ad6;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #4b9ad6), color-stop(100%, #326fbf));
+  background-image: -webkit-linear-gradient(top, #4b9ad6, #326fbf);
+  background-image: -moz-linear-gradient(top, #4b9ad6, #326fbf);
+  background-image: -ms-linear-gradient(top, #4b9ad6, #326fbf);
+  background-image: -o-linear-gradient(top, #4b9ad6, #326fbf);
+  background-image: linear-gradient(top, #4b9ad6, #326fbf);
+}
+
+div#shareaholic-form-container input.btn_main {
   margin-bottom: 0;
   margin-right: 0;
   border: 0;
+}
+
+div#shareaholic-form-container fieldset.form-fieldset {
+  float: none;
+  width: 75%;
 }
