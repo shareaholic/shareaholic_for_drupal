@@ -137,6 +137,11 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertNull(variable_get('shareaholic_settings'), 'Shareaholic settings should be destroyed');
   }
 
+  public function testGetVersion() {
+    $version = ShareaholicUtilities::get_version();
+    $this->assertNotNull($version, 'Shareaholic version should not be null');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }

@@ -310,6 +310,15 @@ class ShareaholicUtilities {
               ShareaholicUtilities::get_option('api_key'));
   }
 
+  /**
+   *
+   */
+  function get_version() {
+    $path = drupal_get_path('module', 'shareaholic') . '/shareaholic.info';
+    $info = drupal_parse_info_file($path);
+    return $info['version'];
+  }
+
 
 
 }

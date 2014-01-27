@@ -16,9 +16,9 @@ class ShareaholicPublic {
   /**
    * Inserts the script code snippet into the head of the page
    */
-  public static function insert_script_tag() {
+  public static function insert_script_tag($version_param) {
     if (ShareaholicUtilities::has_tos_and_apikey()) {
-        drupal_add_js(self::js_snippet(),
+        drupal_add_js(self::js_snippet($version_param),
           array('type' => 'inline', 'scope' => 'header'));
     }
   }
@@ -30,9 +30,9 @@ class ShareaholicPublic {
    *
    * @return string JS block for shareaholic code
    */
-  private static function js_snippet() {
+  private static function js_snippet($version_param) {
     $api_key = ShareaholicUtilities::get_option('api_key');
-    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
+    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js') . '?ver=' . $version_param;
     $js_snippet = <<< DOC
       //<![CDATA[
         (function() {

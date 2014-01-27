@@ -78,7 +78,8 @@ function shareaholic_theme() {
  */
 function shareaholic_html_head_alter(&$head_elements) {
   if(!preg_match('/admin/', request_uri())) {
-    ShareaholicPublic::insert_script_tag();
+    $version = ShareaholicUtilities::get_version();
+    ShareaholicPublic::insert_script_tag($version);
     ShareaholicPublic::insert_disable_analytics_meta_tag($head_elements);
   }
 }
