@@ -18,14 +18,11 @@ module_load_include('php', 'shareaholic', 'public');
  * Implements hook_init()
  * This gets called at the beginning of a non-cached page request
  *
- * Force edge mode for IE so that our plugins will work well
+ * Force edge mode for IE so that our plugins will look nicer
  *
  */
 function shareaholic_init() {
-  if(ShareaholicUtilities::has_tos_and_apikey() &&
-      !drupal_get_http_header('X-UA-Compatible')) {
-    drupal_add_http_header('X-UA-Compatible', 'IE=edge,chrome=1');
-  }
+  ShareaholicPublic::insert_xua_compatible_header();
 }
 
 /**

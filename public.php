@@ -55,9 +55,9 @@ DOC;
   }
 
   /**
-   *
+   * Insert the disable analytics meta tag
    */
-  function insert_disable_analytics_meta_tag(&$head_elements) {
+  public function insert_disable_analytics_meta_tag(&$head_elements) {
     if(ShareaholicUtilities::has_tos_and_apikey() &&
        ShareaholicUtilities::get_option('disable_analytics') === 'on') {
       $head_elements['shareaholic_disable_analytics'] = array(
@@ -69,6 +69,17 @@ DOC;
         ),
         '#weight' => 10000,
       );
+    }
+  }
+
+  /**
+   * Inserts the xua-compatible header if the user has accepted
+   * ToS and has API key
+   */
+  public function insert_xua_compatible_header() {
+    if(ShareaholicUtilities::has_tos_and_apikey() &&
+        !drupal_get_http_header('X-UA-Compatible')) {
+      drupal_add_http_header('X-UA-Compatible', 'IE=edge,chrome=1');
     }
   }
 
