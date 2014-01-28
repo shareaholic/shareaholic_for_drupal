@@ -58,8 +58,10 @@ class ShareaholicTestCase extends DrupalWebTestCase {
 
   public function testInsertDisableAnalyticsMetaTag() {
     ShareaholicUtilities::update_options(array(
-      'disable_analytics' => 'on'
+      'disable_analytics' => 'on',
+      'api_key' => 'test'
     ));
+    ShareaholicUtilities::accept_terms_of_service();
 
     // Check to see if the home page has Shareaholic JS code
     $this->drupalGet('');
@@ -74,6 +76,17 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     $this->drupalGet('');
     $this->assertNoRaw('<meta name="shareaholic:analytics" content="disabled" />',
                         'It should not have the disable analytics metatag on the page');
+  }
+
+  public function testInsertXUACompatible() {
+    // make request to home page. Then check for XUA Compatible header
+    ShareaholicUtilities::accept_terms_of_service();
+    ShareaholicUtilities::update_options(array(
+      'api_key' => 'test'
+    ));
+    $this->drupalGet('');
+    $header = DrupalWebTestCase::drupalGetHeader('X-UA-Compatible');
+    $this->assertNotNull($header, 'The X-UA-Compatible header should not be null');
   }
 
 
