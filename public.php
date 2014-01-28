@@ -83,4 +83,15 @@ DOC;
     }
   }
 
+  /**
+   * Insert into the head tag of the public pages
+   */
+  public function insert_into_head_tag(&$head_elements) {
+    if(!preg_match('/admin/', request_uri())) {
+      $version = ShareaholicUtilities::get_version();
+      ShareaholicPublic::insert_script_tag($version);
+      ShareaholicPublic::insert_disable_analytics_meta_tag($head_elements);
+    }
+  }
+
 }
