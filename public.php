@@ -39,8 +39,7 @@ class ShareaholicPublic {
    */
   private static function js_snippet() {
     $api_key = ShareaholicUtilities::get_option('api_key');
-    $version = ShareaholicUtilities::get_version();
-    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js') . '?ver=' . $version;
+    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
     $js_snippet = <<< DOC
   <script type='text/javascript' data-cfasync='false'>
     //<![CDATA[
