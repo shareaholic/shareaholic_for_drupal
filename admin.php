@@ -35,8 +35,22 @@ class ShareaholicAdmin {
     if(ShareaholicUtilities::is_admin_page() &&
         !ShareaholicUtilities::is_shareaholic_settings_page() &&
         !ShareaholicUtilities::has_accepted_terms_of_service()) {
-      //drupal_set_message('Action Required: Please go here:');
+      //drupal_set_message(self::terms_of_service_html(), 'status', FALSE);
     }
+  }
+
+  /**
+   * The html for the Terms of Service notice as a string
+   * @return String The html for the notice as a string
+   */
+  private function terms_of_service_html() {
+    $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'), '<a href="/admin/config/content/shareaholic/settings" class="button">', '</a>');
+    $html = <<< DOC
+    <span>
+      $message
+    </span>
+DOC;
+    return $html;
   }
 
 }
