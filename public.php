@@ -14,19 +14,26 @@
 class ShareaholicPublic {
 
   /**
-   * Inserts the script code snippet into the head of the page
+   * Inserts the script code snippet into the head of the
+   * public pages of the site if they have accepted ToS and have apikey
    */
-  public static function insert_script_tag() {
-    if (ShareaholicUtilities::has_tos_and_apikey()) {
-        drupal_add_js(self::js_snippet(),
-          array('type' => 'inline', 'scope' => 'header'));
+  public static function insert_script_tag(&$vars) {
+    if (!preg_match('/admin/', request_uri()) &&
+        ShareaholicUtilities::has_tos_and_apikey()) {
+        $markup = self::js_snippet();
+        $element = array(
+          '#type' => 'markup',
+          '#markup' => $markup,
+          '#weight' => 20000
+        );
+        $vars['scripts'] .= drupal_render($element);
     }
   }
 
   /**
    * The actual text for the JS snippet because drupal doesn't seem to be
    * able to add JS from template like Wordpress does...
-   * Using heredocs to for now
+   * Using heredocs for now
    *
    * @return string JS block for shareaholic code
    */
@@ -35,22 +42,25 @@ class ShareaholicPublic {
     $version = ShareaholicUtilities::get_version();
     $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js') . '?ver=' . $version;
     $js_snippet = <<< DOC
-      //<![CDATA[
-        (function() {
-          var shr = document.createElement('script');
-          shr.setAttribute('data-cfasync', 'false');
-          shr.src = '$js_url';
-          shr.type = 'text/javascript'; shr.async = 'true';
-          shr.onload = shr.onreadystatechange = function() {
-            var rs = this.readyState;
-            if (rs && rs != 'complete' && rs != 'loaded') return;
-            var site_id = '$api_key';
-            try { Shareaholic.init(site_id); } catch (e) {}
-          };
-          var s = document.getElementsByTagName('script')[0];
-          s.parentNode.insertBefore(shr, s);
-        })();
-      //]]>
+  <script type='text/javascript' data-cfasync='false'>
+    //<![CDATA[
+      (function() {
+        var shr = document.createElement('script');
+        shr.setAttribute('data-cfasync', 'false');
+        shr.src = '$js_url';
+        shr.type = 'text/javascript'; shr.async = 'true';
+        shr.onload = shr.onreadystatechange = function() {
+          var rs = this.readyState;
+          if (rs && rs != 'complete' && rs != 'loaded') return;
+          var site_id = '$api_key';
+          try { Shareaholic.init(site_id); } catch (e) {}
+        };
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(shr, s);
+      })();
+    //]]>
+  </script>
+
 DOC;
     return $js_snippet;
   }
@@ -58,10 +68,10 @@ DOC;
   /**
    * Insert the disable analytics meta tag
    */
-  public function insert_disable_analytics_meta_tag(&$head_elements) {
+  public function insert_disable_analytics_meta_tag() {
     if(ShareaholicUtilities::has_tos_and_apikey() &&
        ShareaholicUtilities::get_option('disable_analytics') === 'on') {
-      $head_elements['shareaholic_disable_analytics'] = array(
+      $element = array(
         '#type' => 'html_tag',
         '#tag' => 'meta',
         '#attributes' => array(
@@ -70,6 +80,7 @@ DOC;
         ),
         '#weight' => 10000,
       );
+      drupal_add_html_head($element, 'shareaholic_disable_analytics');
     }
   }
 
@@ -87,10 +98,9 @@ DOC;
   /**
    * Insert into the head tag of the public pages
    */
-  public function insert_into_head_tag(&$head_elements) {
+  public function insert_meta_tags() {
     if(!preg_match('/admin/', request_uri())) {
-      ShareaholicPublic::insert_script_tag();
-      ShareaholicPublic::insert_disable_analytics_meta_tag($head_elements);
+      ShareaholicPublic::insert_disable_analytics_meta_tag();
     }
   }
 

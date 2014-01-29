@@ -82,13 +82,22 @@ function shareaholic_theme() {
 }
 
 /**
- * Implements hook_html_head_alter()
+ * Implements hook_page_alter()
  * Adds certain html tags to the head of the document
- * of admin pages before it is rendered by Drupal
+ * of public pages before it is rendered by Drupal
  *
  */
-function shareaholic_html_head_alter(&$head_elements) {
-  ShareaholicPublic::insert_into_head_tag($head_elements);
+function shareaholic_page_alter(&$page) {
+  ShareaholicPublic::insert_meta_tags();
+}
+
+/**
+ * Implements hook_process_html()
+ * Alter the html by adding the Shareaholic JS script tags
+ *
+ */
+function shareaholic_process_html(&$vars) {
+  ShareaholicPublic::insert_script_tag(&$vars);
 }
 
 /**
