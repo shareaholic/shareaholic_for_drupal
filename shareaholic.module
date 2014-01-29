@@ -23,6 +23,7 @@ module_load_include('php', 'shareaholic', 'public');
  */
 function shareaholic_init() {
   ShareaholicPublic::insert_xua_compatible_header();
+  ShareaholicAdmin::show_terms_of_service_notice();
 }
 
 /**

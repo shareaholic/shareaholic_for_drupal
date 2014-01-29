@@ -27,5 +27,17 @@ class ShareaholicAdmin {
     }
   }
 
+  /**
+   * Show the terms of service notice on admin pages
+   * except for shareaholic admin settings page
+   */
+  public function show_terms_of_service_notice() {
+    if(ShareaholicUtilities::is_admin_page() &&
+        !ShareaholicUtilities::is_shareaholic_settings_page() &&
+        !ShareaholicUtilities::has_accepted_terms_of_service()) {
+      //drupal_set_message('Action Required: Please go here:');
+    }
+  }
+
 }
 

@@ -18,7 +18,7 @@ class ShareaholicPublic {
    * public pages of the site if they have accepted ToS and have apikey
    */
   public static function insert_script_tag(&$vars) {
-    if (!preg_match('/admin/', request_uri()) &&
+    if (!ShareaholicUtilities::is_admin_page() &&
         ShareaholicUtilities::has_tos_and_apikey()) {
         $markup = self::js_snippet();
         $element = array(
@@ -99,7 +99,7 @@ DOC;
    * Insert into the head tag of the public pages
    */
   public function insert_meta_tags() {
-    if(!preg_match('/admin/', request_uri())) {
+    if(!ShareaholicUtilities::is_admin_page()) {
       ShareaholicPublic::insert_disable_analytics_meta_tag();
     }
   }
