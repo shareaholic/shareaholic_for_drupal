@@ -92,6 +92,7 @@ function shareaholic_page_alter(&$page) {
   ShareaholicPublic::insert_meta_tags();
 }
 
+
 /**
  * Implements hook_process_html()
  * Alter the html by adding the Shareaholic JS script tags
@@ -100,6 +101,8 @@ function shareaholic_page_alter(&$page) {
 function shareaholic_process_html(&$vars) {
   ShareaholicPublic::insert_script_tag(&$vars);
 }
+
+
 
 /**
  * Returns the form for the terms of service modal popup
@@ -115,6 +118,15 @@ function shareaholic_tos_modal_form() {
 }
 
 /**
+ * Prepare variables to be used in the terms_of_service_modal
+ * template
+ */
+function template_preprocess_shareaholic_terms_of_service_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'shareaholic_tos_modal');
+  $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
+}
+
+/**
  * Submit handler for the ToS modal: update values in the database
  * By storing 'true' for shareaholic_has_accepted_tos
  * and get or create an api key if it does not already exists
@@ -124,6 +136,8 @@ function shareaholic_tos_modal_form_submit($form, &$form_state) {
   ShareaholicUtilities::accept_terms_of_service();
   ShareaholicUtilities::get_or_create_api_key();
 }
+
+
 
 /**
  * Returns the form for the failed to create api key modal popup
@@ -138,6 +152,16 @@ function shareaholic_failed_to_create_api_key_form() {
   return $form;
 }
 
+
+/**
+ * Prepare variables to be used in the shareaholic_failed_to_create_api_key_modal
+ * template
+ */
+function template_preprocess_shareaholic_failed_to_create_api_key_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'failed_api_key_modal');
+}
+
+
 /**
  * Submit handler for the shareaholic_failed_to_create_api_key modal
  * When submitted, try to create an api key for the user
@@ -148,23 +172,6 @@ function shareaholic_failed_to_create_api_key_form_submit($form, &$form_state) {
 }
 
 
-/**
- * Prepare variables to be used in the terms_of_service_modal
- * template
- */
-function template_preprocess_shareaholic_terms_of_service_modal(&$variables) {
-  _prepare_template_form_variables($variables, 'shareaholic_tos_modal');
-  $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
-}
-
-
-/**
- * Prepare variables to be used in the shareaholic_failed_to_create_api_key_modal
- * template
- */
-function template_preprocess_shareaholic_failed_to_create_api_key_modal(&$variables) {
-  _prepare_template_form_variables($variables, 'failed_api_key_modal');
-}
 
 /**
  * The form object for the advanced settings
@@ -224,10 +231,18 @@ function shareaholic_reset_plugin_form() {
   return $form;
 }
 
+/**
+ * The submit handler for the reset plugin form
+ * When the user resets the plugin, destroy settings
+ * and get a new api key
+ *
+ */
 function shareaholic_reset_plugin_form_submit($form, &$form_state) {
   ShareaholicUtilities::destroy_settings();
   ShareaholicUtilities::get_or_create_api_key();
 }
+
+
 
 /**
  * Prepares the form for use in the templates
