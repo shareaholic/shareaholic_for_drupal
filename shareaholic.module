@@ -57,6 +57,7 @@ function shareaholic_admin_settings() {
 
 /**
  * Implements hook_theme().
+ *
  * Defines the themes for each template in this module
  *
  * @return array An array that includes themes implemented for shareaholic
@@ -83,22 +84,23 @@ function shareaholic_theme() {
 
 /**
  * Implements hook_page_alter()
+ *
  * Adds certain html tags to the head of the document
  * of public pages before it is rendered by Drupal
  *
  */
 function shareaholic_page_alter(&$page) {
   ShareaholicPublic::insert_meta_tags();
+  ShareaholicPublic::insert_script_tag();
 }
 
 
 /**
  * Implements hook_process_html()
- * Alter the html by adding the Shareaholic JS script tags
+ *
  * Add the ToS notice to the page in admin pages
  */
 function shareaholic_process_html(&$vars) {
-  ShareaholicPublic::insert_script_tag(&$vars);
   ShareaholicAdmin::show_terms_of_service_notice($vars);
 }
 

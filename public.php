@@ -17,7 +17,7 @@ class ShareaholicPublic {
    * Inserts the script code snippet into the head of the
    * public pages of the site if they have accepted ToS and have apikey
    */
-  public static function insert_script_tag(&$vars) {
+  public static function insert_script_tag() {
     if (!ShareaholicUtilities::is_admin_page() &&
         ShareaholicUtilities::has_tos_and_apikey()) {
         $markup = self::js_snippet();
@@ -26,7 +26,7 @@ class ShareaholicPublic {
           '#markup' => $markup,
           '#weight' => 20000
         );
-        $vars['scripts'] .= drupal_render($element);
+      drupal_add_html_head($element, 'shareaholic_script_tag');
     }
   }
 
