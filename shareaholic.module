@@ -23,7 +23,6 @@ module_load_include('php', 'shareaholic', 'public');
  */
 function shareaholic_init() {
   ShareaholicPublic::insert_xua_compatible_header();
-  ShareaholicAdmin::show_terms_of_service_notice();
 }
 
 /**
@@ -96,10 +95,11 @@ function shareaholic_page_alter(&$page) {
 /**
  * Implements hook_process_html()
  * Alter the html by adding the Shareaholic JS script tags
- *
+ * Add the ToS notice to the page in admin pages
  */
 function shareaholic_process_html(&$vars) {
   ShareaholicPublic::insert_script_tag(&$vars);
+  ShareaholicAdmin::show_terms_of_service_notice($vars);
 }
 
 

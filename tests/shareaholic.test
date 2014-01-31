@@ -15,7 +15,8 @@ class ShareaholicTestCase extends DrupalWebTestCase {
 
   public function setUp() {
     parent::setUp('shareaholic');
-    $this->big_user = $this->drupalCreateUser(array('administer site configuration'));
+    $this->big_user = $this->drupalCreateUser(array('administer site configuration', 'administer modules'));
+    $this->user_admin_access = $this->drupalCreateUser(array('administer site configuration', 'access administration pages'));
   }
 
   public function testMenu() {
@@ -87,6 +88,28 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     $this->drupalGet('');
     $header = DrupalWebTestCase::drupalGetHeader('X-UA-Compatible');
     $this->assertNotNull($header, 'The X-UA-Compatible header should not be null');
+  }
+
+  public function testTermsOfServiceNotice() {
+    variable_set('shareaholic_has_accepted_tos', false);
+    $this->drupalLogin($this->big_user);
+    $this->drupalGet('admin/modules');
+    $this->assertRaw("Action required: You've installed Shareaholic for Drupal", 'If I am admin on admin page and did not accept ToS, notice should show');
+
+    $this->drupalGet('admin/config/content/shareaholic/settings');
+    $this->assertNoRaw("Action required: You've installed Shareaholic for Drupal", 'If I am admin on shareaholic settings, notice should not show');
+
+    $this->drupalGet('');
+    $this->assertNoRaw("Action required: You've installed Shareaholic for Drupal", 'If I am on index page, notice should not show');
+
+    variable_set('shareaholic_has_accepted_tos', true);
+    $this->drupalGet('admin/modules');
+    $this->assertNoRaw("Action required: You've installed Shareaholic for Drupal", 'If accepted ToS, notice should not show');
+
+    variable_set('shareaholic_has_accepted_tos', false);
+    $this->drupalLogin($this->user_admin_access);
+    $this->drupalGet('admin');
+    $this->assertNoRaw("Action required: You've installed Shareaholic for Drupal", 'If user cannot admin modules, notice should not show');
   }
 
 
