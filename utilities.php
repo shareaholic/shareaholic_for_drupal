@@ -311,14 +311,29 @@ class ShareaholicUtilities {
   }
 
   /**
-   *
+   * Gets the current version of this module
    */
-  function get_version() {
+  public function get_version() {
     $path = drupal_get_path('module', 'shareaholic') . '/shareaholic.info';
     $info = drupal_parse_info_file($path);
     return $info['version'];
   }
 
+  /**
+   * Checks if the current page is an admin page
+   * @return Boolean (actually 1, 0, or FALSE)
+   */
+  public function is_admin_page() {
+    return preg_match('/admin/', request_uri());
+  }
+
+  /**
+   * Checks if the current page is the settings page
+   * @return Boolean (actually 1, 0, or FALSE)
+   */
+  public function is_shareaholic_settings_page() {
+    return preg_match('/admin\/config\/content\/shareaholic/', request_uri());
+  }
 
 
 }

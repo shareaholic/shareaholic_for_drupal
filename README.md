@@ -2,7 +2,7 @@
 
 This repository is for Shareaholic's Drupal module
 
-This README is for internal/development purposes while the other README.txt is for release/public purposes
+This README is for development purposes while the other README.txt is for release/public purposes
 
 ## Getting Started
 
@@ -29,26 +29,23 @@ If you have this repository cloned into your local workspace, you can create a s
 
     ln -s /path/to/your/local/workspace/shareaholic_for_drupal/ /path/to/drupal/sites/all/modules/shareaholic_for_drupal
 
-If you do not prefer this method, you can move this repository over to the drupal modules path or some other method. Otherwise, Drupal will not recognize the module.
+If you do not prefer this method, you can move this repository over to the drupal modules path or use some other method. Otherwise, Drupal will not recognize the module.
 
 Then go to your Drupal site signed in as admin, go to Modules and enable the Shareaholic for Drupal plugin. You should not receive errors and be all set to use/develop the plugin
 
-## Environment Variables
-
-TODO: figure out how to configure between spreadaholic, stageaholic, and shareaholic
 
 ## Testing
 
 There are a couple of testing frameworks that can be used with Drupal module development but for now we will simply use the built in testing module provided by Drupal core.
 
 You would simply need to enable the module by going to "Modules" and looking for "Testing" module under Drupal core.
-If you get a memory limit error, increase your memory limit in your php.ini file and restart the server
+If you get a memory limit error, increase your memory limit in your php.ini file and restart the server (128MB is the preferred setting)
 
 To run the tests, enable the Shareaholic for Drupal module,  go to Configuration->Development->Testing and run some or all the tests for Shareaholic for Drupal
 
 ## Deploy
 
-TODO: define rake task that will remove dev files and package the rest for release
+Please refer to the Shareaholic Wiki for deployment instructions
 
 ## Documentation
 

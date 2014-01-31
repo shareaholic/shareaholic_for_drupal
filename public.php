@@ -17,8 +17,8 @@ class ShareaholicPublic {
    * Inserts the script code snippet into the head of the
    * public pages of the site if they have accepted ToS and have apikey
    */
-  public static function insert_script_tag(&$vars) {
-    if (!preg_match('/admin/', request_uri()) &&
+  public static function insert_script_tag() {
+    if (!ShareaholicUtilities::is_admin_page() &&
         ShareaholicUtilities::has_tos_and_apikey()) {
         $markup = self::js_snippet();
         $element = array(
@@ -26,7 +26,7 @@ class ShareaholicPublic {
           '#markup' => $markup,
           '#weight' => 20000
         );
-        $vars['scripts'] .= drupal_render($element);
+      drupal_add_html_head($element, 'shareaholic_script_tag');
     }
   }
 
@@ -39,8 +39,7 @@ class ShareaholicPublic {
    */
   private static function js_snippet() {
     $api_key = ShareaholicUtilities::get_option('api_key');
-    $version = ShareaholicUtilities::get_version();
-    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js') . '?ver=' . $version;
+    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
     $js_snippet = <<< DOC
   <script type='text/javascript' data-cfasync='false'>
     //<![CDATA[
@@ -99,7 +98,7 @@ DOC;
    * Insert into the head tag of the public pages
    */
   public function insert_meta_tags() {
-    if(!preg_match('/admin/', request_uri())) {
+    if(!ShareaholicUtilities::is_admin_page()) {
       ShareaholicPublic::insert_disable_analytics_meta_tag();
     }
   }

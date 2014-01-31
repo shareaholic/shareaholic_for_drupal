@@ -27,5 +27,38 @@ class ShareaholicAdmin {
     }
   }
 
+  /**
+   * Show the terms of service notice on admin pages
+   * except for shareaholic admin settings page
+   */
+  public function show_terms_of_service_notice(&$vars) {
+    if(ShareaholicUtilities::is_admin_page() &&
+        !ShareaholicUtilities::is_shareaholic_settings_page() &&
+        !ShareaholicUtilities::has_accepted_terms_of_service() &&
+        user_access('administer modules')) {
+      $vars['page'] = self::terms_of_service_html() . $vars['page'];
+    }
+  }
+
+  /**
+   * The html for the Terms of Service notice as a string
+   * @return String The html for the notice as a string
+   */
+  private function terms_of_service_html() {
+    $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'),
+    '<a href="/admin/config/content/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
+    $img_check = '/' . SHAREAHOLIC_ASSET_DIR . '/img/check.png';
+    $html = <<< DOC
+  <div id="shareaholic-wrap-container" style="padding: 0 20px 0px 15px; background-color: #45a147; margin: 25px 0px 20px -18px;">
+    <img src="$img_check" style="vertical-align:middle;" />
+    <span id="shareaholic-text-container" style="color: #fff; text-shadow: 0px 1px 1px rgba(0,0,0,0.4); font-size: 14px; vertical-align:middle;">
+        <strong>$message</strong>
+    </span>
+  </div>
+  <div style="clear:both;"></div>
+DOC;
+    return $html;
+  }
+
 }
 
