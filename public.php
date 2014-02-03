@@ -68,8 +68,9 @@ DOC;
    * Insert the disable analytics meta tag
    */
   public function insert_disable_analytics_meta_tag() {
-    if(ShareaholicUtilities::has_tos_and_apikey() &&
-       ShareaholicUtilities::get_option('disable_analytics') === 'on') {
+    if(!ShareaholicUtilities::is_admin_page() &&
+        ShareaholicUtilities::has_tos_and_apikey() &&
+        ShareaholicUtilities::get_option('disable_analytics') === 'on') {
       $element = array(
         '#type' => 'html_tag',
         '#tag' => 'meta',
@@ -87,20 +88,15 @@ DOC;
    * Inserts the xua-compatible header if the user has accepted
    * ToS and has API key
    */
-  public function insert_xua_compatible_header() {
+  public function set_xua_compatible_header() {
     if(ShareaholicUtilities::has_tos_and_apikey() &&
         !drupal_get_http_header('X-UA-Compatible')) {
       drupal_add_http_header('X-UA-Compatible', 'IE=edge,chrome=1');
     }
   }
 
-  /**
-   * Insert into the head tag of the public pages
-   */
-  public function insert_meta_tags() {
-    if(!ShareaholicUtilities::is_admin_page()) {
-      ShareaholicPublic::insert_disable_analytics_meta_tag();
-    }
+  public function insert_content_meta_tags($node, $view_mode, $lang_code) {
+
   }
 
 }

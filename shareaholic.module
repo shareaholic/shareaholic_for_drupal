@@ -17,12 +17,13 @@ module_load_include('php', 'shareaholic', 'public');
 /**
  * Implements hook_init()
  * This gets called at the beginning of a non-cached page request
+ * Ideal for setting response headers
  *
  * Force edge mode for IE so that our plugins will look nicer
  *
  */
 function shareaholic_init() {
-  ShareaholicPublic::insert_xua_compatible_header();
+  ShareaholicPublic::set_xua_compatible_header();
 }
 
 /**
@@ -87,10 +88,11 @@ function shareaholic_theme() {
  *
  * Adds certain html tags to the head of the document
  * of public pages before it is rendered by Drupal
+ * independent of what is on that page
  *
  */
 function shareaholic_page_alter(&$page) {
-  ShareaholicPublic::insert_meta_tags();
+  ShareaholicPublic::insert_disable_analytics_meta_tag();
   ShareaholicPublic::insert_script_tag();
 }
 
@@ -98,10 +100,20 @@ function shareaholic_page_alter(&$page) {
 /**
  * Implements hook_process_html()
  *
- * Add the ToS notice to the page in admin pages
+ * Add the ToS notice to the page in admin pages only
  */
 function shareaholic_process_html(&$vars) {
   ShareaholicAdmin::show_terms_of_service_notice($vars);
+}
+
+/**
+ * Implements hook_node_view()
+ *
+ * When a node is rendered, insert the content meta tags
+ *
+ */
+function shareaholic_node_view($node, $view_mode, $langcode) {
+  ShareaholicPublic::insert_content_meta_tags($node, $view_mode, $langcode);
 }
 
 
