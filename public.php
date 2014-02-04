@@ -96,7 +96,35 @@ DOC;
   }
 
   public function insert_content_meta_tags($node, $view_mode, $lang_code) {
+    $site_name = ShareaholicUtilities::site_name();
+    $api_key = ShareaholicUtilities::get_option('api_key');
+    $module_version = ShareaholicUtilities::get_version();
+    $content_tags = <<<DOC
 
+<!-- Shareaholic Content Tags -->
+<meta name='shareaholic:site_name' content='$site_name' />
+<meta name='shareaholic:language' content='$lang_code' />
+<meta name='shareaholic:site_id' content='$api_key' />
+<meta name='shareaholic:drupal_version' content='$module_version' />
+DOC;
+    if($view_mode === 'full') {
+      $url = $GLOBALS['base_root'] . request_uri();
+      $published_time = date(DATE_ATOM, $node->created);
+      $modified_time = date(DATE_ATOM, $node->changed);
+      $author = user_load($node->uid);
+      $author_name = ShareaholicUtilities::get_user_name($author);
+      $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
+      $content_tags .= "\n<meta name='shareaholic:article_published_time' content='$published_time' />";
+      $content_tags .= "\n<meta name='shareaholic:article_modified_time' content='$modified_time' />";
+      $content_tags .= "\n <meta name='shareaholic:article_author_name' content='$author_name' />";
+    }
+    $content_tags .= "\n<!-- Shareaholic Content Tags End -->\n";
+
+    $element = array(
+      '#type' => 'markup',
+      '#markup' => $content_tags
+    );
+
+    drupal_add_html_head($element, 'shareaholic_content_meta_tags');
   }
-
 }

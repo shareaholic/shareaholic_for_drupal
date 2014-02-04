@@ -335,5 +335,28 @@ class ShareaholicUtilities {
     return preg_match('/admin\/config\/content\/shareaholic/', request_uri());
   }
 
+  /**
+   * Given an account object, get the user's name
+   * If the user has a full name, that gets returned first
+   * Otherwise it returns the user's username
+   */
+  public function get_user_name($account) {
+    $full_name = isset($account->field_fullname) ? $account->field_fullname : false;
+    $full_name = isset($account->field_full_name) ? $account->field_full_name : $full_name;
 
+    if($full_name) {
+      $full_name = $full_name['und']['0']['value'];
+    } else {
+      $first_name = isset($account->field_firstname) ? $account->field_firstname : false;
+      $first_name = isset($account->field_first_name) ? $account->field_first_name : $first_name;
+
+      $last_name = isset($account->field_lastname) ? $account->field_lastname : false;
+      $last_name = isset($account->field_last_name) ? $account->field_last_name : $last_name;
+
+      if(!empty($first_name) && !empty($last_name)) {
+        $full_name = $first_name['und']['0']['value'] . ' ' . $last_name['und']['0']['value'];
+      }
+    }
+    return (!empty($full_name)) ? $full_name : $account->name;
+  }
 }
