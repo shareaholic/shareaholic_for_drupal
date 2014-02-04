@@ -113,10 +113,16 @@ DOC;
       $modified_time = date(DATE_ATOM, $node->changed);
       $author = user_load($node->uid);
       $author_name = ShareaholicUtilities::get_user_name($author);
+      $tags = implode(', ', ShareaholicUtilities::get_tags_for($node));
+
       $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
       $content_tags .= "\n<meta name='shareaholic:article_published_time' content='$published_time' />";
       $content_tags .= "\n<meta name='shareaholic:article_modified_time' content='$modified_time' />";
-      $content_tags .= "\n <meta name='shareaholic:article_author_name' content='$author_name' />";
+      $content_tags .= "\n<meta name='shareaholic:article_author_name' content='$author_name' />";
+
+      if(!empty($tags)) {
+        $content_tags .= "\n<meta name='shareaholic:keywords' content='$tags' />";
+      }
     }
     $content_tags .= "\n<!-- Shareaholic Content Tags End -->\n";
 

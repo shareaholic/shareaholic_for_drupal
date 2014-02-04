@@ -359,4 +359,20 @@ class ShareaholicUtilities {
     }
     return (!empty($full_name)) ? $full_name : $account->name;
   }
+
+  /**
+   * Gets a list of tags for a certain node (basic page, article, etc.)
+   *
+   * @return Array an array of terms as strings or empty array if there are none
+   */
+  public function get_tags_for($node) {
+    $terms = array();
+    if(!isset($node->field_tags) || !isset($node->field_tags['und']) || !is_array($node->field_tags['und'])) {
+      return $terms;
+    }
+    foreach($node->field_tags['und'] as $term) {
+      array_push($terms, $term['taxonomy_term']->name);
+    }
+    return $terms;
+  }
 }
