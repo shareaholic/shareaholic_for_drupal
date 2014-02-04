@@ -114,6 +114,7 @@ DOC;
       $author = user_load($node->uid);
       $author_name = ShareaholicUtilities::get_user_name($author);
       $tags = implode(', ', ShareaholicUtilities::get_tags_for($node));
+      $image_url = ShareaholicUtilities::get_image_url_for($node);
 
       $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
       $content_tags .= "\n<meta name='shareaholic:article_published_time' content='$published_time' />";
@@ -122,6 +123,9 @@ DOC;
 
       if(!empty($tags)) {
         $content_tags .= "\n<meta name='shareaholic:keywords' content='$tags' />";
+      }
+      if(!empty($image_url)) {
+        $content_tags .= "\n<meta name='shareaholic:image' content='$image_url' />";
       }
     }
     $content_tags .= "\n<!-- Shareaholic Content Tags End -->\n";

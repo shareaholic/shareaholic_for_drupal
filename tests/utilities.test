@@ -196,6 +196,15 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertEqual($tags, ShareaholicUtilities::get_tags_for($node), 'If field_tags exist, it should return expected array');
   }
 
+  public function testGetImageUrlFor() {
+    $node = new stdClass;
+    $node->field_image = array('und' => array('0' => array('uri' => 'public://files/test.png')));
+    $this->assertNotNull(ShareaholicUtilities::get_image_url_for($node), 'When the node has a field_image defined, it should not return null');
+
+    $node = new stdClass;
+    $this->assertNull(ShareaholicUtilities::get_image_url_for($node), 'When the node does not have field_image defined, it should return null');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }

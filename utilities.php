@@ -375,4 +375,11 @@ class ShareaholicUtilities {
     }
     return $terms;
   }
+
+  public function get_image_url_for($node) {
+    if(!isset($node->field_image)) {
+      return;
+    }
+    return file_create_url($node->field_image['und']['0']['uri']);
+  }
 }
