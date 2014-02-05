@@ -1,0 +1,83 @@
+<?php
+/**
+ * @file
+ * Tests for the public class
+ */
+
+class ShareaholicPublicTestCase extends DrupalWebTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => 'ShareaholicPublic class functionality',
+      'description' => 'Tests the ShareaholicPublic functions',
+      'group' => 'Shareaholic'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('shareaholic');
+  }
+
+  public function testGetUserName() {
+    $first_username = 'first_username';
+    $second_username = 'second_username';
+    $first_name = 'firstname';
+    $last_name = 'lastname';
+
+    $account = new stdClass;
+    $account->field_fullname = array('und' => array('0' => array('value' => $first_username)));
+    $this->assertEqual($first_username, ShareaholicPublic::get_user_name($account), 'It should get the name from field_fullname');
+
+    $account = new stdClass;
+    $account->field_full_name = array('und' => array('0' => array('value' => $first_username)));
+    $this->assertEqual($first_username, ShareaholicPublic::get_user_name($account), 'It should get the name from field_full_name');
+
+
+    $account = new stdClass;
+    $account->field_fullname = array('und' => array('0' => array('value' => $first_username)));
+    $account->field_full_name = array('und' => array('0' => array('value' => $second_username)));
+    $this->assertEqual($second_username, ShareaholicPublic::get_user_name($account), 'When both field_fullname and field_full_name are set, it should get the name from field_full_name');
+
+    $account = new stdClass;
+    $account->name = $first_username;
+    $account->field_first_name = array('und' => array('0' => array('value' => $first_name)));
+    $account->field_last_name = array('und' => array('0' => array('value' => $last_name)));
+    $this->assertEqual($first_name . ' ' . $last_name, ShareaholicPublic::get_user_name($account), 'When both field_first_name and field_last_name are set, it should get the right full name');
+
+    $account = new stdClass;
+    $account->name = $first_username;
+    $account->field_firstname = array('und' => array('0' => array('value' => $first_name)));
+    $account->field_lastname = array('und' => array('0' => array('value' => $last_name)));
+    $this->assertEqual($first_name . ' ' . $last_name, ShareaholicPublic::get_user_name($account), 'When both field_firstname and field_lastname are set, it should get the right full name');
+
+    $account = new stdClass;
+    $account->name = $first_username;
+    $this->assertEqual($first_username, ShareaholicPublic::get_user_name($account), 'When there are no fields set, then get the default user name');
+  }
+
+  public function testGetTagsFor() {
+    $tags = array('this is a tag', 'this is another tag', 'test');
+
+    $node = new stdClass;
+    $this->assertEqual(array(), ShareaholicPublic::get_tags_for($node), 'If field_tags does not exist, it should return empty array');
+
+    $node = new stdClass;
+    $node->field_tags = array('und' => array());
+    foreach($tags as $tag) {
+      $obj = new stdClass;
+      $obj->name = $tag;
+      array_push($node->field_tags['und'], array('taxonomy_term' => $obj));
+    }
+
+    $this->assertEqual($tags, ShareaholicPublic::get_tags_for($node), 'If field_tags exist, it should return expected array');
+  }
+
+  public function testGetImageUrlFor() {
+    $node = new stdClass;
+    $node->field_image = array('und' => array('0' => array('uri' => 'public://files/test.png')));
+    $this->assertNotNull(ShareaholicPublic::get_image_url_for($node), 'When the node has a field_image defined, it should not return null');
+
+    $node = new stdClass;
+    $this->assertNull(ShareaholicPublic::get_image_url_for($node), 'When the node does not have field_image defined, it should return null');
+  }
+}

@@ -6,6 +6,7 @@ files[] = shareaholic.module
 files[] = tests/shareaholic.test
 files[] = tests/utilities.test
 files[] = tests/admin.test
+files[] = tests/public.test
 
 ; Information added by drupal.org packaging script on 2011-05-30
 version = "7.x-2.0"

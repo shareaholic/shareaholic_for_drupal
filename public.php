@@ -112,9 +112,9 @@ DOC;
       $published_time = date(DATE_ATOM, $node->created);
       $modified_time = date(DATE_ATOM, $node->changed);
       $author = user_load($node->uid);
-      $author_name = ShareaholicUtilities::get_user_name($author);
-      $tags = implode(', ', ShareaholicUtilities::get_tags_for($node));
-      $image_url = ShareaholicUtilities::get_image_url_for($node);
+      $author_name = self::get_user_name($author);
+      $tags = implode(', ', self::get_tags_for($node));
+      $image_url = self::get_image_url_for($node);
 
       $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
       $content_tags .= "\n<meta name='shareaholic:article_published_time' content='$published_time' />";
@@ -136,5 +136,81 @@ DOC;
     );
 
     drupal_add_html_head($element, 'shareaholic_content_meta_tags');
+  }
+
+  /**
+   * Get the user's name from an account object
+   * If the user has a full name, then that is returned
+   * Otherwise it returns the user's username
+   *
+   * @return String the user name
+   */
+  public static function get_user_name($account) {
+    $full_name = isset($account->field_fullname) ? $account->field_fullname : false;
+    $full_name = isset($account->field_full_name) ? $account->field_full_name : $full_name;
+
+    if($full_name && isset($full_name['und']['0']['value'])) {
+      $full_name = $full_name['und']['0']['value'];
+    } else {
+      $first_name = isset($account->field_firstname) ? $account->field_firstname : false;
+      $first_name = isset($account->field_first_name) ? $account->field_first_name : $first_name;
+
+      $last_name = isset($account->field_lastname) ? $account->field_lastname : false;
+      $last_name = isset($account->field_last_name) ? $account->field_last_name : $last_name;
+
+      if(!empty($first_name) && !empty($last_name) && isset($first_name['und']['0']['value']) && isset($last_name['und']['0']['value'])) {
+        $full_name = $first_name['und']['0']['value'] . ' ' . $last_name['und']['0']['value'];
+      }
+    }
+    return (!empty($full_name)) ? $full_name : $account->name;
+  }
+
+  /**
+   * Get a list of tags for a piece of content
+   *
+   * @return Array an array of terms or empty array
+   */
+  public static function get_tags_for($node) {
+    $terms = array();
+    if(!isset($node->field_tags) || !isset($node->field_tags['und']) || !is_array($node->field_tags['und'])) {
+      return $terms;
+    }
+    foreach($node->field_tags['und'] as $term) {
+      if(isset($term['taxonomy_term']->name)) {
+        array_push($terms, $term['taxonomy_term']->name);
+      }
+    }
+    return $terms;
+  }
+
+  /**
+   * Get image used in a piece of content
+   *
+   * @return mixed either returns a string or false if no image is found
+   */
+  public static function get_image_url_for($node) {
+    if(isset($node->field_image['und']['0']['uri'])) {
+      return file_create_url($node->field_image['und']['0']['uri']);
+    }
+    if(isset($node->body) && isset($node->body['und']['0']['value'])) {
+      return self::post_first_image($node->body['und']['0']['value']);
+    }
+  }
+
+  /**
+   * Copied straight out of the wordpress version,
+   * this will grab the first image in a post.
+   *
+   * @return mixed either returns `false` or a string of the image src
+   */
+  public static function post_first_image($body) {
+    preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $body, $matches);
+    if(isset($matches) && isset($matches[1][0]) ) {
+        $first_img = $matches[1][0];
+    }
+    if(empty($first_img)) { // return false if nothing there, makes life easier
+      return false;
+    }
+    return $first_img;
   }
 }
