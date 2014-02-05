@@ -80,4 +80,19 @@ class ShareaholicPublicTestCase extends DrupalWebTestCase {
     $node = new stdClass;
     $this->assertNull(ShareaholicPublic::get_image_url_for($node), 'When the node does not have field_image defined, it should return null');
   }
+
+  public function testPostFirstImage() {
+    $img = 'test.png';
+    $body = '<p><img src="test.png"/><img src="bogus.png" /></p>';
+    $this->assertEqual($img, ShareaholicPublic::post_first_image($body), 'When two image tags are present, return first one');
+
+    $body = "<p><img src='test.png' /><img src='bogus.png' /></p>";
+    $this->assertEqual($img, ShareaholicPublic::post_first_image($body), 'Even when single quotes are used, it returns the first image');
+
+    $body = "<p><img src='test.png'><img src='bogus.png' /></p>";
+    $this->assertEqual($img, ShareaholicPublic::post_first_image($body), 'Even if the first image is not closed, should still return it');
+
+    $body = '<p></p>';
+    $this->assertFalse(ShareaholicPublic::post_first_image($body), 'If there is no image, it returns false');
+  }
 }

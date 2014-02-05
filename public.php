@@ -204,7 +204,7 @@ DOC;
    * @return mixed either returns `false` or a string of the image src
    */
   public static function post_first_image($body) {
-    preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $body, $matches);
+    preg_match_all('/<img[\s]+src=[\'"]([^\'"]+)[\'"].*>/i', $body, $matches);
     if(isset($matches) && isset($matches[1][0]) ) {
         $first_img = $matches[1][0];
     }
