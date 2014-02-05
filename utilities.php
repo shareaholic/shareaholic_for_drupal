@@ -344,7 +344,7 @@ class ShareaholicUtilities {
     $full_name = isset($account->field_fullname) ? $account->field_fullname : false;
     $full_name = isset($account->field_full_name) ? $account->field_full_name : $full_name;
 
-    if($full_name) {
+    if($full_name && isset($full_name['und']['0']['value'])) {
       $full_name = $full_name['und']['0']['value'];
     } else {
       $first_name = isset($account->field_firstname) ? $account->field_firstname : false;
@@ -353,7 +353,7 @@ class ShareaholicUtilities {
       $last_name = isset($account->field_lastname) ? $account->field_lastname : false;
       $last_name = isset($account->field_last_name) ? $account->field_last_name : $last_name;
 
-      if(!empty($first_name) && !empty($last_name)) {
+      if(!empty($first_name) && !empty($last_name) && isset($first_name['und']['0']['value']) && isset($last_name['und']['0']['value'])) {
         $full_name = $first_name['und']['0']['value'] . ' ' . $last_name['und']['0']['value'];
       }
     }
@@ -371,13 +371,15 @@ class ShareaholicUtilities {
       return $terms;
     }
     foreach($node->field_tags['und'] as $term) {
-      array_push($terms, $term['taxonomy_term']->name);
+      if(isset($term['taxonomy_term']->name)) {
+        array_push($terms, $term['taxonomy_term']->name);
+      }
     }
     return $terms;
   }
 
   public function get_image_url_for($node) {
-    if(!isset($node->field_image)) {
+    if(!isset($node->field_image['und']['0']['uri'])) {
       return;
     }
     return file_create_url($node->field_image['und']['0']['uri']);
