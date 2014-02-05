@@ -313,7 +313,7 @@ class ShareaholicUtilities {
   /**
    * Gets the current version of this module
    */
-  public function get_version() {
+  public static function get_version() {
     $path = drupal_get_path('module', 'shareaholic') . '/shareaholic.info';
     $info = drupal_parse_info_file($path);
     return $info['version'];
@@ -323,7 +323,7 @@ class ShareaholicUtilities {
    * Checks if the current page is an admin page
    * @return Boolean (actually 1, 0, or FALSE)
    */
-  public function is_admin_page() {
+  public static function is_admin_page() {
     return preg_match('/admin/', request_uri());
   }
 
@@ -331,7 +331,7 @@ class ShareaholicUtilities {
    * Checks if the current page is the settings page
    * @return Boolean (actually 1, 0, or FALSE)
    */
-  public function is_shareaholic_settings_page() {
+  public static function is_shareaholic_settings_page() {
     return preg_match('/admin\/config\/content\/shareaholic/', request_uri());
   }
 
@@ -340,7 +340,7 @@ class ShareaholicUtilities {
    * If the user has a full name, that gets returned first
    * Otherwise it returns the user's username
    */
-  public function get_user_name($account) {
+  public static function get_user_name($account) {
     $full_name = isset($account->field_fullname) ? $account->field_fullname : false;
     $full_name = isset($account->field_full_name) ? $account->field_full_name : $full_name;
 
@@ -365,7 +365,7 @@ class ShareaholicUtilities {
    *
    * @return Array an array of terms as strings or empty array if there are none
    */
-  public function get_tags_for($node) {
+  public static function get_tags_for($node) {
     $terms = array();
     if(!isset($node->field_tags) || !isset($node->field_tags['und']) || !is_array($node->field_tags['und'])) {
       return $terms;
@@ -378,10 +378,29 @@ class ShareaholicUtilities {
     return $terms;
   }
 
-  public function get_image_url_for($node) {
-    if(!isset($node->field_image['und']['0']['uri'])) {
-      return;
+  public static function get_image_url_for($node) {
+    if(isset($node->field_image['und']['0']['uri'])) {
+      return file_create_url($node->field_image['und']['0']['uri']);
     }
-    return file_create_url($node->field_image['und']['0']['uri']);
+    if(isset($node->body) && isset($node->body['und']['0']['value'])) {
+      return self::post_first_image($node->body['und']['0']['value']);
+    }
+  }
+
+  /**
+   * Copied straight out of the wordpress version,
+   * this will grab the first image in a post.
+   *
+   * @return mixed either returns `false` or a string of the image src
+   */
+  public static function post_first_image($body) {
+    preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $body, $matches);
+    if(isset($matches) && isset($matches[1][0]) ){
+        $first_img = $matches[1][0];
+    }
+    if(empty($first_img)){ // return false if nothing there, makes life easier
+      return false;
+    }
+    return $first_img;
   }
 }
