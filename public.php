@@ -173,12 +173,11 @@ DOC;
    */
   public static function get_tags_for($node) {
     $terms = array();
-    if(!isset($node->field_tags) || !isset($node->field_tags['und']) || !is_array($node->field_tags['und'])) {
-      return $terms;
-    }
-    foreach($node->field_tags['und'] as $term) {
-      if(isset($term['taxonomy_term']->name)) {
-        array_push($terms, ShareaholicUtilities::clean_string($term['taxonomy_term']->name));
+    $results = db_query('SELECT tid FROM {taxonomy_index} WHERE nid = :nid', array(':nid' => $node->nid));
+    foreach ($results as $result) {
+      $term = taxonomy_term_load($result->tid);
+      if(isset($term) && isset($term->name)) {
+        array_push($terms, ShareaholicUtilities::clean_string($term->name));
       }
     }
     $terms = array_unique($terms);
