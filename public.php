@@ -114,7 +114,7 @@ DOC;
       $modified_time = date('c', $node->changed);
       $author = user_load($node->uid);
       $author_name = self::get_user_name($author);
-      $tags = implode(', ', self::get_tags_for($node));
+      $tags = implode(', ', self::get_keywords_for($node));
       $image_url = self::get_image_url_for($node);
 
       $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
@@ -171,7 +171,7 @@ DOC;
    *
    * @return Array an array of terms or empty array
    */
-  public static function get_tags_for($node) {
+  public static function get_keywords_for($node) {
     $terms = array();
     $results = db_query('SELECT tid FROM {taxonomy_index} WHERE nid = :nid', array(':nid' => $node->nid));
     foreach ($results as $result) {
