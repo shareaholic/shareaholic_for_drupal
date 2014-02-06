@@ -95,7 +95,7 @@ DOC;
     }
   }
 
-  public function insert_content_meta_tags($node, $view_mode, $lang_code) {
+  public function insert_content_meta_tags($node = NULL, $view_mode = NULL, $lang_code = NULL) {
     $site_name = ShareaholicUtilities::site_name();
     $api_key = ShareaholicUtilities::get_option('api_key');
     $module_version = ShareaholicUtilities::get_version();
@@ -107,7 +107,7 @@ DOC;
 <meta name='shareaholic:site_id' content='$api_key' />
 <meta name='shareaholic:drupal_version' content='$module_version' />
 DOC;
-    if($view_mode === 'full') {
+    if(isset($node) && isset($view_mode) && $view_mode === 'full') {
       $url = $GLOBALS['base_root'] . request_uri();
       $published_time = date(DATE_ATOM, $node->created);
       $modified_time = date(DATE_ATOM, $node->changed);
