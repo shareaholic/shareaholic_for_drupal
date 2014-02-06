@@ -26,14 +26,14 @@ class ShareaholicTestCase extends DrupalWebTestCase {
 
   public function testShareaholicAdminSettings() {
     ob_start();
-    module_invoke('shareaholic', 'shareaholic_admin_settings');
+    module_invoke('shareaholic', 'shareaholic_admin_advanced');
     $output = ob_get_clean();
     $this->assertNotNull($output, 'There should be a theme/template for shareaholic admin page');
   }
 
   public function testShareaholicTheme() {
     $themes = module_invoke('shareaholic', 'theme');
-    $result = (isset($themes['shareaholic_admin_settings']) &&
+    $result = (isset($themes['shareaholic_admin_advanced']) &&
                 isset($themes['shareaholic_terms_of_service_modal']) &&
                 isset($themes['shareaholic_failed_to_create_api_key_modal']));
     $this->assertTrue($result, 'It should have the expected themes');

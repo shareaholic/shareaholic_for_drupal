@@ -39,12 +39,22 @@ function shareaholic_init() {
  */
 function shareaholic_menu() {
   // Path to the shareaholic settings page
-  $items['admin/config/content/shareaholic/settings'] = array(
-    'title' => 'Shareaholic Settings',
-    'description' => 'Settings for the Shareaholic Plugin',
-    'page callback' => 'shareaholic_admin_settings',
+  $items['admin/config/content/shareaholic/advanced'] = array(
+    'title' => 'Shareaholic Advanced Settings',
+    'description' => 'Advanced settings for the Shareaholic module',
+    'page callback' => 'shareaholic_admin_advanced',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
+    'weight' => 2
+  );
+
+  $items['admin/config/content/shareaholic/settings'] = array(
+    'title' => 'Shareaholic App Manager',
+    'description' => 'Manage Share Buttons and Recommendations for your site',
+    'page callback' => 'shareaholic_admin_advanced',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 1
   );
   return $items;
 }
@@ -55,8 +65,8 @@ function shareaholic_menu() {
  *
  * @return The theme to render the settings page
  */
-function shareaholic_admin_settings() {
-  return theme('shareaholic_admin_settings');
+function shareaholic_admin_advanced() {
+  return theme('shareaholic_admin_advanced');
 }
 
 
@@ -70,9 +80,9 @@ function shareaholic_admin_settings() {
  */
 function shareaholic_theme() {
   return array(
-    'shareaholic_admin_settings' => array(
+    'shareaholic_admin_advanced' => array(
       'path' => MODULE_PATH . '/templates',
-      'template' => 'shareaholic_admin_settings',
+      'template' => 'shareaholic_admin_advanced',
     ),
     'shareaholic_terms_of_service_modal' => array(
       'render element' => 'form',
