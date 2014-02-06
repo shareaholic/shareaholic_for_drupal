@@ -55,34 +55,6 @@ class ShareaholicPublicTestCase extends DrupalWebTestCase {
     $this->assertEqual($first_username, ShareaholicPublic::get_user_name($account), 'When there are no fields set, then get the default user name');
   }
 
-  public function testGetTagsFor() {
-    $tags = array('this is a tag', 'this is another tag', 'test');
-
-    $node = new stdClass;
-    $this->assertEqual(array(), ShareaholicPublic::get_tags_for($node), 'If field_tags does not exist, it should return empty array');
-
-    $node = new stdClass;
-    $node->field_tags = array('und' => array());
-    foreach($tags as $tag) {
-      $obj = new stdClass;
-      $obj->name = $tag;
-      array_push($node->field_tags['und'], array('taxonomy_term' => $obj));
-    }
-
-    $this->assertEqual($tags, ShareaholicPublic::get_tags_for($node), 'If field_tags exist, it should return expected array');
-
-    // add terms twice to test for uniqueness
-    $node = new stdClass;
-    $node->field_tags = array('und' => array());
-    foreach($tags as $tag) {
-      $obj = new stdClass;
-      $obj->name = $tag;
-      array_push($node->field_tags['und'], array('taxonomy_term' => $obj));
-      array_push($node->field_tags['und'], array('taxonomy_term' => $obj));
-    }
-    $array_diff =  array_diff($tags, ShareaholicPublic::get_tags_for($node));
-    $this->assertEqual(0, count($array_diff), 'If the tags are not unique, it should return expected array with unique values');
-  }
 
   public function testGetImageUrlFor() {
     $node = new stdClass;

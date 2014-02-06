@@ -176,9 +176,15 @@ DOC;
     $results = db_query('SELECT tid FROM {taxonomy_index} WHERE nid = :nid', array(':nid' => $node->nid));
     foreach ($results as $result) {
       $term = taxonomy_term_load($result->tid);
-      if(isset($term) && isset($term->name)) {
-        array_push($terms, ShareaholicUtilities::clean_string($term->name));
+      if(empty($term) || empty($term->name)) {
+        continue;
       }
+      array_push($terms, ShareaholicUtilities::clean_string($term->name));
+      $vocabulary = taxonomy_vocabulary_load($term->vid);
+      if(empty($vocabulary) || empty($vocabulary->name) || preg_match('/tags/i', $vocabulary->name)) {
+        continue;
+      }
+      array_push($terms, ShareaholicUtilities::clean_string($vocabulary->name));
     }
     $terms = array_unique($terms);
     return $terms;
