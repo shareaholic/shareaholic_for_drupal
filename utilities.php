@@ -319,10 +319,18 @@ class ShareaholicUtilities {
 
   /**
    * Checks if the current page is an admin page
-   * @return Boolean (actually 1, 0, or FALSE)
+   * @return mixed: returns 1 if matched, 0 if no match, false if error occurs
    */
   public static function is_admin_page() {
     return preg_match('/admin/', request_uri());
+  }
+
+  /**
+   * Checks if the current page is an edit page
+   * @return mixed: returns 1 if matched, 0 if no match, false if error occurs
+   */
+  public static function is_edit_page() {
+    return preg_match('/edit/', request_uri());
   }
 
   /**
@@ -331,6 +339,20 @@ class ShareaholicUtilities {
    */
   public static function is_shareaholic_settings_page() {
     return preg_match('/admin\/config\/content\/shareaholic/', request_uri());
+  }
+
+  /**
+   * Cleans the string to be HTML safe
+   *
+   * Given a string, it will:
+   * - Encode the string
+   * - Trim the string
+   * - lower case the string
+   *
+   * @return String the cleaned string
+   */
+  public static function clean_string($word) {
+    return trim(trim(strtolower(trim(htmlspecialchars(htmlspecialchars_decode($word), ENT_QUOTES))), ","));
   }
 
 }

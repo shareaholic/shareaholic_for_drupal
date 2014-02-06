@@ -19,6 +19,7 @@ class ShareaholicPublic {
    */
   public static function insert_script_tag() {
     if (!ShareaholicUtilities::is_admin_page() &&
+        !ShareaholicUtilities::is_edit_page() &&
         ShareaholicUtilities::has_tos_and_apikey()) {
         $markup = self::js_snippet();
         $element = array(
@@ -109,8 +110,8 @@ DOC;
 DOC;
     if(isset($node) && isset($view_mode) && $view_mode === 'full') {
       $url = $GLOBALS['base_root'] . request_uri();
-      $published_time = date(DATE_ATOM, $node->created);
-      $modified_time = date(DATE_ATOM, $node->changed);
+      $published_time = date('c', $node->created);
+      $modified_time = date('c', $node->changed);
       $author = user_load($node->uid);
       $author_name = self::get_user_name($author);
       $tags = implode(', ', self::get_tags_for($node));
@@ -177,9 +178,10 @@ DOC;
     }
     foreach($node->field_tags['und'] as $term) {
       if(isset($term['taxonomy_term']->name)) {
-        array_push($terms, $term['taxonomy_term']->name);
+        array_push($terms, ShareaholicUtilities::clean_string($term['taxonomy_term']->name));
       }
     }
+    $terms = array_unique($terms);
     return $terms;
   }
 

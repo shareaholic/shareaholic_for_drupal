@@ -142,6 +142,29 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertNotNull($version, 'Shareaholic version should not be null');
   }
 
+  public function testCleanString() {
+    $string = '&hello';
+    $this->assertEqual('&amp;hello', ShareaholicUtilities::clean_string($string), 'It should clean out ampersands');
+
+    $string = "'hello'";
+    $this->assertEqual('&#039;hello&#039;', ShareaholicUtilities::clean_string($string), 'It should clean out single quotes');
+
+    $string = '"hello"';
+    $this->assertEqual('&quot;hello&quot;', ShareaholicUtilities::clean_string($string), 'It should clean out double quotes');
+
+    $string = '&hello&amp;';
+    $this->assertEqual('&amp;hello&amp;', ShareaholicUtilities::clean_string($string), 'It should clean out mixed decoded/encoded specialchars');
+
+    $string = ' hello ';
+    $this->assertEqual('hello', ShareaholicUtilities::clean_string($string), 'It should trim string of whitespaces before and after');
+
+    $string = 'HEllO ';
+    $this->assertEqual('hello', ShareaholicUtilities::clean_string($string), 'It should lower case the string');
+
+    $string = ',hello world ,';
+    $this->assertEqual('hello world', ShareaholicUtilities::clean_string($string), 'It should trim out commas in a keyword before and after');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }
