@@ -3281,8 +3281,10 @@ button.close {
 }
 
 .btn-large {
-  padding: 11px 19px;
-  font-size: 17.5px;
+  padding: 16px 23px;
+  font-size: 18px;
+  line-height: 24px;
+  margin-left: 0 !important;
   -webkit-border-radius: 6px;
      -moz-border-radius: 6px;
           border-radius: 6px;
@@ -4935,32 +4937,6 @@ input[type="submit"].btn.btn-mini {
 .navbar-inverse .btn-navbar:active,
 .navbar-inverse .btn-navbar.active {
   background-color: #000000 \9;
-}
-
-.breadcrumb {
-  padding: 8px 15px;
-  margin: 0 0 20px;
-  list-style: none;
-  background-color: #f5f5f5;
-  -webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
-          border-radius: 4px;
-}
-
-.breadcrumb > li {
-  display: inline-block;
-  *display: inline;
-  text-shadow: 0 1px 0 #ffffff;
-  *zoom: 1;
-}
-
-.breadcrumb > li > .divider {
-  padding: 0 5px;
-  color: #ccc;
-}
-
-.breadcrumb > .active {
-  color: #999999;
 }
 
 .pagination {
