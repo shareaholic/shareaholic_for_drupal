@@ -219,12 +219,12 @@ function shareaholic_failed_to_create_api_key_form_submit($form, &$form_state) {
 function shareaholic_advanced_settings_form() {
   $disable_analytics_checked = ShareaholicUtilities::get_option('disable_analytics');
   $form['advanced_settings'] = array(
-    '#title' => t('Advanced'),
-    '#type' => 'fieldset',
+    '#prefix' => '<fieldset class="app"><legend><h2>' . t('Advanced') . '</h2></legend>',
+    '#suffix' => '</fieldset>',
   );
   $form['advanced_settings']['disable_analytics'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Disable Analytics (it is recommended NOT to disable analytics)',
+    '#title' => t('Disable Analytics (it is recommended NOT to disable analytics)'),
   );
   $form['advanced_settings']['submit'] = array(
     '#type' => 'submit',
@@ -254,12 +254,12 @@ function shareaholic_advanced_settings_form_submit($form, &$form_state) {
  */
 function shareaholic_reset_plugin_form() {
   $form['reset'] = array(
-    '#title' => t('Reset'),
-    '#type' => 'fieldset',
+    '#prefix' => '<fieldset class="app"><legend><h2>' . t('Reset') . '</h2></legend>',
+    '#suffix' => '</fieldset>',
   );
   $form['reset']['submit'] = array(
     '#type' => 'submit',
-    '#prefix' => '<p>This will reset all of your settings and start you from scratch. This can not be undone.</p>',
+    '#prefix' => '<p>' . t('This will reset all of your settings and start you from scratch. This can not be undone.') . '</p>',
     '#value' => t('Reset Plugin')
   );
   $form['reset']['submit']['#attributes']['class'][] = 'settings';
