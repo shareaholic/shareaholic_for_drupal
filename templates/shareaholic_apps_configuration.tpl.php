@@ -27,7 +27,7 @@
 
 <div class="row" style="padding-top:20px; padding-bottom:35px;">
   <div class="span2">
-    <?php print $variables['apps_configuration']['hidden'] ?>
-    <?php print $variables['apps_configuration']['submit'] ?>
+    <?php print $variables['shareaholic_apps_configuration']['hidden'] ?>
+    <?php print $variables['shareaholic_apps_configuration']['submit'] ?>
   </div>
 </div>

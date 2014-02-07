@@ -108,7 +108,7 @@ function shareaholic_theme() {
     'shareaholic_apps_configuration' => array(
       'render element' => 'form',
       'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
-      'template' => 'apps_configuration'
+      'template' => 'shareaholic_apps_configuration'
     ),
   );
 }
@@ -300,11 +300,11 @@ function shareaholic_apps_configuration_form() {
 
 
 /**
- * Prepare variables to be used in the apps_configuration
+ * Prepare variables to be used in the shareaholic_apps_configuration
  * template
  */
 function template_preprocess_shareaholic_apps_configuration(&$variables) {
-  _prepare_template_form_variables($variables, 'apps_configuration');
+  _prepare_template_form_variables($variables, 'shareaholic_apps_configuration');
 }
 
 
