@@ -98,7 +98,7 @@ sub {
   bottom: -0.25em;
 }
 
-img {
+#shareaholic-form-container img {
   width: auto\9;
   height: auto;
   max-width: 100%;

@@ -7,6 +7,7 @@
 class ShareaholicUtilities {
   const MODULE_VERSION = '7.x-3.0';
   const URL = 'http://spreadaholic.com:8080';
+  const REC_API_URL = 'http://recommendations.stageaholic.com';
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL
@@ -355,6 +356,29 @@ class ShareaholicUtilities {
    */
   public static function clean_string($word) {
     return trim(trim(strtolower(trim(htmlspecialchars(htmlspecialchars_decode($word), ENT_QUOTES))), ","));
+  }
+
+  /**
+   * This is a wrapper for the Recommendations API
+   *
+   */
+  public static function recommendations_status_check() {
+    $api_key = self::get_option('api_key');
+    if (!empty($api_key)) {
+    	$recommendations_url = self::REC_API_URL . "/v3/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=3&apiKey=" . $api_key;
+      $response = drupal_http_request($recommendations_url, array('method' => 'GET'));
+      if(self::has_bad_response($response, 'FailedRecommendationsCheck')) {
+        return 'unknown';
+      }
+      $response = (array) $response;
+      if($response['code'] == 200) {
+        return 'ready';
+      } else {
+        return 'processing';
+      }
+    } else {
+      return 'unknown';
+    }
   }
 
 }

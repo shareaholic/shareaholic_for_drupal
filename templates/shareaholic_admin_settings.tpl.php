@@ -22,14 +22,12 @@
 
     <strong><?php print t('Related Content:'); ?></strong>
     <?php
-      /*
 	    $status = ShareaholicUtilities::recommendations_status_check();
-	    if ($status == "processing" || $status == 'unknown'){
-	      echo '<img class="shrsb_health_icon" align="top" src="'.SHAREAHOLIC_ASSET_DIR.'img/circle_yellow.png" />'. sprintf(__('Processing', 'shareaholic'));
+	    if ($status == 'processing' || $status == 'unknown'){
+	      echo '<img class="shrsb_health_icon" align="top" src="/' . SHAREAHOLIC_ASSET_DIR . '/img/circle_yellow.png" />' . t('Processing');
 	    } else {
-	      echo '<img class="shrsb_health_icon" align="top" src="'.SHAREAHOLIC_ASSET_DIR.'img/circle_green.png" />'. sprintf(__('Ready', 'shareaholic'));
+	      echo '<img class="shrsb_health_icon" align="top" src="/' . SHAREAHOLIC_ASSET_DIR . '/img/circle_green.png" />' . t('Ready');
 	    }
-	    */
 	  ?>
 
   </fieldset>
@@ -45,7 +43,5 @@
 </div>
 
 
-<?php /* ShareaholicAdmin::show_footer(); */ ?>
-<?php /* ShareaholicAdmin::include_snapengage(); */ ?>
 <?php ShareaholicAdmin::draw_modal_popup(); ?>
 </div>
