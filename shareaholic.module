@@ -103,6 +103,11 @@ function shareaholic_theme() {
       'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
       'template' => 'failed_to_create_api_key_modal',
     ),
+    'shareaholic_apps_configuration' => array(
+      'render element' => 'form',
+      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'template' => 'apps_configuration'
+    ),
   );
 }
 
@@ -231,7 +236,6 @@ function shareaholic_advanced_settings_form() {
     '#value' => t('Save Changes')
   );
   $form['advanced_settings']['submit']['#attributes']['class'][] = 'settings';
-  $form['advanced_settings']['#attributes']['class'][] = 'form-fieldset';
   if($disable_analytics_checked === 'on') {
     $form['advanced_settings']['disable_analytics']['#attributes'] = array('checked' => 'checked');
   }
@@ -263,7 +267,6 @@ function shareaholic_reset_plugin_form() {
     '#value' => t('Reset Plugin')
   );
   $form['reset']['submit']['#attributes']['class'][] = 'settings';
-  $form['reset']['#attributes']['class'][] = 'form-fieldset';
 
   return $form;
 }
@@ -279,6 +282,37 @@ function shareaholic_reset_plugin_form_submit($form, &$form_state) {
   ShareaholicUtilities::get_or_create_api_key();
 }
 
+
+/**
+ * Returns the form to configure the shareaholic apps
+ */
+function shareaholic_apps_configuration_form() {
+  $form['#theme'] = 'shareaholic_apps_configuration';
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Changes'),
+  );
+  $form['submit']['#attributes']['class'][] = 'settings';
+  return $form;
+}
+
+
+/**
+ * Prepare variables to be used in the apps_configuration
+ * template
+ */
+function template_preprocess_shareaholic_apps_configuration(&$variables) {
+  _prepare_template_form_variables($variables, 'apps_configuration');
+}
+
+
+/**
+ * Submit handler for the shareaholic_apps_configuration form
+ * When submitted, update the location settings
+ *
+ */
+function shareaholic_apps_configuration_form_submit($form, &$form_state) {
+}
 
 
 /**
