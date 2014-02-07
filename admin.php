@@ -23,7 +23,7 @@ class ShareaholicAdmin {
     if(!ShareaholicUtilities::has_accepted_terms_of_service()) {
       print(drupal_render(drupal_get_form('shareaholic_tos_modal_form')));
     } else if (!ShareaholicUtilities::get_option('api_key')) {
-      print(drupal_render(drupal_get_form('shareaholic_failed_to_create_api_key_form')));
+      print(drupal_render(drupal_get_form('shareaholic_failure_modal_form')));
     }
   }
 

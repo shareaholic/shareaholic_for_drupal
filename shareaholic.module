@@ -68,7 +68,9 @@ function shareaholic_admin_advanced() {
 }
 
 /**
+ * Renders page for shareaholic app manager settings
  *
+ * @return The theme to render the app manager page
  */
 function shareaholic_admin_settings() {
   return theme('shareaholic_admin_settings');
@@ -93,15 +95,15 @@ function shareaholic_theme() {
       'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
       'template' => 'shareaholic_admin_settings',
     ),
-    'shareaholic_terms_of_service_modal' => array(
+    'shareaholic_tos_modal' => array(
       'render element' => 'form',
       'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
-      'template' => 'terms_of_service_modal',
+      'template' => 'shareaholic_tos_modal',
     ),
-    'shareaholic_failed_to_create_api_key_modal' => array(
+    'shareaholic_failure_modal' => array(
       'render element' => 'form',
       'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
-      'template' => 'failed_to_create_api_key_modal',
+      'template' => 'shareaholic_failure_modal',
     ),
     'shareaholic_apps_configuration' => array(
       'render element' => 'form',
@@ -150,7 +152,7 @@ function shareaholic_node_view($node, $view_mode, $langcode) {
  * Returns the form for the terms of service modal popup
  */
 function shareaholic_tos_modal_form() {
-  $form['#theme'] = 'shareaholic_terms_of_service_modal';
+  $form['#theme'] = 'shareaholic_tos_modal';
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Get Started »'),
@@ -160,10 +162,10 @@ function shareaholic_tos_modal_form() {
 }
 
 /**
- * Prepare variables to be used in the terms_of_service_modal
+ * Prepare variables to be used in the shareaholic_tos_modal
  * template
  */
-function template_preprocess_shareaholic_terms_of_service_modal(&$variables) {
+function template_preprocess_shareaholic_tos_modal(&$variables) {
   _prepare_template_form_variables($variables, 'shareaholic_tos_modal');
   $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
 }
@@ -182,10 +184,10 @@ function shareaholic_tos_modal_form_submit($form, &$form_state) {
 
 
 /**
- * Returns the form for the failed to create api key modal popup
+ * Returns the form for the failure modal popup
  */
-function shareaholic_failed_to_create_api_key_form() {
-  $form['#theme'] = 'shareaholic_failed_to_create_api_key_modal';
+function shareaholic_failure_modal_form() {
+  $form['#theme'] = 'shareaholic_failure_modal';
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Retry'),
@@ -196,20 +198,20 @@ function shareaholic_failed_to_create_api_key_form() {
 
 
 /**
- * Prepare variables to be used in the shareaholic_failed_to_create_api_key_modal
+ * Prepare variables to be used in the shareaholic_failure_modal
  * template
  */
-function template_preprocess_shareaholic_failed_to_create_api_key_modal(&$variables) {
-  _prepare_template_form_variables($variables, 'failed_api_key_modal');
+function template_preprocess_shareaholic_failure_modal(&$variables) {
+  _prepare_template_form_variables($variables, 'shareaholic_failure_modal');
 }
 
 
 /**
- * Submit handler for the shareaholic_failed_to_create_api_key modal
+ * Submit handler for the shareaholic_failure_modal
  * When submitted, try to create an api key for the user
  *
  */
-function shareaholic_failed_to_create_api_key_form_submit($form, &$form_state) {
+function shareaholic_failure_modal_form_submit($form, &$form_state) {
   ShareaholicUtilities::get_or_create_api_key();
 }
 

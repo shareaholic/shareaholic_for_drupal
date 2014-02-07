@@ -9,8 +9,8 @@
     </div>
   </div>
   <div class="pvl">
-    <?php print $variables['failed_api_key_modal']['hidden'] ?>
-    <?php print $variables['failed_api_key_modal']['submit'] ?>
+    <?php print $variables['shareaholic_failure_modal']['hidden'] ?>
+    <?php print $variables['shareaholic_failure_modal']['submit'] ?>
     <br /><br />
     <a href='/admin' style="font-size:12px; font-weight:normal;"><?php print t('or, try again later'); ?></a>
   </div>
