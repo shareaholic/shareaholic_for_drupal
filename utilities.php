@@ -5,6 +5,8 @@
  *
  */
 class ShareaholicUtilities {
+  const MODULE_VERSION = '7.x-3.0';
+  const URL = 'http://spreadaholic.com:8080';
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL
@@ -192,7 +194,7 @@ class ShareaholicUtilities {
       )
     );
 
-    $response = drupal_http_request(SHAREAHOLIC_URL . '/publisher_tools/anonymous', array(
+    $response = drupal_http_request(self::URL . '/publisher_tools/anonymous', array(
       'method' => 'POST',
       'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
       'data' => http_build_query($post_data)
@@ -292,9 +294,9 @@ class ShareaholicUtilities {
    * @return string
    */
   public static function asset_url($asset) {
-    if (preg_match('/spreadaholic/', SHAREAHOLIC_URL)) {
+    if (preg_match('/spreadaholic/', self::URL)) {
       return 'http://spreadaholic.com:8080/assets/' . $asset;
-    } elseif (preg_match('/stageaholic/', SHAREAHOLIC_URL)) {
+    } elseif (preg_match('/stageaholic/', self::URL)) {
       return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
     } else {
       return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
@@ -314,7 +316,7 @@ class ShareaholicUtilities {
    * Gets the current version of this module
    */
   public static function get_version() {
-    return SHAREAHOLIC_MODULE_VERSION;
+    return self::MODULE_VERSION;
   }
 
   /**
