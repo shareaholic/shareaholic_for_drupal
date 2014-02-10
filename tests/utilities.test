@@ -196,6 +196,18 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertEqual('on', $result2, 'The below option should be on');
   }
 
+  public function testPageTypes() {
+    $page_types = ShareaholicUtilities::page_types();
+    $this->assertTrue(!empty($page_types), 'The page types array should not be empty');
+    $isFound = false;
+    foreach($page_types as $key => $page_type) {
+      if($page_type->type === 'teaser') {
+        $isFound = true;
+      }
+    }
+    $this->assertTrue($isFound, 'There should be a teaser option for page types');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }

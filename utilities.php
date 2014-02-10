@@ -172,7 +172,6 @@ class ShareaholicUtilities {
     $verification_key = md5(mt_rand());
     $page_types = node_type_get_types();
     $turned_on_recommendations_locations = array();
-    $turned_off_recommendations_locations = array();
 
     foreach($page_types as $key => $page_type) {
       $page_type_name = $page_type->type;
@@ -180,13 +179,9 @@ class ShareaholicUtilities {
       $turned_on_recommendations_locations[] = array(
         'name' => $page_type_name . '_below_content'
       );
-
-      $turned_off_recommendations_locations[] = array(
-        'name' => $page_type_name . '_above_content'
-      );
     }
 
-    $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
+    $recommendations_attributes = $turned_on_recommendations_locations;
     $post_data = array(
       'configuration_publisher' => array(
         'verification_key' => $verification_key,
@@ -225,20 +220,11 @@ class ShareaholicUtilities {
         $turned_on_recommendations_keys[] = $loc['name'];
       }
 
-      $turned_off_recommendations_keys = array();
-      foreach($turned_off_recommendations_locations as $loc) {
-        $turned_off_recommendations_keys[] = $loc['name'];
-      }
-
       $turn_on = array(
         'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_on_recommendations_keys)
       );
 
-      $turn_off = array(
-        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
-      );
-
-      ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
+      ShareaholicUtilities::turn_on_locations($turn_on);
     } else {
       self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
     }
@@ -438,8 +424,7 @@ class ShareaholicUtilities {
    * @param array $array
    */
   public static function turn_on_locations($array, $turn_off_array = array()) {
-
-   if (is_array($array)) {
+    if (is_array($array)) {
       foreach($array as $app => $ids) {
         if (is_array($ids)) {
           foreach($ids as $name => $id) {
@@ -462,6 +447,21 @@ class ShareaholicUtilities {
         }
       }
     }
+  }
+
+  /**
+   * Get all the available page types
+   * Insert the teaser mode as a page type
+   *
+   * @return Array list of page types
+   */
+  public static function page_types() {
+    $page_types = node_type_get_types();
+    $teaser = new stdClass;
+    $teaser->name = 'Teaser';
+    $teaser->type = 'teaser';
+    array_push($page_types, $teaser);
+    return $page_types;
   }
 
 }
