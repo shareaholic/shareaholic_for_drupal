@@ -408,3 +408,7 @@ div#shareaholic-form-container input.btn_main {
   margin-right: 0;
   border: 0;
 }
+
+div #shareaholic-form-container .app label {
+  display: inline;
+}
