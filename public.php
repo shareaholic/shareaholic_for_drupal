@@ -242,7 +242,7 @@ DOC;
       return;
     }
     if(isset($node->content)) {
-      self::draw_canvases($node);
+      self::draw_canvases($node, $view_mode);
     }
   }
 
@@ -251,30 +251,31 @@ DOC;
    *
    * @param  string $node The node object to insert the canvas into
    */
-  public static function draw_canvases(&$node) {
+  public static function draw_canvases(&$node, $view_mode) {
     $settings = ShareaholicUtilities::get_settings();
-    $page_types = node_type_get_types();
+    $page_type = $node->type;
+    if($view_mode === 'teaser') {
+      $page_type = 'teaser';
+    }
     foreach (array('recommendations') as $app) {
-      foreach($page_types as $key => $page_type) {
-        $title = $node->title;
-        $link = $GLOBALS['base_root'] . url('node/'. $node->nid);
-        if (isset($settings[$app]["{$page_type->type}_above_content"]) &&
-            $settings[$app]["{$page_type->type}_above_content"] == 'on') {
-          $id = $settings['location_name_ids'][$app]["{$page_type->type}_above_content"];
-          $node->content["shareaholic_{$app}"] = array(
-            '#markup' => self::canvas($id, $app, $title, $link),
-            '#weight' => -1000
-          );
-        }
+      $title = $node->title;
+      $link = $GLOBALS['base_root'] . url('node/'. $node->nid);
+      if (isset($settings[$app]["{$page_type}_above_content"]) &&
+          $settings[$app]["{$page_type}_above_content"] == 'on') {
+        $id = $settings['location_name_ids'][$app]["{$page_type}_above_content"];
+        $node->content["shareaholic_{$app}"] = array(
+          '#markup' => self::canvas($id, $app, $title, $link),
+          '#weight' => -1000
+        );
+      }
 
-        if (isset($settings[$app]["{$page_type->type}_below_content"]) &&
-            $settings[$app]["{$page_type->type}_below_content"] == 'on') {
-          $id = $settings['location_name_ids'][$app]["{$page_type->type}_below_content"];
-          $node->content["shareaholic_{$app}"] = array(
-            '#markup' => self::canvas($id, $app, $title, $link),
-            '#weight' => 1000
-          );
-        }
+      if (isset($settings[$app]["{$page_type}_below_content"]) &&
+          $settings[$app]["{$page_type}_below_content"] == 'on') {
+        $id = $settings['location_name_ids'][$app]["{$page_type}_below_content"];
+        $node->content["shareaholic_{$app}"] = array(
+          '#markup' => self::canvas($id, $app, $title, $link),
+          '#weight' => 1000
+        );
       }
     }
   }
