@@ -79,4 +79,9 @@ class ShareaholicPublicTestCase extends DrupalWebTestCase {
     $body = '<p></p>';
     $this->assertFalse(ShareaholicPublic::post_first_image($body), 'If there is no image, it returns false');
   }
+
+  public function testCanvas() {
+    $canvas = ShareaholicPublic::canvas('123', 'share_buttons');
+    $this->assertTrue(!empty($canvas), 'The canvas should not be empty');
+  }
 }

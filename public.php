@@ -95,8 +95,16 @@ DOC;
       drupal_add_http_header('X-UA-Compatible', 'IE=edge,chrome=1');
     }
   }
-
+  /**
+   * Inserts the shareaholic content meta tags on the page
+   * On all pages, it will insert the standard content meta tags
+   * On full post pages, it will insert page specific content meta tags
+   *
+   */
   public function insert_content_meta_tags($node = NULL, $view_mode = NULL, $lang_code = NULL) {
+    if($view_mode === 'rss') {
+      return;
+    }
     $site_name = ShareaholicUtilities::site_name();
     $api_key = ShareaholicUtilities::get_option('api_key');
     $module_version = ShareaholicUtilities::get_version();
@@ -219,5 +227,81 @@ DOC;
       return false;
     }
     return $first_img;
+  }
+
+  /**
+   * Inserts the Shareaholic widget/apps on the page
+   * By drawing the canvas on a piece of content
+   *
+   * @param $node The node object representing a piece of content
+   * @param $view_mode The view that tells how to show the content
+   * @param $lang_code The language code
+   */
+  public static function insert_widgets($node, $view_mode, $lang_code) {
+    if($view_mode === 'rss') {
+      return;
+    }
+    if(isset($node->content)) {
+      self::draw_canvases($node);
+    }
+  }
+
+  /**
+   * This static function inserts the shareaholic canvas in a node
+   *
+   * @param  string $node The node object to insert the canvas into
+   */
+  public static function draw_canvases(&$node) {
+    $settings = ShareaholicUtilities::get_settings();
+    $page_types = node_type_get_types();
+    foreach (array('recommendations') as $app) {
+      foreach($page_types as $key => $page_type) {
+        $title = $node->title;
+        $link = $GLOBALS['base_root'] . url('node/'. $node->nid);
+        if (isset($settings[$app]["{$page_type->type}_above_content"]) &&
+            $settings[$app]["{$page_type->type}_above_content"] == 'on') {
+          $id = $settings['location_name_ids'][$app]["{$page_type->type}_above_content"];
+          $node->content["shareaholic_{$app}"] = array(
+            '#markup' => self::canvas($id, $app, $title, $link),
+            '#weight' => -1000
+          );
+        }
+
+        if (isset($settings[$app]["{$page_type->type}_below_content"]) &&
+            $settings[$app]["{$page_type->type}_below_content"] == 'on') {
+          $id = $settings['location_name_ids'][$app]["{$page_type->type}_below_content"];
+          $node->content["shareaholic_{$app}"] = array(
+            '#markup' => self::canvas($id, $app, $title, $link),
+            '#weight' => 1000
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Draws an individual canvas given a specific location
+   * id and app
+   *
+   * @param string $id  the location id for configuration
+   * @param string $app the type of app
+   * @param string $title the title of URL
+   * @param string $link url
+   * @param string $summary summary text for URL
+   */
+  public static function canvas($id, $app, $title = NULL, $link = NULL, $summary = NULL) {
+
+    $title = trim(htmlspecialchars($title, ENT_QUOTES));
+    $link = trim($link);
+    $summary = trim(htmlspecialchars(strip_tags($summary), ENT_QUOTES));
+
+    $canvas = "<div class='shareaholic-canvas'
+      data-app-id='$id'
+      data-app='$app'
+      data-title='$title'
+      data-link='$link'
+      data-summary='$summary'></div>";
+
+    return trim(preg_replace('/\s+/', ' ', $canvas));
   }
 }
