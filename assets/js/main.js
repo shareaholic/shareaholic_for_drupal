@@ -93,6 +93,47 @@
        }
    });
 
+    Shareaholic.create_new_location = function(_this) {
+      $(_this).prop('disabled', true);
+      var button = $(_this).siblings('button');
+      var app = button.data('app');
+      var location_id = button.data('location_id');
+      if (location_id) {
+        return;
+      }
+
+      var data = {};
+      data['configuration_' + app + '_location'] = {
+        name: /.*\[(.*)\]/.exec($(_this).attr('name'))[1]
+      }
+
+      button.text('Creating...');
+
+      $.ajax({
+        url: first_part_of_url + app + '/locations.json',
+        type: 'POST',
+        data: data,
+        success: function(data, status, jqxhr) {
+          data['action'] = 'shareaholic_add_location';
+          button.data('location_id', data['location']['id']);
+          button.text('Customize');
+          Shareaholic.disable_buttons();
+          $(_this).prop('disabled', false);
+        },
+        failure: function(things) {
+          button.text('Creation Failed');
+          $(_this).prop('disabled', false);
+        },
+        error: function() {
+          button.text('Creation Failed');
+          $(_this).prop('disabled', false);
+        },
+        xhrFields: {
+          withCredentials: true
+        }
+      });
+    }
+
   $(document).ready(function() {
     Shareaholic.disable_buttons();
 
@@ -108,6 +149,12 @@
       closeonbackgroundclick: false,
       closeonescape: false,
       topPosition: 90
+    });
+
+    $('input[type=checkbox]').click(function() {
+      if($(this).is(':checked') && !$(this).data('location_id')) {
+        Shareaholic.create_new_location(this);
+      }
     });
 
   });

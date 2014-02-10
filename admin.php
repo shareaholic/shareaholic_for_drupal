@@ -60,6 +60,11 @@ DOC;
     return $html;
   }
 
+  /**
+   * Inserts the necessary css and js assets
+   * for the Shareaholic Admin Pages
+   *
+   */
   public function include_css_js_assets() {
     $module_path = drupal_get_path('module', 'shareaholic');
     drupal_add_css('//fonts.googleapis.com/css?family=Open+Sans:400,300,700', array('group' => CSS_DEFAULT));

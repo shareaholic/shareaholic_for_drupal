@@ -475,7 +475,7 @@ class ShareaholicUtilities {
     $teaser = new stdClass;
     $teaser->name = 'Teaser';
     $teaser->type = 'teaser';
-    array_push($page_types, $teaser);
+    $page_types['shareaholic_custom_type'] = $teaser;
     return $page_types;
   }
 
