@@ -165,6 +165,37 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
     $this->assertEqual('hello world', ShareaholicUtilities::clean_string($string), 'It should trim out commas in a keyword before and after');
   }
 
+  public function testAssociativeArraySlice() {
+    $test_array = array(
+      'key1' => 'value1',
+      'key2' => 'value2',
+      'key3' => 'value3'
+    );
+
+    $result = ShareaholicUtilities::associative_array_slice($test_array, array('key1', 'key3'));
+    $this->assertTrue(is_array($result), 'It should return an array');
+    $this->assertEqual(2, count($result), 'When asked to slice two keys, the returned array should be two items long');
+    $this->assertTrue((isset($result['key1']) && isset($result['key3'])), 'The sliced keys should not be returned');
+    $this->assertFalse(isset($result['key2']), 'Any other key should not be returned');
+  }
+
+  public function testTurnOnLocations() {
+    $turn_on = array(
+      'share_buttons' => array('below' => 1)
+    );
+
+    $turn_off = array(
+      'share_buttons' => array('above' => 2)
+    );
+
+    ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
+    $share_buttons = ShareaholicUtilities::get_option('share_buttons');
+    $result1 = $share_buttons['above'];
+    $result2 = $share_buttons['below'];
+    $this->assertEqual('off', $result1, 'The above option should be off');
+    $this->assertEqual('on', $result2, 'The below option should be on');
+  }
+
   private function testNotATest() {
     echo 'Not a test';
   }

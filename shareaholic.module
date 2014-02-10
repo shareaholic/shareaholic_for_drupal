@@ -295,6 +295,7 @@ function shareaholic_apps_configuration_form() {
     '#value' => t('Save Changes'),
   );
   $form['submit']['#attributes']['class'][] = 'settings';
+  $form['submit']['#attributes']['onclick'] = 'this.value="' . t('Saving Changes...') . '"';
   return $form;
 }
 

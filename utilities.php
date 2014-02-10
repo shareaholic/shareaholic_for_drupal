@@ -170,6 +170,23 @@ class ShareaholicUtilities {
     }
 
     $verification_key = md5(mt_rand());
+    $page_types = node_type_get_types();
+    $turned_on_recommendations_locations = array();
+    $turned_off_recommendations_locations = array();
+
+    foreach($page_types as $key => $page_type) {
+      $page_type_name = $page_type->type;
+
+      $turned_on_recommendations_locations[] = array(
+        'name' => $page_type_name . '_below_content'
+      );
+
+      $turned_off_recommendations_locations[] = array(
+        'name' => $page_type_name . '_above_content'
+      );
+    }
+
+    $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
     $post_data = array(
       'configuration_publisher' => array(
         'verification_key' => $verification_key,
@@ -179,18 +196,7 @@ class ShareaholicUtilities {
         'language_id' => self::site_language(),
         'shortener' => 'shrlc',
         'recommendations_attributes' => array(
-          'locations_attributes' => array(
-            array('name' => 'post_below_content'),
-            array('name' => 'page_below_content'),
-          )
-        ),
-        'share_buttons_attributes' => array(
-          'locations_attributes' => array(
-            array('name' => 'post_below_content', 'counter' => 'badge-counter'),
-            array('name' => 'page_below_content', 'counter' => 'badge-counter'),
-            array('name' => 'index_below_content', 'counter' => 'badge-counter'),
-            array('name' => 'category_below_content', 'counter' => 'badge-counter')
-          )
+          'locations_attributes' => $recommendations_attributes
         )
       )
     );
@@ -212,10 +218,29 @@ class ShareaholicUtilities {
       'location_name_ids' => $json_response['location_name_ids']
     ));
 
-    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids'])) {
-      //ShareaholicUtilities::turn_on_locations($response['body']['location_name_ids']);
+    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids']) && isset($json_response['location_name_ids']['recommendations'])) {
+
+      $turned_on_recommendations_keys = array();
+      foreach($turned_on_recommendations_locations as $loc) {
+        $turned_on_recommendations_keys[] = $loc['name'];
+      }
+
+      $turned_off_recommendations_keys = array();
+      foreach($turned_off_recommendations_locations as $loc) {
+        $turned_off_recommendations_keys[] = $loc['name'];
+      }
+
+      $turn_on = array(
+        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_on_recommendations_keys)
+      );
+
+      $turn_off = array(
+        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
+      );
+
+      ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
     } else {
-      self:log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
+      self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
     }
   }
 
@@ -378,6 +403,64 @@ class ShareaholicUtilities {
       }
     } else {
       return 'unknown';
+    }
+  }
+
+
+  /**
+   * Give back only the request keys from an array. The first
+   * argument is the array to be sliced, and after that it can
+   * either be a variable-length list of keys or one array of keys.
+   *
+   * @param  array $array
+   * @param  Mixed ... can be either one array or many keys
+   * @return array
+   */
+  public static function associative_array_slice($array) {
+    $keys = array_slice(func_get_args(), 1);
+    if (func_num_args() == 2 && is_array($keys[0])) {
+      $keys = $keys[0];
+    }
+
+    $result = array();
+
+    foreach($keys as $key) {
+      $result[$key] = $array[$key];
+    }
+
+    return $result;
+  }
+
+
+  /**
+   * Passed an array of location names mapped to ids per app.
+   *
+   * @param array $array
+   */
+  public static function turn_on_locations($array, $turn_off_array = array()) {
+
+   if (is_array($array)) {
+      foreach($array as $app => $ids) {
+        if (is_array($ids)) {
+          foreach($ids as $name => $id) {
+            self::update_options(array(
+              $app => array($name => 'on')
+            ));
+          }
+        }
+      }
+    }
+
+    if (is_array($turn_off_array)) {
+      foreach($turn_off_array as $app => $ids) {
+        if (is_array($ids)) {
+          foreach($ids as $name => $id) {
+            self::update_options(array(
+              $app => array($name => 'off')
+            ));
+          }
+        }
+      }
     }
   }
 
