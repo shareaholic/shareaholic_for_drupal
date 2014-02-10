@@ -170,18 +170,24 @@ class ShareaholicUtilities {
     }
 
     $verification_key = md5(mt_rand());
-    $page_types = node_type_get_types();
+    $page_types = self::page_types();
     $turned_on_recommendations_locations = array();
+    $turned_off_recommendations_locations = array();
 
     foreach($page_types as $key => $page_type) {
       $page_type_name = $page_type->type;
-
-      $turned_on_recommendations_locations[] = array(
-        'name' => $page_type_name . '_below_content'
-      );
+      if($page_type_name === 'article' || $page_type_name === 'page') {
+        $turned_on_recommendations_locations[] = array(
+          'name' => $page_type_name . '_below_content'
+        );
+      } else {
+        $turned_off_recommendations_locations[] = array(
+          'name' => $page_type_name . '_below_content'
+        );
+      }
     }
 
-    $recommendations_attributes = $turned_on_recommendations_locations;
+    $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
     $post_data = array(
       'configuration_publisher' => array(
         'verification_key' => $verification_key,
@@ -220,11 +226,20 @@ class ShareaholicUtilities {
         $turned_on_recommendations_keys[] = $loc['name'];
       }
 
+      $turned_off_recommendations_keys = array();
+      foreach($turned_off_recommendations_locations as $loc) {
+        $turned_off_recommendations_keys[] = $loc['name'];
+      }
+
       $turn_on = array(
         'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_on_recommendations_keys)
       );
 
-      ShareaholicUtilities::turn_on_locations($turn_on);
+      $turn_off = array(
+        'recommendations' => self::associative_array_slice($response['body']['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
+      );
+
+      ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
     } else {
       self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
     }

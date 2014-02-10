@@ -6,7 +6,7 @@
     <legend><h2><img src="<?php echo '/' . SHAREAHOLIC_ASSET_DIR; ?>/img/related_content@2x.png" height=32 width=32 /> <?php print t('Related Content / Recommendations'); ?></h2></legend>
 
     <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want Related Content to be displayed. Click "Customize" to customize look & feel, themes, block lists, etc.'); ?></span>
-    <?php $page_types = node_type_get_types(); ?>
+    <?php $page_types = ShareaholicUtilities::page_types(); ?>
     <?php $settings = ShareaholicUtilities::get_settings(); ?>
     <?php foreach($page_types as $key => $page_type) { ?>
       <?php if (isset($settings['location_name_ids']['recommendations']["{$page_type->type}_below_content"])) { ?>
