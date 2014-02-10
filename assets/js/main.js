@@ -19,7 +19,7 @@
                     click_object.callback(this);
                 }
                 $('#editing_modal').reveal({
-                    topPosition:50,
+                    topPosition:90,
                     close:function () {
                         if (click_object.close) {
                             click_object.close(button);
@@ -84,7 +84,18 @@
         });
     }
 
+   Shareaholic.Utils.PostMessage.receive('settings_saved', {
+       success: function(data) {
+           $('input[type="submit"]').click();
+       },
+       failure: function(data) {
+           console.log(data);
+       }
+   });
+
   $(document).ready(function() {
+    Shareaholic.disable_buttons();
+
     Shareaholic.bind_button_clicks(Shareaholic.click_objects['app_settings']);
 
     $('#terms_of_service_modal').reveal({
