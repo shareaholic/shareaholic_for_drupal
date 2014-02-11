@@ -243,7 +243,7 @@ class ShareaholicUtilities {
       );
 
       $turn_off = array(
-        'recommendations' => self::associative_array_slice($response['body']['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
+        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
       );
 
       ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
