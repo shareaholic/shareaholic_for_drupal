@@ -259,6 +259,7 @@ DOC;
     }
     foreach (array('recommendations') as $app) {
       $title = $node->title;
+      $summary = isset($node->teaser) ? $node->teaser : '';
       $link = $GLOBALS['base_root'] . url('node/'. $node->nid);
       if (isset($settings[$app]["{$page_type}_above_content"]) &&
           $settings[$app]["{$page_type}_above_content"] == 'on') {
