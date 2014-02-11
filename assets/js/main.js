@@ -158,6 +158,7 @@
     Shareaholic.disable_buttons();
 
     Shareaholic.bind_button_clicks(Shareaholic.click_objects['app_settings']);
+    Shareaholic.bind_button_clicks(Shareaholic.click_objects['general_settings']);
 
     $('#terms_of_service_modal').reveal({
       closeonbackgroundclick: false,
