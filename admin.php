@@ -73,6 +73,7 @@ DOC;
     drupal_add_css($module_path . '/assets/css/reveal.css', array('group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/main.css', array('group' => CSS_DEFAULT));
     drupal_add_js(ShareaholicUtilities::asset_url('pub/utilities.js'), array('group' => JS_DEFAULT));
+    drupal_add_js(ShareaholicUtilities::asset_url('pub/shareaholic_sdk.js'), array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery_custom.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery_ui_custom.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery.reveal.modified.js', array('group' => JS_DEFAULT));

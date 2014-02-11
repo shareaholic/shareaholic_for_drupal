@@ -19,6 +19,7 @@
             <?php if (isset($settings['recommendations']["{$page_type->type}_below_content"])) { ?>
               <?php echo ($settings['recommendations']["{$page_type->type}_below_content"] == 'on' ? 'checked' : '') ?>
             <?php } ?>>
+            <input type="hidden" id="recommendations_<?php echo "{$page_type->type}_below_content_location_id" ?>" name="recommendations[<?php echo "{$page_type->type}_below_content_location_id" ?>]" value="<?php echo $location_id ?>"/>
             <label for="recommendations_<?php echo "{$page_type->type}_below_content" ?>">Below Content</label>
             <button data-app='recommendations'
                     data-location_id='<?php echo $location_id ?>'
