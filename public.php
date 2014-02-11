@@ -254,10 +254,14 @@ DOC;
   public static function draw_canvases(&$node, $view_mode) {
     $settings = ShareaholicUtilities::get_settings();
     $page_type = $node->type;
+    $sb_above_weight = -1000;
+    $rec_above_weight = -999;
+    $sb_below_weight = 1000;
+    $rec_below_weight = 1001;
     if($view_mode === 'teaser') {
       $page_type = 'teaser';
     }
-    foreach (array('recommendations') as $app) {
+    foreach (array('share_buttons', 'recommendations') as $app) {
       $title = $node->title;
       $summary = isset($node->teaser) ? $node->teaser : '';
       $link = $GLOBALS['base_root'] . url('node/'. $node->nid);
@@ -266,7 +270,7 @@ DOC;
         $id = $settings['location_name_ids'][$app]["{$page_type}_above_content"];
         $node->content["shareaholic_{$app}"] = array(
           '#markup' => self::canvas($id, $app, $title, $link),
-          '#weight' => -1000
+          '#weight' => ($app === 'share_buttons') ? $sb_above_weight : $rec_above_weight
         );
       }
 
@@ -275,7 +279,7 @@ DOC;
         $id = $settings['location_name_ids'][$app]["{$page_type}_below_content"];
         $node->content["shareaholic_{$app}"] = array(
           '#markup' => self::canvas($id, $app, $title, $link),
-          '#weight' => 1000
+          '#weight' => ($app === 'share_buttons') ? $sb_below_weight : $rec_below_weight
         );
       }
     }
