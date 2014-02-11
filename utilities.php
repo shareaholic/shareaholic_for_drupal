@@ -85,6 +85,13 @@ class ShareaholicUtilities {
     variable_del('shareaholic_settings');
   }
 
+  /**
+   * Set the settings option
+   */
+  public static function set_settings($settings) {
+    variable_set('shareaholic_settings', $settings);
+  }
+
 
   /**
    * Returns the site's url stripped of protocol.

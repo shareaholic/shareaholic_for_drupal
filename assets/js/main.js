@@ -7,7 +7,7 @@
         }
 
         $(click_object.selector).off('click.app_settings').on('click.app_settings', function (e) {
-            button = this;
+            var button = this;
             e.preventDefault();
             url = click_object.url(this);
             if (click_object.selector == '#general_settings') {
@@ -93,46 +93,66 @@
        }
    });
 
-    Shareaholic.create_new_location = function(_this) {
-      $(_this).prop('disabled', true);
-      var button = $(_this).siblings('button');
-      var app = button.data('app');
-      var location_id = button.data('location_id');
+    Shareaholic.create_new_location = function($input) {
+      var $button = $input.siblings('button').eq(0);
+      var app = $button.data('app');
+      var location_id = $button.data('location_id');
+      var location_name = /.*\[(.*)\]/.exec($input.attr('name'))[1];
+      var data = {};
       if (location_id) {
         return;
       }
-
-      var data = {};
+      $input.prop('disabled', true);
       data['configuration_' + app + '_location'] = {
-        name: /.*\[(.*)\]/.exec($(_this).attr('name'))[1]
-      }
+        name: location_name
+      };
 
-      button.text('Creating...');
+      $button.text('Creating...');
 
       $.ajax({
         url: first_part_of_url + app + '/locations.json',
         type: 'POST',
         data: data,
         success: function(data, status, jqxhr) {
-          data['action'] = 'shareaholic_add_location';
-          button.data('location_id', data['location']['id']);
-          button.text('Customize');
-          Shareaholic.disable_buttons();
-          $(_this).prop('disabled', false);
-        },
-        failure: function(things) {
-          button.text('Creation Failed');
-          $(_this).prop('disabled', false);
+          Shareaholic.new_location_success_callback($input, $button, app, location_name, data['location']['id']);
         },
         error: function() {
-          button.text('Creation Failed');
-          $(_this).prop('disabled', false);
+          Shareaholic.get_publisher_configurations($input, $button, app, location_name);
         },
         xhrFields: {
           withCredentials: true
         }
       });
     }
+
+    Shareaholic.new_location_success_callback = function($input, $button, app, location_name, location_id) {
+      $button.data('location_id', location_id);
+      $button.text('Customize');
+      Shareaholic.disable_buttons();
+      $input.prop('disabled', false);
+      $('#' + app + '_' + location_name + '_location_id').val(location_id);
+    };
+
+    Shareaholic.get_publisher_configurations = function($input, $button, app, location_name) {
+      Shareaholic.dispatcher.add_once('on_load_publisher_configuration', function() {
+        var locations = Shareaholic.publisher_configuration.apps[app].locations;
+        var isFound = false;
+        $.each(locations, function(location_id, location) {
+          console.log(location);
+          console.log(location_name);
+          if(location.location_id && location.name && location.name === location_name) {
+            Shareaholic.new_location_success_callback($input, $button, app, location_name, location_id);
+            isFound = true;
+            return;
+          }
+        });
+        if(!isFound) {
+          $button.text('Creation Failed');
+          $input.prop('disabled', false);
+        }
+      });
+      Shareaholic.SDK.load_publisher_configuration(window.shareaholic_api_key);
+    };
 
   $(document).ready(function() {
     Shareaholic.disable_buttons();
@@ -152,8 +172,9 @@
     });
 
     $('input[type=checkbox]').click(function() {
-      if($(this).is(':checked') && !$(this).data('location_id')) {
-        Shareaholic.create_new_location(this);
+      var $input = $(this);
+      if($input.is(':checked')) {
+        Shareaholic.create_new_location($input);
       }
     });
 

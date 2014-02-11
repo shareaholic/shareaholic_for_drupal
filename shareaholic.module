@@ -316,22 +316,25 @@ function template_preprocess_shareaholic_apps_configuration(&$variables) {
  *
  */
 function shareaholic_apps_configuration_form_submit($form, &$form_state) {
-  $recommendations = ShareaholicUtilities::get_option('recommendations');
+  $settings = ShareaholicUtilities::get_settings();
+  $recommendations = $settings['recommendations'];
   if(empty($recommendations)) {
     return;
   }
   $form_input = $form_state['input'];
-  foreach($recommendations as $location => $switch) {
-    if(!isset($form_input['recommendations'][$location]) || $form_input['recommendations'][$location] !== 'on') {
-      ShareaholicUtilities::update_options(array(
-        'recommendations' => array($location => 'off')
-      ));
+  $page_types = ShareaholicUtilities::page_types();
+  foreach($page_types as $key => $page_type) {
+    $below_content = $page_type->type . '_below_content';
+    if(!isset($form_input['recommendations'][$below_content]) ||
+        !isset($form_input['recommendations']["{$below_content}_location_id"]) ||
+        $form_input['recommendations'][$below_content] !== 'on') {
+      $settings['recommendations'][$below_content] = 'off';
     } else {
-      ShareaholicUtilities::update_options(array(
-        'recommendations' => array($location => 'on')
-      ));
+      $settings['recommendations'][$below_content] = 'on';
+      $settings['location_name_ids']['recommendations'][$below_content] = $form_input['recommendations']["{$below_content}_location_id"];
     }
   }
+  ShareaholicUtilities::set_settings($settings);
   drupal_set_message(t('Shareaholic Settings Saved'), 'status');
 }
 
