@@ -10,6 +10,6 @@ task :makequickcopy, :path do |task, args|
   sh "rm -rf #{args[:path]}/shareaholic_for_drupal/.git"
   sh "sed -i.bak 's/spreadaholic.com:8080/stageaholic.com/' #{args[:path]}/shareaholic_for_drupal/utilities.php"
   sh "sed -i.bak 's/http/https/' #{args[:path]}/shareaholic_for_drupal/utilities.php"
-  sh "rm #{args[:path]}/shareaholic_for_drupal/shareaholic.module.bak"
+  sh "rm #{args[:path]}/shareaholic_for_drupal/utilities.php.bak"
 end
 
