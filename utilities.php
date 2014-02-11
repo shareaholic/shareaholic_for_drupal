@@ -180,6 +180,8 @@ class ShareaholicUtilities {
     $page_types = self::page_types();
     $turned_on_recommendations_locations = array();
     $turned_off_recommendations_locations = array();
+    $turned_on_share_buttons_locations = array();
+    $turned_off_share_buttons_locations = array();
 
     foreach($page_types as $key => $page_type) {
       $page_type_name = $page_type->type;
@@ -192,8 +194,17 @@ class ShareaholicUtilities {
           'name' => $page_type_name . '_below_content'
         );
       }
+
+      $turned_on_share_buttons_locations[] = array(
+        'name' => $page_type_name . '_below_content'
+      );
+
+      $turned_off_share_buttons_locations[] = array(
+        'name' => $page_type_name . '_above_content'
+      );
     }
 
+    $share_buttons_attributes = array_merge($turned_on_share_buttons_locations, $turned_off_share_buttons_locations);
     $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
     $post_data = array(
       'configuration_publisher' => array(
@@ -205,7 +216,10 @@ class ShareaholicUtilities {
         'shortener' => 'shrlc',
         'recommendations_attributes' => array(
           'locations_attributes' => $recommendations_attributes
-        )
+        ),
+        'share_buttons_attributes' => array(
+          'locations_attributes' => $share_buttons_attributes
+       )
       )
     );
 
@@ -226,11 +240,16 @@ class ShareaholicUtilities {
       'location_name_ids' => $json_response['location_name_ids']
     ));
 
-    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids']) && isset($json_response['location_name_ids']['recommendations'])) {
+    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids']) && isset($json_response['location_name_ids']['recommendations']) && isset($json_response['location_name_ids']['share_buttons'])) {
 
       $turned_on_recommendations_keys = array();
       foreach($turned_on_recommendations_locations as $loc) {
         $turned_on_recommendations_keys[] = $loc['name'];
+      }
+
+      $turned_on_share_buttons_keys = array();
+      foreach($turned_on_share_buttons_locations as $loc) {
+        $turned_on_share_buttons_keys[] = $loc['name'];
       }
 
       $turned_off_recommendations_keys = array();
@@ -238,11 +257,18 @@ class ShareaholicUtilities {
         $turned_off_recommendations_keys[] = $loc['name'];
       }
 
+      $turned_off_share_buttons_keys = array();
+      foreach($turned_off_share_buttons_locations as $loc) {
+        $turned_off_share_buttons_keys[] = $loc['name'];
+      }
+
       $turn_on = array(
+        'share_buttons' => self::associative_array_slice($json_response['location_name_ids']['share_buttons'], $turned_on_share_buttons_keys),
         'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_on_recommendations_keys)
       );
 
       $turn_off = array(
+        'share_buttons' => self::associative_array_slice($json_response['location_name_ids']['share_buttons'], $turned_off_share_buttons_keys),
         'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
       );
 
