@@ -23,7 +23,7 @@ class ShareaholicAdmin {
     if(!ShareaholicUtilities::has_accepted_terms_of_service()) {
       print(drupal_render(drupal_get_form('shareaholic_tos_modal_form')));
     } else if (!ShareaholicUtilities::get_option('api_key')) {
-      print(drupal_render(drupal_get_form('shareaholic_failed_to_create_api_key_form')));
+      print(drupal_render(drupal_get_form('shareaholic_failure_modal_form')));
     }
   }
 
@@ -60,12 +60,20 @@ DOC;
     return $html;
   }
 
+  /**
+   * Inserts the necessary css and js assets
+   * for the Shareaholic Admin Pages
+   *
+   */
   public function include_css_js_assets() {
     $module_path = drupal_get_path('module', 'shareaholic');
+    drupal_add_css('//fonts.googleapis.com/css?family=Open+Sans:400,300,700', array('type' => 'external', 'group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/bootstrap.css', array('group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/bootstrap-responsive.css', array('group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/reveal.css', array('group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/main.css', array('group' => CSS_DEFAULT));
+    drupal_add_js(ShareaholicUtilities::asset_url('pub/utilities.js'), array('type' => 'external', 'group' => JS_DEFAULT));
+    drupal_add_js(ShareaholicUtilities::asset_url('pub/shareaholic_sdk.js'), array('type' => 'external', 'group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery_custom.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery_ui_custom.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery.reveal.modified.js', array('group' => JS_DEFAULT));

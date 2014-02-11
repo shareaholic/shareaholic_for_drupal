@@ -7,45 +7,30 @@
   <a class="close-reveal-modal">&#215;</a>
 </div>
 
+<script>
+window.first_part_of_url = "<?php echo ShareaholicUtilities::URL . '/publisher_tools/' . ShareaholicUtilities::get_option('api_key')?>/";
+window.verification_key = "<?php echo ShareaholicUtilities::get_option('verification_key') ?>";
+window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_key'); ?>";
+</script>
+
 <div class='unit size3of5'>
-  <form name="settings" method="post" action="">
-  <input type="hidden" name="already_submitted" value="Y">
-
-  <div id='app_settings'>
-
-  <div class='clear'></div>
-
-  <fieldset class="app"><legend><h2><img src="<?php echo '/' . SHAREAHOLIC_ASSET_DIR; ?>/img/related_content@2x.png" height=32 width=32 /> <?php print t('Related Content / Recommendations'); ?></h2></legend>
-  <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want Related Content to be displayed. Click "Customize" to customize look & feel, themes, block lists, etc.'); ?></span>
-
-    <div class='clear'></div>
-
-    <strong><?php print t('Related Content:'); ?></strong>
-    <?php
-      /*
-	    $status = ShareaholicUtilities::recommendations_status_check();
-	    if ($status == "processing" || $status == 'unknown'){
-	      echo '<img class="shrsb_health_icon" align="top" src="'.SHAREAHOLIC_ASSET_DIR.'img/circle_yellow.png" />'. sprintf(__('Processing', 'shareaholic'));
-	    } else {
-	      echo '<img class="shrsb_health_icon" align="top" src="'.SHAREAHOLIC_ASSET_DIR.'img/circle_green.png" />'. sprintf(__('Ready', 'shareaholic'));
-	    }
-	    */
-	  ?>
-
-  </fieldset>
-  </div>
-
-  <div class='clear'></div>
-  <div class="row" style="padding-top:20px; padding-bottom:35px;">
-    <div class="span2"><input type='submit' onclick="this.value='<?php print t('Saving Changes...'); ?>';" value='<?php print t('Save Changes'); ?>'></div>
-  </div>
-  </form>
+<?php print(drupal_render(drupal_get_form('shareaholic_apps_configuration_form'))); ?>
 </div>
-<?php /* ShareaholicUtilities::load_template('why_to_sign_up', array('url' => Shareaholic::URL)) */ ?>
+
+  <div class="signuppromo unit size1of5">
+  <p class="promoh1"><?php print t('Unlock additional customization options when you connect this  plugin to your FREE Shareaholic account.'); ?></p>
+  <ul>
+    <li><?php print t('Brand your social shares. For example, you can make all Twitter shares say "by @Twitterhandle"'); ?></li>
+    <li><?php print t('Pick your favorite URL shortener, including support for branded bitly short links.'); ?></li>
+    <li><?php print t('Additional themes for share buttons, related content, etc to match your site.'); ?></li>
+    <li><?php print t('Opportunities to make money with your site, plus lots more!'); ?></li>
+  </ul>
+  <button data-href='edit' id='general_settings' class="btn btn-large"><?php print t('Edit General Website Settings'); ?></button>
+  <p class="signuppromo_note"><?php print t("Connecting is simple. Simply click the button above and sign in to your Shareaholic account to connect this plugin to your account. If you don't have an account already, simply create a new account — it takes just seconds and it's free!"); ?></p>
+  </div>
+
 </div>
 
 
-<?php /* ShareaholicAdmin::show_footer(); */ ?>
-<?php /* ShareaholicAdmin::include_snapengage(); */ ?>
 <?php ShareaholicAdmin::draw_modal_popup(); ?>
 </div>

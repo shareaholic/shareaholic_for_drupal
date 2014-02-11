@@ -7,7 +7,7 @@ body {
   padding-top:20px;
 }
 
-fieldset {
+div#shareaholic-form-container fieldset {
 	border: 1px solid #d8d8d8;
 	margin: 5px;
 	padding: 10px;
@@ -23,6 +23,8 @@ fieldset {
 
 .app h2 {
   font-size: 20px;
+  color: #464646;
+  font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
  }
  
 legend {
@@ -32,6 +34,7 @@ legend {
 	padding: 0px 10px;
 	color: #007bb6;
   margin-bottom: 0;
+  font-size: 14px;
 }
 
 .check {
@@ -293,24 +296,25 @@ input[type='text'] {
 }
 
 .signuppromo{
-  border: 1px solid #1E8520;
-	background: #45A147;
+  border: 1px solid #d8d8d8;
 	border-radius: 6px;
 	padding: 20px 20px;
-	color: white;
+	color: #45A147;
 	font-size: 14px;
 	float: right;
-	margin: 30px;
+	margin: 25px 0 0 20px;
 	min-width: 250px;
-	box-shadow: 0px 1px 5px rgba(0,0,0,0.27);
+}
+
+.signuppromo_note{
+	font: 300 12px/20px "open sans","helvetica neue",helvetica,arial,sans-serif;
+	color: #555;
 }
 
 .promoh1{
-	font-size: 24px;
-	line-height: 28px;
-	margin: 10px 0 0 0;
+	font: 400 16px/22px "open sans","helvetica neue",helvetica,arial,sans-serif;
+	margin: 0;
 	padding: 0;
-	text-shadow: 0px 1px 0px rgba(0,0,0,0.4);
 }
 
 .promosub{
@@ -319,12 +323,20 @@ input[type='text'] {
 	font-weight: bold;
 }
 
-.signuppromo ul{
+div#shareaholic-form-container .signuppromo ul{
 margin: 24px 0px;
 }
 
 .signuppromo ul li{
-margin: 10px 0px;
+  background: url(../img/bolt.png) 0 2px no-repeat;
+  background-size: 22px 22px;
+  color: #555;
+  float: left;
+  font: 400 13px/20px "open sans","helvetica neue",helvetica,arial,sans-serif;
+  list-style: none;
+  padding: 2px 0 2px 32px;
+  margin: 0 0 18px 0;
+  text-align: left;
 }
 
 .signuppromo a,.signuppromo a:active {
@@ -409,7 +421,6 @@ div#shareaholic-form-container input.btn_main {
   border: 0;
 }
 
-div#shareaholic-form-container fieldset.form-fieldset {
-  float: none;
-  width: 75%;
+div #shareaholic-form-container .app label {
+  display: inline;
 }

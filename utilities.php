@@ -5,6 +5,9 @@
  *
  */
 class ShareaholicUtilities {
+  const MODULE_VERSION = '7.x-3.0';
+  const URL = 'http://spreadaholic.com:8080';
+  const REC_API_URL = 'http://recommendations.stageaholic.com';
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL
@@ -80,6 +83,13 @@ class ShareaholicUtilities {
    */
   public static function destroy_settings() {
     variable_del('shareaholic_settings');
+  }
+
+  /**
+   * Set the settings option
+   */
+  public static function set_settings($settings) {
+    variable_set('shareaholic_settings', $settings);
   }
 
 
@@ -167,6 +177,35 @@ class ShareaholicUtilities {
     }
 
     $verification_key = md5(mt_rand());
+    $page_types = self::page_types();
+    $turned_on_recommendations_locations = array();
+    $turned_off_recommendations_locations = array();
+    $turned_on_share_buttons_locations = array();
+    $turned_off_share_buttons_locations = array();
+
+    foreach($page_types as $key => $page_type) {
+      $page_type_name = $page_type->type;
+      if($page_type_name === 'article' || $page_type_name === 'page') {
+        $turned_on_recommendations_locations[] = array(
+          'name' => $page_type_name . '_below_content'
+        );
+      } else {
+        $turned_off_recommendations_locations[] = array(
+          'name' => $page_type_name . '_below_content'
+        );
+      }
+
+      $turned_on_share_buttons_locations[] = array(
+        'name' => $page_type_name . '_below_content'
+      );
+
+      $turned_off_share_buttons_locations[] = array(
+        'name' => $page_type_name . '_above_content'
+      );
+    }
+
+    $share_buttons_attributes = array_merge($turned_on_share_buttons_locations, $turned_off_share_buttons_locations);
+    $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
     $post_data = array(
       'configuration_publisher' => array(
         'verification_key' => $verification_key,
@@ -176,23 +215,15 @@ class ShareaholicUtilities {
         'language_id' => self::site_language(),
         'shortener' => 'shrlc',
         'recommendations_attributes' => array(
-          'locations_attributes' => array(
-            array('name' => 'post_below_content'),
-            array('name' => 'page_below_content'),
-          )
+          'locations_attributes' => $recommendations_attributes
         ),
         'share_buttons_attributes' => array(
-          'locations_attributes' => array(
-            array('name' => 'post_below_content', 'counter' => 'badge-counter'),
-            array('name' => 'page_below_content', 'counter' => 'badge-counter'),
-            array('name' => 'index_below_content', 'counter' => 'badge-counter'),
-            array('name' => 'category_below_content', 'counter' => 'badge-counter')
-          )
-        )
+          'locations_attributes' => $share_buttons_attributes
+       )
       )
     );
 
-    $response = drupal_http_request(SHAREAHOLIC_URL . '/publisher_tools/anonymous', array(
+    $response = drupal_http_request(self::URL . '/publisher_tools/anonymous', array(
       'method' => 'POST',
       'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
       'data' => http_build_query($post_data)
@@ -209,10 +240,41 @@ class ShareaholicUtilities {
       'location_name_ids' => $json_response['location_name_ids']
     ));
 
-    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids'])) {
-      //ShareaholicUtilities::turn_on_locations($response['body']['location_name_ids']);
+    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids']) && isset($json_response['location_name_ids']['recommendations']) && isset($json_response['location_name_ids']['share_buttons'])) {
+
+      $turned_on_recommendations_keys = array();
+      foreach($turned_on_recommendations_locations as $loc) {
+        $turned_on_recommendations_keys[] = $loc['name'];
+      }
+
+      $turned_on_share_buttons_keys = array();
+      foreach($turned_on_share_buttons_locations as $loc) {
+        $turned_on_share_buttons_keys[] = $loc['name'];
+      }
+
+      $turned_off_recommendations_keys = array();
+      foreach($turned_off_recommendations_locations as $loc) {
+        $turned_off_recommendations_keys[] = $loc['name'];
+      }
+
+      $turned_off_share_buttons_keys = array();
+      foreach($turned_off_share_buttons_locations as $loc) {
+        $turned_off_share_buttons_keys[] = $loc['name'];
+      }
+
+      $turn_on = array(
+        'share_buttons' => self::associative_array_slice($json_response['location_name_ids']['share_buttons'], $turned_on_share_buttons_keys),
+        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_on_recommendations_keys)
+      );
+
+      $turn_off = array(
+        'share_buttons' => self::associative_array_slice($json_response['location_name_ids']['share_buttons'], $turned_off_share_buttons_keys),
+        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
+      );
+
+      ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
     } else {
-      self:log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
+      self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
     }
   }
 
@@ -292,9 +354,9 @@ class ShareaholicUtilities {
    * @return string
    */
   public static function asset_url($asset) {
-    if (preg_match('/spreadaholic/', SHAREAHOLIC_URL)) {
+    if (preg_match('/spreadaholic/', self::URL)) {
       return 'http://spreadaholic.com:8080/assets/' . $asset;
-    } elseif (preg_match('/stageaholic/', SHAREAHOLIC_URL)) {
+    } elseif (preg_match('/stageaholic/', self::URL)) {
       return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
     } else {
       return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
@@ -314,7 +376,7 @@ class ShareaholicUtilities {
    * Gets the current version of this module
    */
   public static function get_version() {
-    return SHAREAHOLIC_MODULE_VERSION;
+    return self::MODULE_VERSION;
   }
 
   /**
@@ -353,6 +415,101 @@ class ShareaholicUtilities {
    */
   public static function clean_string($word) {
     return trim(trim(strtolower(trim(htmlspecialchars(htmlspecialchars_decode($word), ENT_QUOTES))), ","));
+  }
+
+  /**
+   * This is a wrapper for the Recommendations API
+   *
+   */
+  public static function recommendations_status_check() {
+    $api_key = self::get_option('api_key');
+    if (!empty($api_key)) {
+    	$recommendations_url = self::REC_API_URL . "/v3/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=3&apiKey=" . $api_key;
+      $response = drupal_http_request($recommendations_url, array('method' => 'GET'));
+      if(self::has_bad_response($response, 'FailedRecommendationsCheck')) {
+        return 'unknown';
+      }
+      $response = (array) $response;
+      if($response['code'] == 200) {
+        return 'ready';
+      } else {
+        return 'processing';
+      }
+    } else {
+      return 'unknown';
+    }
+  }
+
+
+  /**
+   * Give back only the request keys from an array. The first
+   * argument is the array to be sliced, and after that it can
+   * either be a variable-length list of keys or one array of keys.
+   *
+   * @param  array $array
+   * @param  Mixed ... can be either one array or many keys
+   * @return array
+   */
+  public static function associative_array_slice($array) {
+    $keys = array_slice(func_get_args(), 1);
+    if (func_num_args() == 2 && is_array($keys[0])) {
+      $keys = $keys[0];
+    }
+
+    $result = array();
+
+    foreach($keys as $key) {
+      $result[$key] = $array[$key];
+    }
+
+    return $result;
+  }
+
+
+  /**
+   * Passed an array of location names mapped to ids per app.
+   *
+   * @param array $array
+   */
+  public static function turn_on_locations($array, $turn_off_array = array()) {
+    if (is_array($array)) {
+      foreach($array as $app => $ids) {
+        if (is_array($ids)) {
+          foreach($ids as $name => $id) {
+            self::update_options(array(
+              $app => array($name => 'on')
+            ));
+          }
+        }
+      }
+    }
+
+    if (is_array($turn_off_array)) {
+      foreach($turn_off_array as $app => $ids) {
+        if (is_array($ids)) {
+          foreach($ids as $name => $id) {
+            self::update_options(array(
+              $app => array($name => 'off')
+            ));
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Get all the available page types
+   * Insert the teaser mode as a page type
+   *
+   * @return Array list of page types
+   */
+  public static function page_types() {
+    $page_types = node_type_get_types();
+    $teaser = new stdClass;
+    $teaser->name = 'Teaser';
+    $teaser->type = 'teaser';
+    $page_types['shareaholic_custom_type'] = $teaser;
+    return $page_types;
   }
 
 }
