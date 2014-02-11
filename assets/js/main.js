@@ -42,18 +42,6 @@
                 url = url.replace(/{{id}}/, id);
                 return url;
             },
-            callback: function(button) {
-                id = $(button).data('location_id');
-                app = $(button).data('app');
-                text = 'You can also use this shortcode to place this {{app}} App anywhere.';
-                html = "<div id='shortcode_container'> \
-          <span id='shortcode_description'></span> \
-          <textarea id='shortcode' name='widget_div' onclick='select();' readonly='readonly'></textarea> \
-        </div>"
-                $(html).appendTo('.reveal-modal');
-                $('#shortcode_description').text(text.replace(/{{app}}/, Shareaholic.titlecase(app)));
-                $('#shortcode').text('[shareaholic app="' + app + '" id="' + id + '"]');
-            },
             close: function(button) {
                 $('#shortcode_container').remove();
             }

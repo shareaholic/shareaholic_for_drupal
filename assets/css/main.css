@@ -104,6 +104,10 @@ h3 {
   padding: 0;
 }
 
+#editing_modal #iframe_container iframe {
+  height: 600px;
+}
+
 .wp-submenu-wrap ul {
   margin: 0;
 }
