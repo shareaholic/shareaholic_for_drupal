@@ -323,7 +323,7 @@ input[type='text'] {
 	font-weight: bold;
 }
 
-.signuppromo ul{
+div#shareaholic-form-container .signuppromo ul{
 margin: 24px 0px;
 }
 
