@@ -239,6 +239,7 @@ function shareaholic_advanced_settings_form() {
     '#value' => t('Save Changes')
   );
   $form['advanced_settings']['submit']['#attributes']['class'][] = 'settings';
+  $form['advanced_settings']['submit']['#attributes']['onclick'][] = 'this.value="Saving Settings..."';
   if($disable_analytics_checked === 'on') {
     $form['advanced_settings']['disable_analytics']['#attributes'] = array('checked' => 'checked');
   }
@@ -270,7 +271,7 @@ function shareaholic_reset_plugin_form() {
     '#value' => t('Reset Plugin')
   );
   $form['reset']['submit']['#attributes']['class'][] = 'settings';
-
+  $form['reset']['submit']['#attributes']['onclick'][] = 'this.value="Resetting..."';
   return $form;
 }
 
