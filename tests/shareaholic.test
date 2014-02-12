@@ -21,7 +21,9 @@ class ShareaholicTestCase extends DrupalWebTestCase {
 
   public function testMenu() {
     $items = module_invoke('shareaholic', 'menu');
-    $this->assertNotNull($items['admin/config/content/shareaholic/settings'], 'The configure settings should exist');
+    $this->assertNotNull($items['admin/config/shareaholic'], 'The admin block should exist');
+    $this->assertNotNull($items['admin/config/shareaholic/advanced'], 'The advanced settings should exist');
+    $this->assertNotNull($items['admin/config/shareaholic/settings'], 'The configure settings should exist');
   }
 
   public function testShareaholicAdminSettings() {

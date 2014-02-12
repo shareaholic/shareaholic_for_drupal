@@ -36,8 +36,21 @@ function shareaholic_init() {
  * @return The menu structure containing link to settings page
  */
 function shareaholic_menu() {
-  // Path to the shareaholic settings page
-  $items['admin/config/content/shareaholic/advanced'] = array(
+
+  // this creates the block for shareaholic in config page
+  $menu['admin/config/shareaholic'] = array(
+    'title' => 'Shareaholic',
+    'description' => 'Shareaholic Module Settings',
+    'weight' => 1,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+    'position' => 'left',
+  );
+
+  // Path to the shareaholic advanced page
+  $menu['admin/config/shareaholic/advanced'] = array(
     'title' => 'Shareaholic Advanced Settings',
     'description' => 'Advanced settings for the Shareaholic module',
     'page callback' => 'shareaholic_admin_advanced',
@@ -46,7 +59,8 @@ function shareaholic_menu() {
     'weight' => 2
   );
 
-  $items['admin/config/content/shareaholic/settings'] = array(
+  // Path to the shareaholic app manager page
+  $menu['admin/config/shareaholic/settings'] = array(
     'title' => 'Shareaholic App Manager',
     'description' => 'Manage Share Buttons and Recommendations for your site',
     'page callback' => 'shareaholic_admin_settings',
@@ -54,7 +68,7 @@ function shareaholic_menu() {
     'type' => MENU_NORMAL_ITEM,
     'weight' => 1
   );
-  return $items;
+  return $menu;
 }
 
 

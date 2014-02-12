@@ -1,6 +1,6 @@
 name = Shareaholic
 description = Shareaholic for Drupal
-configure = admin/config/content/shareaholic/settings
+configure = admin/config/shareaholic
 core = 7.x
 files[] = shareaholic.module
 files[] = tests/shareaholic.test
