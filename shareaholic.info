@@ -1,6 +1,6 @@
-name = Shareaholic
-description = Shareaholic for Drupal
-configure = admin/config/shareaholic
+name = Shareaholic | share buttons, analytics, related content
+description = Whether you want to get people sharing, keep them on your site, grow your fans, make money, or know who's reading your content, Shareaholic will help you get it done.
+configure = admin/config/shareaholic/settings
 core = 7.x
 files[] = shareaholic.module
 files[] = tests/shareaholic.test
