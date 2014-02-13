@@ -7,6 +7,7 @@
 class ShareaholicUtilities {
   const MODULE_VERSION = '7.x-3.0';
   const URL = 'http://spreadaholic.com:8080';
+  const API_URL = 'http://spreadaholic.com:8080';
   const REC_API_URL = 'http://recommendations.stageaholic.com';
   /**
    * Returns whether the user has accepted our terms of service.
@@ -223,7 +224,7 @@ class ShareaholicUtilities {
       )
     );
 
-    $response = drupal_http_request(self::URL . '/publisher_tools/anonymous', array(
+    $response = drupal_http_request(self::API_URL . '/publisher_tools/anonymous', array(
       'method' => 'POST',
       'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
       'data' => http_build_query($post_data)
