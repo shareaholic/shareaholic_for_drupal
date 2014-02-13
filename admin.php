@@ -46,7 +46,7 @@ class ShareaholicAdmin {
    */
   private function terms_of_service_html() {
     $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'),
-    '<a href="/admin/config/content/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
+    '<a href="/admin/config/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
     $img_check = '/' . SHAREAHOLIC_ASSET_DIR . '/img/check.png';
     $html = <<< DOC
   <div id="shareaholic-wrap-container" style="padding: 0 20px 0px 15px; background-color: #45a147; margin: 25px 0px 20px -18px;">
@@ -77,6 +77,7 @@ DOC;
     drupal_add_js($module_path . '/assets/js/jquery_custom.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery_ui_custom.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/jquery.reveal.modified.js', array('group' => JS_DEFAULT));
+    drupal_add_js($module_path . '/assets/js/bootstrap.js', array('group' => JS_DEFAULT));
     drupal_add_js($module_path . '/assets/js/main.js', array('group' => JS_DEFAULT));
   }
 

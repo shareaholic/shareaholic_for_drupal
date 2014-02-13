@@ -400,7 +400,7 @@ class ShareaholicUtilities {
    * @return Boolean (actually 1, 0, or FALSE)
    */
   public static function is_shareaholic_settings_page() {
-    return preg_match('/admin\/config\/content\/shareaholic/', request_uri());
+    return preg_match('/admin\/config\/shareaholic\//', request_uri());
   }
 
   /**

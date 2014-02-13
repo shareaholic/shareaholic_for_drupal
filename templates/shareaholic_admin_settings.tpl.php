@@ -1,5 +1,9 @@
 <?php ShareaholicAdmin::include_css_js_assets(); ?>
 <div id="shareaholic-form-container">
+<ul class="nav nav-tabs">
+  <li class="active"><a href="/admin/config/shareaholic/settings">App Manager</a></li>
+  <li><a href="/admin/config/shareaholic/advanced">Advanced Settings</a></li>
+</ul>
 <div class='wrap'>
 
 <div class='reveal-modal' id='editing_modal'>

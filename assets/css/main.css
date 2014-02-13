@@ -17,17 +17,25 @@ div#shareaholic-form-container fieldset {
   float:left;
 }
 
-.app {
+div#shareaholic-form-container .app {
   width:100%;
 }
 
-.app h2 {
+div#shareaholic-form-container .app h2 {
   font-size: 20px;
   color: #464646;
   font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
  }
+
+div#shareaholic-form-container .wrap h2 {
+  padding: 9px 15px 4px 0;
+  line-height: 29px;
+  font-weight: normal;
+  margin: 0;
+  text-shadow: #fff 0 1px 0;
+}
  
-legend {
+div#shareaholic-form-container legend {
 	border: none;
 	width: auto;
 	font-weight: bold;
@@ -427,4 +435,19 @@ div#shareaholic-form-container input.btn_main {
 
 div #shareaholic-form-container .app label {
   display: inline;
+  font-size: 12px;
+}
+
+div #shareaholic-form-container .nav li {
+  list-style: none;
+}
+
+div #shareaholic-form-container ul.nav  {
+  border-bottom: 1px solid #ddd;
+  margin: 0;
+}
+
+div #shareaholic-form-container fieldset.app legend img  {
+  width: 32px;
+  height: 32px;
 }
