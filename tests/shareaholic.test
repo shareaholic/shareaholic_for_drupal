@@ -37,7 +37,8 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     $themes = module_invoke('shareaholic', 'theme');
     $result = (isset($themes['shareaholic_admin_advanced']) &&
                 isset($themes['shareaholic_tos_modal']) &&
-                isset($themes['shareaholic_failure_modal']));
+                isset($themes['shareaholic_failure_modal']) &&
+                isset($themes['shareaholic_verify_api_key']));
     $this->assertTrue($result, 'It should have the expected themes');
 
   }
@@ -98,7 +99,7 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     $this->drupalGet('admin/modules');
     $this->assertRaw("Action required: You've installed Shareaholic for Drupal", 'If I am admin on admin page and did not accept ToS, notice should show');
 
-    $this->drupalGet('admin/config/content/shareaholic/settings');
+    $this->drupalGet('admin/config/shareaholic/settings');
     $this->assertNoRaw("Action required: You've installed Shareaholic for Drupal", 'If I am admin on shareaholic settings, notice should not show');
 
     $this->drupalGet('');
