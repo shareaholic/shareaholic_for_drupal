@@ -270,6 +270,7 @@ function shareaholic_advanced_settings_form_submit($form, &$form_state) {
     ShareaholicUtilities::update_options(array(
       'disable_analytics' => $checked
     ));
+  drupal_set_message(t('Settings Saved: please clear your cache.'), 'status');
   }
 }
 
@@ -302,6 +303,7 @@ function shareaholic_reset_plugin_form() {
 function shareaholic_reset_plugin_form_submit($form, &$form_state) {
   ShareaholicUtilities::destroy_settings();
   ShareaholicUtilities::get_or_create_api_key();
+  drupal_set_message(t('Plugin has been reset. Please clear your cache.'), 'status');
 }
 
 

@@ -12,7 +12,6 @@ Shareaholic.click_objects['unverified_app_settings'] = {
     return url;
   },
   callback: function(button) {
-    Shareaholic.click_objects['app_settings'].callback(button);
   },
   close: Shareaholic.click_objects['app_settings'].close
 }
