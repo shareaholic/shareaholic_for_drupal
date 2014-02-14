@@ -291,7 +291,8 @@ class ShareaholicUtilities {
     }
     $response = (array) $response;
     if(isset($response['error'])) {
-      self::log($type . ': There was an error: ' . $response['error']);
+      $error_message = print_r($response['error'], true);
+      self::log($type . ': There was an error: ' . $error_message);
       return true;
     }
     if(!($response['code'] >= 200 && $response['code'] < 210)) {
