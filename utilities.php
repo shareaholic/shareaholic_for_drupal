@@ -513,4 +513,41 @@ class ShareaholicUtilities {
     return $page_types;
   }
 
+
+  /**
+   * Checks whether the api key has been verified
+   * using the rails endpoint. Once the key has
+   * been verified, we store that away so that we
+   * don't have to check again.
+   *
+   * @return bool
+   */
+  public static function api_key_verified() {
+    $settings = self::get_settings();
+    if (isset($settings['api_key_verified']) && $settings['api_key_verified']) {
+      return true;
+    }
+
+    $api_key = $settings['api_key'];
+    if (!$api_key) {
+      return false;
+    }
+
+    $response = drupal_http_request(self::API_URL . '/publisher_tools/' . $api_key . '/verified', array('method' => 'GET'));
+    if(self::has_bad_response($response, 'FailedApiKeyVerified')) {
+      return false;
+    }
+    $response = (array) $response;
+
+    $result = $response['data'];
+
+    if ($result == 'true') {
+      ShareaholicUtilities::update_options(array(
+        'api_key_verified' => true
+      ));
+      return true;
+    }
+    return false;
+  }
+
 }

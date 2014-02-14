@@ -81,5 +81,17 @@ DOC;
     drupal_add_js($module_path . '/assets/js/main.js', array('group' => JS_DEFAULT));
   }
 
+  /**
+   * This function is in charge of the logic for
+   * showing whatever it is we want to show a user
+   * about whether they have verified their api
+   * key or not.
+   */
+  public static function draw_verify_api_key() {
+    if (!ShareaholicUtilities::api_key_verified()) {
+      print theme('shareaholic_verify_api_key');
+    }
+  }
+
 }
 

@@ -147,6 +147,12 @@
 
     Shareaholic.bind_button_clicks(Shareaholic.click_objects['app_settings']);
     Shareaholic.bind_button_clicks(Shareaholic.click_objects['general_settings']);
+    if (Shareaholic.click_objects['unverified_general_settings']) {
+        Shareaholic.bind_button_clicks(Shareaholic.click_objects['unverified_general_settings'], true);
+    }
+    if (Shareaholic.click_objects['unverified_app_settings']) {
+        Shareaholic.bind_button_clicks(Shareaholic.click_objects['unverified_app_settings'], true);
+    }
 
     $('#terms_of_service_modal').reveal({
       closeonbackgroundclick: false,

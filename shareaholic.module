@@ -124,6 +124,10 @@ function shareaholic_theme() {
       'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
       'template' => 'shareaholic_apps_configuration'
     ),
+    'shareaholic_verify_api_key' => array(
+      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'template' => 'shareaholic_verify_api_key',
+    ),
   );
 }
 
