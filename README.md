@@ -49,7 +49,7 @@ Please refer to the Shareaholic Wiki for deployment instructions
 
 ## Documentation
 
-TODO: link to wiki
+Please refer to the Shareaholic Wiki for documentation
 
 
 

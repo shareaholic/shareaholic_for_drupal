@@ -1,3 +1,6 @@
+= 7.x-3.x-dev =
+* Revamp plugin to use new and improved share buttons with recommendations
+
 Shareaholic 7.x-2.x-dev, xxxx-xx-xx (development release)
 --------------------------------------------------------------------------------
 
