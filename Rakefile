@@ -13,11 +13,10 @@ task :makerelease, :path do |task, args|
 end
 
 task :makequickcopy, :path do |task, args|
-  sh "cp -R ../shareaholic_for_drupal #{args[:path]}"
-  sh "rm -rf #{args[:path]}/shareaholic_for_drupal/.git"
-  sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/stageaholic.com/' #{args[:path]}/shareaholic_for_drupal/utilities.php"
-  sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/stageaholic.com/' #{args[:path]}/shareaholic_for_drupal/utilities.php"
-  sh "rm #{args[:path]}/shareaholic_for_drupal/utilities.php.bak"
-  sh "awk '{if(/http/){count++; if(count>=1 && count<=2){gsub(\"http\", \"https\");}} print}' #{args[:path]}/shareaholic_for_drupal/utilities.php > #{args[:path]}/shareaholic_for_drupal/utilities.php.tmp && mv #{args[:path]}/shareaholic_for_drupal/utilities.php.tmp #{args[:path]}/shareaholic_for_drupal/utilities.php"
+  sh "rsync -av --exclude='.*' ./ #{args[:path]}"
+  sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/stageaholic.com/' #{args[:path]}/utilities.php"
+  sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/stageaholic.com/' #{args[:path]}/utilities.php"
+  sh "rm #{args[:path]}/utilities.php.bak"
+  sh "awk '{if(/http/){count++; if(count>=1 && count<=2){gsub(\"http\", \"https\");}} print}' #{args[:path]}/utilities.php > #{args[:path]}/utilities.php.tmp && mv #{args[:path]}/utilities.php.tmp #{args[:path]}/utilities.php"
 end
 
