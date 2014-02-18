@@ -5,7 +5,7 @@
  *
  */
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.0';
+  const MODULE_VERSION = '7.x-3.2';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const REC_API_URL = 'http://recommendations.stageaholic.com';
