@@ -21,9 +21,11 @@ class ShareaholicAdmin {
    */
   public static function draw_modal_popup() {
     if(!ShareaholicUtilities::has_accepted_terms_of_service()) {
-      print(drupal_render(drupal_get_form('shareaholic_tos_modal_form')));
+      $form = drupal_get_form('shareaholic_tos_modal_form');
+      print(drupal_render($form));
     } else if (!ShareaholicUtilities::get_option('api_key')) {
-      print(drupal_render(drupal_get_form('shareaholic_failure_modal_form')));
+      $form = drupal_get_form('shareaholic_failure_modal_form');
+      print(drupal_render($form));
     }
   }
 
@@ -31,7 +33,7 @@ class ShareaholicAdmin {
    * Show the terms of service notice on admin pages
    * except for shareaholic admin settings page
    */
-  public function show_terms_of_service_notice(&$vars) {
+  public static function show_terms_of_service_notice(&$vars) {
     if(ShareaholicUtilities::is_admin_page() &&
         !ShareaholicUtilities::is_shareaholic_settings_page() &&
         !ShareaholicUtilities::has_accepted_terms_of_service() &&
@@ -44,7 +46,7 @@ class ShareaholicAdmin {
    * The html for the Terms of Service notice as a string
    * @return String The html for the notice as a string
    */
-  private function terms_of_service_html() {
+  private static function terms_of_service_html() {
     $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'),
     '<a href="/admin/config/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
     $img_check = '/' . SHAREAHOLIC_ASSET_DIR . '/img/check.png';
@@ -65,7 +67,7 @@ DOC;
    * for the Shareaholic Admin Pages
    *
    */
-  public function include_css_js_assets() {
+  public static function include_css_js_assets() {
     $module_path = drupal_get_path('module', 'shareaholic');
     drupal_add_css('//fonts.googleapis.com/css?family=Open+Sans:400,300,700', array('type' => 'external', 'group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/bootstrap.css', array('group' => CSS_DEFAULT));

@@ -13,8 +13,10 @@
     <?php print t('After changing any Shareaholic advanced setting, it is good practice to clear your cache.'); ?>
   </span>
     <?php
-      print(drupal_render(drupal_get_form('shareaholic_advanced_settings_form')));
-      print(drupal_render(drupal_get_form('shareaholic_reset_plugin_form')));
+      $form = drupal_get_form('shareaholic_advanced_settings_form');
+      print(drupal_render($form));
+      $form = drupal_get_form('shareaholic_reset_plugin_form');
+      print(drupal_render($form));
       ShareaholicAdmin::draw_modal_popup();
       print '</div>';
     ?>

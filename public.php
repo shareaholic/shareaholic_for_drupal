@@ -68,7 +68,7 @@ DOC;
   /**
    * Insert the disable analytics meta tag
    */
-  public function insert_disable_analytics_meta_tag() {
+  public static function insert_disable_analytics_meta_tag() {
     if(!ShareaholicUtilities::is_admin_page() &&
         ShareaholicUtilities::has_tos_and_apikey() &&
         ShareaholicUtilities::get_option('disable_analytics') === 'on') {
@@ -89,7 +89,7 @@ DOC;
    * Inserts the xua-compatible header if the user has accepted
    * ToS and has API key
    */
-  public function set_xua_compatible_header() {
+  public static function set_xua_compatible_header() {
     if(ShareaholicUtilities::has_tos_and_apikey() &&
         !drupal_get_http_header('X-UA-Compatible')) {
       drupal_add_http_header('X-UA-Compatible', 'IE=edge,chrome=1');
@@ -101,7 +101,7 @@ DOC;
    * On full post pages, it will insert page specific content meta tags
    *
    */
-  public function insert_content_meta_tags($node = NULL, $view_mode = NULL, $lang_code = NULL) {
+  public static function insert_content_meta_tags($node = NULL, $view_mode = NULL, $lang_code = NULL) {
     if($view_mode === 'rss') {
       return;
     }

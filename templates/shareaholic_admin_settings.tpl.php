@@ -18,7 +18,10 @@ window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_k
 </script>
 
 <div class='unit size3of5'>
-<?php print(drupal_render(drupal_get_form('shareaholic_apps_configuration_form'))); ?>
+<?php
+  $form = drupal_get_form('shareaholic_apps_configuration_form');
+  print(drupal_render($form));
+?>
 </div>
 
   <div class="signuppromo unit size1of5">
