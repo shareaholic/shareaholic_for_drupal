@@ -8,6 +8,7 @@ class ShareaholicUtilities {
   const MODULE_VERSION = '7.x-3.2';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
+  const CM_API_URL = 'http://localhost:3000';
   const REC_API_URL = 'http://recommendations.stageaholic.com';
   /**
    * Returns whether the user has accepted our terms of service.
@@ -274,6 +275,7 @@ class ShareaholicUtilities {
       );
 
       ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
+      ShareaholicContentManager::single_domain_worker();
     } else {
       self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
     }

@@ -12,6 +12,7 @@ define('SHAREAHOLIC_DEBUG', getenv('SHAREAHOLIC_DEBUG'));
 module_load_include('php', 'shareaholic', 'utilities');
 module_load_include('php', 'shareaholic', 'admin');
 module_load_include('php', 'shareaholic', 'public');
+module_load_include('php', 'shareaholic', 'content_manager');
 
 /**
  * Implements hook_init()
