@@ -78,6 +78,15 @@ class ShareaholicPublicTestCase extends DrupalWebTestCase {
 
     $body = '<p></p>';
     $this->assertFalse(ShareaholicPublic::post_first_image($body), 'If there is no image, it returns false');
+
+    $body = "<p><img alt='stuff' class='more_stuff' src='test.png'/><img alt='stuff' class='more_stuff' src='bogus.png'/></p>";
+    $this->assertEqual($img, ShareaholicPublic::post_first_image($body), 'Even if the first image tag has other attributes it should still return it');
+
+    $body = "<p><img src='test.png'/><img alt='stuff' class='more_stuff' src='bogus.png'/></p>";
+    $this->assertEqual($img, ShareaholicPublic::post_first_image($body), 'It should return the test.png');
+
+    $body = "<p><img src='test.png' alt=''/><img src='bogus.png'/></p>";
+    $this->assertEqual($img, ShareaholicPublic::post_first_image($body), 'It should return the test.png');
   }
 
   public function testCanvas() {
