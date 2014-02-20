@@ -177,6 +177,27 @@ function shareaholic_node_update($node) {
 }
 
 
+/**
+ * Implements hook_node_delete().
+ * When a node is deleted, notify CM
+ *
+ * @param $node The node that has been deleted
+ */
+function shareaholic_node_delete($node) {
+  ShareaholicContentManager::single_page_worker($node);
+}
+
+
+/**
+ * Implements hook_node_insert().
+ * When a node is created, notify CM to scrape its details
+ *
+ * @param $node The node that has been created
+ */
+function shareaholic_node_insert($node) {
+  ShareaholicContentManager::single_page_worker($node);
+}
+
 
 /**
  * Returns the form for the terms of service modal popup
