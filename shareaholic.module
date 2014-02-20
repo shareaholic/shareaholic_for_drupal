@@ -166,6 +166,16 @@ function shareaholic_node_view($node, $view_mode, $langcode) {
   ShareaholicPublic::insert_widgets($node, $view_mode, $langcode);
 }
 
+/**
+ * Implements hook_node_update().
+ * When a node is updated, notify CM to scrape its details
+ *
+ * @param $node The node that has been updated
+ */
+function shareaholic_node_update($node) {
+  ShareaholicContentManager::single_page_worker($node);
+}
+
 
 
 /**
