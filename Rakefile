@@ -11,6 +11,7 @@ task :makerelease, :path do |task, args|
   sh "awk '{if(/http/){count++; if(count>=1 && count<=3){gsub(\"http\", \"https\");}} print}' #{args[:path]}/utilities.php > #{args[:path]}/utilities.php.tmp && mv #{args[:path]}/utilities.php.tmp #{args[:path]}/utilities.php"
   sh "rm -rf #{args[:path]}/tests"
   sh "rm -rf #{args[:path]}/Rakefile"
+  sh "rm -rf #{args[:path]}/README.md"
 end
 
 task :makequickcopy, :path do |task, args|
