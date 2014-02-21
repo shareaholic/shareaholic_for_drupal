@@ -553,4 +553,28 @@ class ShareaholicUtilities {
     return false;
   }
 
+
+  /**
+   * Answers whether we should ping CM
+   *
+   * @return bool
+   */
+  public static function should_notify_cm() {
+    $settings = ShareaholicUtilities::get_settings();
+    $recommendations_settings = isset($settings['recommendations']) ?
+      $settings["recommendations"] :
+      null;
+
+    if (is_array($recommendations_settings)) {
+      if (in_array("on", $recommendations_settings)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+
 }
