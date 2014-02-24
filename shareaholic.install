@@ -9,6 +9,7 @@
 
 module_load_include('php', 'shareaholic', 'utilities');
 module_load_include('php', 'shareaholic', 'content_manager');
+module_load_include('php', 'shareaholic', 'content_settings');
 
 /**
  * Implements hook_uninstall().
@@ -29,6 +30,28 @@ function shareaholic_enable() {
   if(ShareaholicUtilities::has_accepted_terms_of_service() &&
       ShareaholicUtilities::get_option('api_key')) {
     ShareaholicContentManager::single_domain_worker();
+  }
+}
+
+/**
+ * Implements hook_schema().
+ * Defines the shareaholic_content_settings schema
+ *
+ */
+function shareaholic_schema() {
+  return ShareaholicContentSettings::schema();
+}
+
+
+/**
+ * This update will add the new shareaholic content settings table
+ * for installs 7.x-3.3 and earlier
+ */
+function shareaholic_update_7300() {
+  if (!db_table_exists('shareaholic_content_settings')) {
+    $schema = ShareaholicContentSettings::schema();
+    db_create_table('shareaholic_content_settings', $schema['shareaholic_content_settings']);
+    return t('Created table shareaholic_content_settings');
   }
 }
 

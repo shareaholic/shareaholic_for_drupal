@@ -202,6 +202,69 @@ function shareaholic_node_insert($node) {
   }
 }
 
+/**
+ * Implements hook_form_alter().
+ *
+ * When the node form is presented, add additional options
+ * for Shareaholic Apps
+ *
+ * @param Array $form - Nested array of form elements
+ * @param Array $form_state - keyed array containing form state
+ * @param $form_id - String representing the name of the form itself
+ */
+function shareaholic_form_node_form_alter(&$form, &$form_state, $form_id) {
+  $node = $form['#node'];
+
+  $form['shareaholic_node_options'] = array(
+    '#type' => 'fieldset',
+    '#access' => TRUE,
+    '#title' => 'Shareaholic Options',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#group' => 'additional_settings',
+    '#weight' => 100,
+  );
+
+  $form['shareaholic_node_options']['exclude_from_recommendations'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Exclude from Related Content'
+  );
+  if($node->shareaholic_options['exclude_from_recommendations']) {
+    $form['shareaholic_node_options']['exclude_from_recommendations']['#attributes'] = array('checked' => 'checked');
+  }
+}
+
+
+/**
+ * Implements hook_node_prepare().
+ *
+ * If the given node does not have shareaholic settings
+ * set, give default values in the object
+ *
+ * @param Object $node The node being shown in add/edit form
+ */
+function shareaholic_node_prepare($node) {
+  if (empty($node->shareaholic_options)) {
+    // Set default values, since this only runs when adding a new node
+    // or an existing node without the values
+    $node->shareaholic_options['exclude_from_recommendations'] = FALSE;
+  }
+}
+
+
+/**
+ * Implements hook_node_submit().
+ *
+ * Retrieve the inputs to the shareaholic options form
+ *
+ */
+function shareaholic_node_submit($node, $form, &$form_state) {
+  $form = print_r($form_state['values'], true);
+  //watchdog('shareaholic', $form);
+  // Move the new data into the node object.
+  //$node->ajax_example['example_1'] = $values['ajax_example_1'];
+}
+
 
 /**
  * Returns the form for the terms of service modal popup
