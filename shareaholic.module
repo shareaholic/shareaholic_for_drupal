@@ -173,7 +173,9 @@ function shareaholic_node_view($node, $view_mode, $langcode) {
  * @param $node The node that has been updated
  */
 function shareaholic_node_update($node) {
-  ShareaholicContentManager::single_page_worker($node);
+  if(ShareaholicUtilities::should_notify_cm()) {
+    ShareaholicContentManager::single_page_worker($node);
+  }
 }
 
 
@@ -195,7 +197,9 @@ function shareaholic_node_delete($node) {
  * @param $node The node that has been created
  */
 function shareaholic_node_insert($node) {
-  ShareaholicContentManager::single_page_worker($node);
+  if(ShareaholicUtilities::should_notify_cm()) {
+    ShareaholicContentManager::single_page_worker($node);
+  }
 }
 
 
