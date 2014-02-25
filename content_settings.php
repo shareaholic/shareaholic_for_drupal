@@ -42,4 +42,105 @@ class ShareaholicContentSettings {
     return $schema;
   }
 
+
+  /**
+   * Updates the content settings in the database
+   * with values selected in the content type form
+   *
+   * @param Object $node the node object that has been updated
+   */
+  public static function update($node) {
+    if (db_select('shareaholic_content_settings', 'settings')
+        ->fields('settings')->condition('nid', $node->nid, '=')
+        ->execute()->fetchAssoc()) {
+
+      db_update('shareaholic_content_settings')
+        ->fields(array(
+          'settings' => self::serialize_settings($node),
+        ))
+        ->condition('nid', $node->nid)
+        ->execute();
+    }
+    else {
+      // If not found insert it as a new node
+      self::insert($node);
+    }
+  }
+
+
+  /**
+   * Inserts the content settings for a node
+   * in the database with values selected in the form
+   *
+   * @param Object $node the newly created node object
+   */
+  public static function insert($node) {
+    if (isset($node->shareaholic_options)) {
+      db_insert('shareaholic_content_settings')
+        ->fields(array(
+          'nid' => $node->nid,
+          'settings' => self::serialize_settings($node),
+        ))
+        ->execute();
+    }
+  }
+
+
+
+  /**
+   * Load the content settings from the database
+   * and attach to each node object
+   *
+   * @param Array $node The list of node objects
+   * @param Array $types The list of content types from the available nodes
+   */
+  public static function load($nodes, $types) {
+    $result = db_query('SELECT * FROM {shareaholic_content_settings} WHERE nid IN(:nids)', array(':nids' => array_keys($nodes)))->fetchAllAssoc('nid');
+
+    foreach ($nodes as &$node) {
+      if(isset($result[$node->nid]->settings)) {
+        $settings = self::unserialize_settings($result[$node->nid]);
+        $node->shareaholic_options['shareaholic_exclude_from_recommendations'] = $settings['exclude_from_recommendations'];
+      }
+    }
+  }
+
+  /**
+   * Implements hook_node_delete().
+   *
+   * Delete the content settings for a node
+   * @param Object $node the node that will be deleted
+   */
+  public static function delete($node) {
+    db_delete('shareaholic_content_settings')
+      ->condition('nid', $node->nid)
+      ->execute();
+  }
+
+
+  /**
+   * Get a serialized version of the content settings
+   *
+   * @param Object $node The node with settings to serialize
+   * @return String the string representation of the settings
+   */
+  private static function serialize_settings($node) {
+    $settings = array(
+      'exclude_from_recommendations' => $node->shareaholic_options['shareaholic_exclude_from_recommendations'],
+    );
+
+    return serialize($settings);
+  }
+
+
+  /**
+   * Get an unserialized version of the content settings
+   *
+   * @param Object $node The node with settings to serialize
+   * @return String the string representation of the settings
+   */
+  private static function unserialize_settings($node) {
+    return unserialize($node->settings);
+  }
+
 }
