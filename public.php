@@ -266,9 +266,13 @@ DOC;
       $page_type = 'teaser';
     }
     foreach (array('share_buttons', 'recommendations') as $app) {
+      if(isset($node->shareaholic_options["shareaholic_hide_{$app}"]) && $node->shareaholic_options["shareaholic_hide_{$app}"]) {
+        break;
+      }
       $title = $node->title;
       $summary = isset($node->teaser) ? $node->teaser : '';
       $link = url('node/'. $node->nid, array('absolute' => TRUE));
+
       if (isset($settings[$app]["{$page_type}_above_content"]) &&
           $settings[$app]["{$page_type}_above_content"] == 'on') {
         $id = $settings['location_name_ids'][$app]["{$page_type}_above_content"];
