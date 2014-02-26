@@ -93,4 +93,30 @@ class ShareaholicPublicTestCase extends DrupalWebTestCase {
     $canvas = ShareaholicPublic::canvas('123', 'share_buttons');
     $this->assertTrue(!empty($canvas), 'The canvas should not be empty');
   }
+
+  public function testGetVisibility() {
+    $node = new stdClass;
+    $this->assertTrue(is_null(ShareaholicPublic::get_visibility($node)), 'If we cannot determine visibility then it should return NULL');
+
+    $node->status = 0;
+    $this->assertEqual('draft', ShareaholicPublic::get_visibility($node), 'If it is a draft, then return draft');
+
+    $node->status = 1;
+    $this->assertTrue(is_null(ShareaholicPublic::get_visibility($node)), 'If it is not a draft and is not excluded, then it should return NULL');
+
+    $node->shareaholic_options = array(
+      'shareaholic_exclude_from_recommendations' => false
+    );
+    $node->status = 1;
+    $this->assertTrue(is_null(ShareaholicPublic::get_visibility($node)), 'If it is not to be excluded, then return NULL');
+
+    $node->shareaholic_options = array(
+      'shareaholic_exclude_from_recommendations' => true
+    );
+    $node->status = 1;
+    $this->assertTrue('private', ShareaholicPublic::get_visibility($node), 'If it is to be excluded, then return private');
+
+    $node->status = 0;
+    $this->assertEqual('private', ShareaholicPublic::get_visibility($node), 'If it is to be excluded and is a draft, then return private as it overrules draft');
+  }
 }
