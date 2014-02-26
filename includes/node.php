@@ -83,14 +83,34 @@
       '#weight' => 100,
     );
 
-    // I have to namespace it this way because Drupal can't do it
+    // I have to namespace it this way because Drupal can't add
+    // the shareholic_options name to it
     // when you process the form on submit!!!
+    $form['shareaholic_options']['shareaholic_hide_share_buttons'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Hide Share Buttons'
+    );
+
+    $form['shareaholic_options']['shareaholic_hide_recommendations'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Hide Related Content'
+    );
+
     $form['shareaholic_options']['shareaholic_exclude_from_recommendations'] = array(
       '#type' => 'checkbox',
       '#title' => 'Exclude from Related Content'
     );
+
     if($node->shareaholic_options['shareaholic_exclude_from_recommendations']) {
       $form['shareaholic_options']['shareaholic_exclude_from_recommendations']['#attributes'] = array('checked' => 'checked');
+    }
+
+    if($node->shareaholic_options['shareaholic_hide_recommendations']) {
+      $form['shareaholic_options']['shareaholic_hide_recommendations']['#attributes'] = array('checked' => 'checked');
+    }
+
+    if($node->shareaholic_options['shareaholic_hide_share_buttons']) {
+      $form['shareaholic_options']['shareaholic_hide_share_buttons']['#attributes'] = array('checked' => 'checked');
     }
   }
 
@@ -107,7 +127,11 @@
     if (empty($node->shareaholic_options)) {
       // Set default values, since this only runs when adding a new node
       // or an existing node without the values
-      $node->shareaholic_options['shareaholic_exclude_from_recommendations'] = false;
+      $node->shareaholic_options = array(
+        'shareaholic_exclude_from_recommendations' => false,
+        'shareaholic_hide_recommendations' => false,
+        'shareaholic_hide_share_buttons' => false,
+      );
     }
   }
 
@@ -121,8 +145,15 @@
   function shareaholic_node_submit($node, $form, &$form_state) {
     $values = $form_state['values'];
     // Move the new data into the node object.
+    // This is why I namespaced it: the form values does not preserve shareaholic_options
     $isChecked = ($values['shareaholic_exclude_from_recommendations'] === 1) ? true : false;
     $node->shareaholic_options['shareaholic_exclude_from_recommendations'] = $isChecked;
+
+    $isChecked = ($values['shareaholic_hide_recommendations'] === 1) ? true : false;
+    $node->shareaholic_options['shareaholic_hide_recommendations'] = $isChecked;
+
+    $isChecked = ($values['shareaholic_hide_share_buttons'] === 1) ? true : false;
+    $node->shareaholic_options['shareaholic_hide_share_buttons'] = $isChecked;
   }
 
 

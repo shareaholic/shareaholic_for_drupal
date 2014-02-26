@@ -100,7 +100,9 @@ class ShareaholicContentSettings {
     foreach ($nodes as &$node) {
       if(isset($result[$node->nid]->settings)) {
         $settings = self::unserialize_settings($result[$node->nid]);
-        $node->shareaholic_options['shareaholic_exclude_from_recommendations'] = $settings['exclude_from_recommendations'];
+        $node->shareaholic_options['shareaholic_exclude_from_recommendations'] = isset($settings['exclude_from_recommendations']) && $settings['exclude_from_recommendations'];
+        $node->shareaholic_options['shareaholic_hide_recommendations'] = isset($settings['hide_recommendations']) && $settings['hide_recommendations'];
+        $node->shareaholic_options['shareaholic_hide_share_buttons'] = isset($settings['hide_share_buttons']) && $settings['hide_share_buttons'];
       }
     }
   }
@@ -127,6 +129,8 @@ class ShareaholicContentSettings {
   private static function serialize_settings($node) {
     $settings = array(
       'exclude_from_recommendations' => $node->shareaholic_options['shareaholic_exclude_from_recommendations'],
+      'hide_recommendations' => $node->shareaholic_options['shareaholic_hide_recommendations'],
+      'hide_share_buttons' => $node->shareaholic_options['shareaholic_hide_share_buttons'],
     );
 
     return serialize($settings);
