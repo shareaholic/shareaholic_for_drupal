@@ -267,7 +267,7 @@ DOC;
     }
     foreach (array('share_buttons', 'recommendations') as $app) {
       if(isset($node->shareaholic_options["shareaholic_hide_{$app}"]) && $node->shareaholic_options["shareaholic_hide_{$app}"]) {
-        break;
+        continue;
       }
       $title = $node->title;
       $summary = isset($node->teaser) ? $node->teaser : '';
