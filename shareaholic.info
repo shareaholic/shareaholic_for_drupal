@@ -16,7 +16,7 @@ datestamp = "1306745218"
 
 
 ; Information added by drupal.org packaging script on 2012-06-29
-version = "7.x-2.0"
+version = "7.x-3.4"
 core = "7.x"
 project = "shareaholic"
 datestamp = "1340972236"
