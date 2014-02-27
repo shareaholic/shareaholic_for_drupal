@@ -331,7 +331,6 @@ DOC;
    */
   public static function get_visibility($node) {
     $visibility = NULL;
-    watchdog('shareaholic', $node->status);
     // Check if it is a draft
     if(isset($node->status) && $node->status == 0) {
       $visibility = 'draft';
