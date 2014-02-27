@@ -50,6 +50,9 @@ class ShareaholicContentSettings {
    * @param Object $node the node object that has been updated
    */
   public static function update($node) {
+    if (!db_table_exists('shareaholic_content_settings')) {
+      return;
+    }
     if (db_select('shareaholic_content_settings', 'settings')
         ->fields('settings')->condition('nid', $node->nid, '=')
         ->execute()->fetchAssoc()) {
@@ -75,6 +78,9 @@ class ShareaholicContentSettings {
    * @param Object $node the newly created node object
    */
   public static function insert($node) {
+    if (!db_table_exists('shareaholic_content_settings')) {
+      return;
+    }
     if (isset($node->shareaholic_options)) {
       db_insert('shareaholic_content_settings')
         ->fields(array(
@@ -95,6 +101,10 @@ class ShareaholicContentSettings {
    * @param Array $types The list of content types from the available nodes
    */
   public static function load($nodes, $types) {
+    if (!db_table_exists('shareaholic_content_settings')) {
+      return;
+    }
+
     $result = db_query('SELECT * FROM {shareaholic_content_settings} WHERE nid IN(:nids)', array(':nids' => array_keys($nodes)))->fetchAllAssoc('nid');
 
     foreach ($nodes as &$node) {
@@ -114,6 +124,9 @@ class ShareaholicContentSettings {
    * @param Object $node the node that will be deleted
    */
   public static function delete($node) {
+    if (!db_table_exists('shareaholic_content_settings')) {
+      return;
+    }
     db_delete('shareaholic_content_settings')
       ->condition('nid', $node->nid)
       ->execute();
