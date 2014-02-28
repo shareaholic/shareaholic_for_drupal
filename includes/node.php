@@ -101,6 +101,13 @@
       '#title' => 'Exclude from Related Content'
     );
 
+    if(!db_table_exists('shareaholic_content_settings')) {
+      $form['shareaholic_options']['shareaholic_message'] = array(
+        '#type' => 'markup',
+        '#markup' => '<p style="color:#FF0000;">' . t('Action required: you have some pending updates required by Shareaholic. Please go to update.php for more information.') . '</p>',
+      );
+    }
+
     if($node->shareaholic_options['shareaholic_exclude_from_recommendations']) {
       $form['shareaholic_options']['shareaholic_exclude_from_recommendations']['#attributes'] = array('checked' => 'checked');
     }

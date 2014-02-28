@@ -51,7 +51,7 @@ function shareaholic_update_7300() {
   if (!db_table_exists('shareaholic_content_settings')) {
     $schema = ShareaholicContentSettings::schema();
     db_create_table('shareaholic_content_settings', $schema['shareaholic_content_settings']);
-    return t('Created table shareaholic_content_settings');
   }
+  return t('Created table shareaholic_content_settings');
 }
 
