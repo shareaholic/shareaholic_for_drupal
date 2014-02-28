@@ -38,17 +38,31 @@ class ShareaholicAdmin {
         !ShareaholicUtilities::is_shareaholic_settings_page() &&
         !ShareaholicUtilities::has_accepted_terms_of_service() &&
         user_access('administer modules')) {
-      $vars['page'] = self::terms_of_service_html() . $vars['page'];
+          $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'),
+          '<a href="/admin/config/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
+      $vars['page'] = self::header_message_html($message) . $vars['page'];
     }
   }
 
   /**
-   * The html for the Terms of Service notice as a string
+   * Show the pending update notice on admin pages
+   *
+   */
+  public static function show_pending_update_notice(&$vars) {
+    if(ShareaholicUtilities::is_admin_page() &&
+       ShareaholicUtilities::has_accepted_terms_of_service() &&
+       !db_table_exists('shareaholic_content_settings') &&
+        user_access('administer modules')) {
+          $message = sprintf(t('Action required: You have pending updates required by Shareaholic. Please go to update.php for more information.'));
+      $vars['page'] = self::header_message_html($message) . $vars['page'];
+    }
+  }
+
+  /**
+   * The html for the Shareaholic notice as a string
    * @return String The html for the notice as a string
    */
-  private static function terms_of_service_html() {
-    $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'),
-    '<a href="/admin/config/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
+  private static function header_message_html($message) {
     $img_check = '/' . SHAREAHOLIC_ASSET_DIR . '/img/check.png';
     $html = <<< DOC
   <div id="shareaholic-wrap-container" style="padding: 0 20px 0px 15px; background-color: #45a147; margin: 25px 0px 20px -18px;">

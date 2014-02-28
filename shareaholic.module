@@ -164,6 +164,7 @@ function shareaholic_page_alter(&$page) {
  */
 function shareaholic_process_html(&$vars) {
   ShareaholicAdmin::show_terms_of_service_notice($vars);
+  ShareaholicAdmin::show_pending_update_notice(&$vars);
 }
 
 
