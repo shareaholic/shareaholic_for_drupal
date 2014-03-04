@@ -124,6 +124,7 @@ DOC;
       $author_name = self::get_user_name($author);
       $tags = implode(', ', self::get_keywords_for($node));
       $image_url = self::get_image_url_for($node);
+      $visibility = self::get_visibility($node);
 
       $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
       $content_tags .= "\n<meta name='shareaholic:article_published_time' content='$published_time' />";
@@ -135,6 +136,9 @@ DOC;
       }
       if(!empty($image_url)) {
         $content_tags .= "\n<meta name='shareaholic:image' content='$image_url' />";
+      }
+      if(!empty($visibility)) {
+        $content_tags .= "\n<meta name='shareaholic:article_visibility' content='$visibility' />";
       }
     }
     $content_tags .= "\n<!-- Shareaholic Content Tags End -->\n";
@@ -262,9 +266,13 @@ DOC;
       $page_type = 'teaser';
     }
     foreach (array('share_buttons', 'recommendations') as $app) {
+      if(isset($node->shareaholic_options["shareaholic_hide_{$app}"]) && $node->shareaholic_options["shareaholic_hide_{$app}"]) {
+        continue;
+      }
       $title = $node->title;
       $summary = isset($node->teaser) ? $node->teaser : '';
       $link = url('node/'. $node->nid, array('absolute' => TRUE));
+
       if (isset($settings[$app]["{$page_type}_above_content"]) &&
           $settings[$app]["{$page_type}_above_content"] == 'on') {
         $id = $settings['location_name_ids'][$app]["{$page_type}_above_content"];
@@ -309,5 +317,29 @@ DOC;
       data-summary='$summary'></div>";
 
     return trim(preg_replace('/\s+/', ' ', $canvas));
+  }
+
+
+  /**
+   * Determines the visibility of a piece of content
+   * and returns that value
+   *
+   * Possible values are: 'draft', 'private', and NULL
+   *
+   * @param Object $node The content to determine its visibility
+   * @return String a string indicating its visibility
+   */
+  public static function get_visibility($node) {
+    $visibility = NULL;
+    // Check if it is a draft
+    if(isset($node->status) && $node->status == 0) {
+      $visibility = 'draft';
+    }
+    // Check if it should be excluded from recommendations
+    if(isset($node->shareaholic_options) && $node->shareaholic_options['shareaholic_exclude_from_recommendations']) {
+      $visibility = 'private';
+    }
+
+    return $visibility;
   }
 }
