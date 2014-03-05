@@ -1,3 +1,7 @@
+= 7.x-3.5=
+* Bug fix: call time pass by reference in shareaholic.module
+* Bug fix: links do not work if site does not use clean urls
+
 = 7.x-3.4 =
 * New feature: per page edit options to hide share buttons or recommendations
 * New feature: per page edit options to exclude that content from being recommended
