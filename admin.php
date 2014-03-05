@@ -38,8 +38,8 @@ class ShareaholicAdmin {
         !ShareaholicUtilities::is_shareaholic_settings_page() &&
         !ShareaholicUtilities::has_accepted_terms_of_service() &&
         user_access('administer modules')) {
-          $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %sGet started now &raquo;%s'),
-          '<a href="/admin/config/shareaholic/settings" style="background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;">', '</a>');
+          $link = l(t('Get started now >>'), '/admin/config/shareaholic/settings', array('attributes' => array('style' => 'background: #f3f3f3; border-color: #bbb; color: #333; display: inline-block; text-decoration: none; cursor: pointer; border-radius: 3px; padding: 0 10px; 1px; font-size: 12px; height: 20px;')));
+          $message = sprintf(t('Action required: You\'ve installed Shareaholic for Drupal.  We\'re ready when you are. %s'), $link);
       $vars['page'] = self::header_message_html($message) . $vars['page'];
     }
   }
