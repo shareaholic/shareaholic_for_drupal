@@ -1,8 +1,8 @@
 <?php ShareaholicAdmin::include_css_js_assets(); ?>
 <div id="shareaholic-form-container">
   <ul class="nav nav-tabs">
-    <li><?php print l(t('App Manager'), '/admin/config/shareaholic/settings'); ?></li>
-    <li class="active"><?php print l(t('Advanced Settings'), '/admin/config/shareaholic/advanced'); ?></li>
+    <li><?php print l(t('App Manager'), 'admin/config/shareaholic/settings'); ?></li>
+    <li class="active"><?php print l(t('Advanced Settings'), 'admin/config/shareaholic/advanced'); ?></li>
   </ul>
 
   <div style="margin-top:20px;"></div>

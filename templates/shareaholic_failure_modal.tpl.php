@@ -12,7 +12,7 @@
     <?php print $variables['shareaholic_failure_modal']['hidden'] ?>
     <?php print $variables['shareaholic_failure_modal']['submit'] ?>
     <br /><br />
-    <?php print l(t('or, try again later'), '/admin', array('attributes' => array('style' => 'font-size:12px; font-weight:normal;'))); ?>
+    <?php print l(t('or, try again later'), 'admin', array('attributes' => array('style' => 'font-size:12px; font-weight:normal;'))); ?>
   </div>
   </div>
 </div>

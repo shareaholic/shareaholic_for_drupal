@@ -1,3 +1,6 @@
+= 7.x-3.6 =
+* Bug fix: incorrect use of l() function: remove the slash
+
 = 7.x-3.5=
 * Bug fix: call time pass by reference in shareaholic.module
 * Bug fix: links do not work if site does not use clean urls
