@@ -1,57 +1,50 @@
-Shareaholic enables your users to easily find and share your content online. Shareaholic for Drupal is the same amazing sharing plugin used by over 200,000 Publishers, custom built for your Drupal site. Shareaholic includes two sharing button form factors, Sexy Bookmarks and Classic Bookmarks, and is loaded with options to ensure that your content is highlighted when shared to grab more clicks.
+Welcome to Shareaholic for Drupal.
 
+== Installing Shareaholic ==
 
-Features
---------------------------------------------------------------------------------
+Copy the 'shareaholic' module directory in to your Drupal sites/all/modules directory as usual.
 
-* Support for more than 200 social services, like Facebook, Twitter, LinkedIn and Delicious.
-* Multiple display options:
-  * Node item/Psuedo field for Nodes.
-  * Field/Views formatters:
-    * Link module.
-    * Node Reference module.
-  * Views module content field.
-  * Blocks:
-    * Current URL.
-    * Site URL.
-    * plus an example Boxes block for extended support.
-  * Drupal API theme() function.
-* Support for:
-  * Page Title module.
-  * Shorten URLs module.
+Navigate to administer >> build >> modules. Enable Shareaholic.
 
+== For Help & Support ==
 
-Required Modules
---------------------------------------------------------------------------------
+http://support.shareaholic.com
 
-* Chaos Tool suite - http://drupal.org/project/ctools
+== Changelog ==
 
+= 7.x-3.6 =
+* Bug fix: incorrect use of l() function: remove the slash
 
-Recommended Modules
---------------------------------------------------------------------------------
+= 7.x-3.5=
+* Bug fix: call time pass by reference in shareaholic.module
+* Bug fix: links do not work if site does not use clean urls
 
-* Shorten URLs - http://drupal.org/project/shorten
+= 7.x-3.4 =
+* New feature: per page edit options to hide share buttons or recommendations
+* New feature: per page edit options to exclude that content from being recommended
 
+= 7.x-3.3 =
+* New feature: newly created content will be added to Shareaholic's recommendations
+* Any updates or deleted content will also notify Shareaholic's recommendations
 
-Configuration
---------------------------------------------------------------------------------
+= 7.x-3.2 =
+* Bug fix: call to non-static methods (PHP strict mode)
 
-* Displaying via Nodes (pseudo field):
+= 7.x-3.1 =
+* No major updates were introduced in this version
 
-  The profile for each Content type can be set at:
-    Administration > Structure > Content types > [content type] > Edit
-    http://[www.yoursite.com/path/to/drupal]/admin/structure/types/manage/[content-type]
+= 7.x-3.0 =
+* Huge update! The plugin has been completely re-written from the ground up to be faster, simpler to use
+* Choose from snazzy new Related Post themes
+* Related Posts now come mobile optimized and responsive out of the box - Shareaholic automagically determines how many Related Posts to show given how much screen width it is given
+* Customize your "You may also like" Related Posts text
+* Choose from new Share button themes! (including vertical share buttons!)
+* Addition of new shareaholic:language tag to improve related content and recommendations computation
+* Advanced Settings: ability to reset your module
+* Advanced Settings: ability to disable analytics
 
-  The position of the Shareaholic widget can be set at:
-    Administration > Structure > Content types > [content type] > Manage display > [view mode]
-    http://[www.yoursite.com/path/to/drupal]/admin/structure/types/manage/[content-type]/display/[view-mode]
+= 7.x-3.x-dev =
+* Revamp plugin to use new and improved share buttons with recommendations
 
-
-Help
---------------------------------------------------------------------------------
-
-You can contact Shareaholic directly for issues or questions at: http://support.shareaholic.com
-
-More help can be found via the Help module:
-  Administration > Help > shareaholic
-  http://[www.yoursite.com/path/to/drupal]/admin/help/shareaholic
+= 7.x-2.x-dev =
+* Initial 7.x module dev release
