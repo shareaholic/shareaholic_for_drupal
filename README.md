@@ -6,20 +6,16 @@ This README is for development purposes while the other README.txt is for releas
 
 ## Getting Started
 
-At the time of writing this (2013-01-17) the repo assumes you have:
+At the time of writing this (17 Jan 2014) the repo assumes you have:
 * PHP version 5.3.x or higher
 * Drupal 7.x
-
 
 Please follow the installation instructions for Drupal 7.x at the [drupal site](https://drupal.org/documentation/install) to get started
 
 Once you have the server setup with drupal, clone this repository to your local workspace:
 
     git clone https://github.com/shareaholic/shareaholic_for_drupal.git
-
-At the time of writing this (2013-01-17) the new drupal code is in a branch called master-new. Switch over to that branch:
-
-    git checkout master-new
+    git checkout master
 
 All modules in a Drupal site are located in:
 
