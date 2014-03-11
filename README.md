@@ -1,12 +1,23 @@
-Shareaholic for Drupal Module
-===================
+# Shareaholic for Drupal Module
 
 With the official Shareaholic for Drupal module, Drupal users now have access to the full suite of Shareaholic tools. Drupal site owners and administrators no longer need to fiddle around with HTML or JavaScript to implement Shareaholic. We’ve done all of the hard work for you - it should take less than 5 minutes to install and setup.
 
 Note: This README is for the project while [README.txt](https://github.com/shareaholic/shareaholic_for_drupal/blob/master/README.txt) is the one that is packaged with the module.
 
-Getting Started
-------------
+
+## Drupal Project Home
+
+https://drupal.org/project/shareaholic
+
+
+## Contributing
+
+1. Fork the [official repository](https://github.com/shareaholic/shareaholic_for_drupal/tree/master).
+2. Make your changes in a topic branch.
+3. Send a pull request.
+
+
+### Getting Started
 
 This project assumes you have:
 
@@ -33,8 +44,7 @@ If you do not prefer this method, you can move this repository over to the Drupa
 Then go to your Drupal site signed in as admin, go to Modules and enable the Shareaholic for Drupal plugin. You should not receive errors and be all set to use/develop the plugin
 
 
-Testing
-------------
+### Testing
 
 There are a couple of testing frameworks that can be used with Drupal module development but for now we will simply use the built in testing module provided by Drupal core.
 
@@ -43,21 +53,14 @@ If you get a memory limit error, increase your memory limit in your php.ini file
 
 To run the tests, enable the Shareaholic for Drupal module,  go to Configuration->Development->Testing and run some or all the tests for Shareaholic for Drupal
 
-Deploying to Production
-------------
+
+### Deploying to Drupal.org
+
 
 Please refer to the Shareaholic Developer Wiki for deployment instructions
 
 
-Contributing
-------------
-
-1. Fork the [official repository](https://github.com/shareaholic/shareaholic_for_drupal/tree/master).
-2. Make your changes in a topic branch.
-3. Send a pull request.
-
-Credits
--------
+## Credits
 
 ![Shareaholic](https://blog.shareaholic.com/wp-content/uploads/2013/10/new-shareaholic-logo.png)
 
@@ -65,12 +68,6 @@ shareaholic_for_drupal is owned and maintained by [Shareaholic, Inc](https://sha
 
 Thank you to all [the contributors](https://github.com/shareaholic/shareaholic_for_drupal/contributors)!
 
-Drupal Project
--------
-
-https://drupal.org/project/shareaholic
-
-License
--------
+## License
 
 shareaholic_for_drupal is Copyright © 2014 Shareaholic Inc. It is free software, and may be redistributed under the terms specified in the [LICENSE](https://github.com/shareaholic/shareaholic_for_drupal/blob/master/LICENSE)
