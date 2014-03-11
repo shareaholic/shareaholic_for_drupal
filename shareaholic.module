@@ -79,6 +79,14 @@ function shareaholic_menu() {
     'type' => MENU_NORMAL_ITEM,
     'weight' => 1
   );
+
+  // Path for the shareaholic share count API
+  $menu['shareaholic/api/share_counts/v1'] = array(
+    'page callback' => 'shareaholic_share_counts_api',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
   return $menu;
 }
 
@@ -186,5 +194,17 @@ function _prepare_template_form_variables(&$variables, $form_id) {
     }
   }
   $variables[$form_id]['hidden'] = implode($hidden);
+}
+
+
+/**
+ * Returns the share counts for the given url and services
+ * Requires the url and services to be passed into GET params
+ *
+ * @return String json response of services => share counts
+ */
+function shareaholic_share_counts_api() {
+  header('Content-Type: application/json');
+  echo json_encode(array('text' => 'Hello World'));
 }
 
