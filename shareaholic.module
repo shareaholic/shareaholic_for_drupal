@@ -5,8 +5,8 @@
  * Allows site owner to add share buttons/recommendations on their website
  */
 
-define('SHAREAHOLIC_MODULE_PATH', drupal_get_path('module', 'shareaholic'));
-define('SHAREAHOLIC_ASSET_DIR', SHAREAHOLIC_MODULE_PATH . '/assets/');
+define('SHAREAHOLIC_DIR', drupal_get_path('module', 'shareaholic'));
+define('SHAREAHOLIC_ASSET_DIR', SHAREAHOLIC_DIR . '/assets/');
 define('SHAREAHOLIC_DEBUG', getenv('SHAREAHOLIC_DEBUG'));
 
 // Required global files
@@ -123,30 +123,30 @@ function shareaholic_admin_settings() {
 function shareaholic_theme() {
   return array(
     'shareaholic_admin_advanced' => array(
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_admin_advanced',
     ),
     'shareaholic_admin_settings' => array(
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_admin_settings',
     ),
     'shareaholic_tos_modal' => array(
       'render element' => 'form',
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_tos_modal',
     ),
     'shareaholic_failure_modal' => array(
       'render element' => 'form',
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_failure_modal',
     ),
     'shareaholic_apps_configuration' => array(
       'render element' => 'form',
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_apps_configuration'
     ),
     'shareaholic_verify_api_key' => array(
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_verify_api_key',
     ),
   );
