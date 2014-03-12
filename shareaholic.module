@@ -15,6 +15,7 @@ module_load_include('php', 'shareaholic', 'admin');
 module_load_include('php', 'shareaholic', 'public');
 module_load_include('php', 'shareaholic', 'content_manager');
 module_load_include('php', 'shareaholic', 'content_settings');
+module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_counts');
 
 // Include files
 module_load_include('php', 'shareaholic', 'includes/node');
@@ -193,7 +194,11 @@ function _prepare_template_form_variables(&$variables, $form_id) {
  * @return String json response of services => share counts
  */
 function shareaholic_share_counts_api() {
+  $url = $_GET['url'];
+  $services = $_GET['services'];
+  $shares = new ShareaholicSeqShareCount($url, $services);
+  $result = $shares->get_counts();
   header('Content-Type: application/json');
-  echo json_encode(array('text' => 'Hello World'));
+  echo json_encode($result);
 }
 
