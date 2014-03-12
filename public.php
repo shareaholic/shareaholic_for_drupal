@@ -25,7 +25,6 @@ class ShareaholicPublic {
         $element = array(
           '#type' => 'markup',
           '#markup' => $markup,
-          '#weight' => 20000
         );
       drupal_add_html_head($element, 'shareaholic_script_tag');
     }
@@ -79,7 +78,6 @@ DOC;
           'name' => 'shareaholic:analytics',
           'content' => 'disabled'
         ),
-        '#weight' => 10000,
       );
       drupal_add_html_head($element, 'shareaholic_disable_analytics');
     }

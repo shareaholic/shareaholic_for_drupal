@@ -36,6 +36,8 @@ function shareaholic_init() {
   ShareaholicPublic::set_xua_compatible_header();
   if(!ShareaholicUtilities::is_admin_page()) {
     ShareaholicPublic::insert_content_meta_tags();
+    ShareaholicPublic::insert_disable_analytics_meta_tag();
+    ShareaholicPublic::insert_script_tag();
   }
 }
 
@@ -150,19 +152,6 @@ function shareaholic_theme() {
   );
 }
 
-
-/**
- * Implements hook_page_alter()
- *
- * Adds certain html tags to the head of the document
- * of public pages before it is rendered by Drupal
- * independent of what is on that page
- *
- */
-function shareaholic_page_alter(&$page) {
-  ShareaholicPublic::insert_disable_analytics_meta_tag();
-  ShareaholicPublic::insert_script_tag();
-}
 
 
 /**
