@@ -40,6 +40,9 @@ abstract class ShareaholicShareCount {
       'google_plus' => array(
         'url' => 'https://clients6.google.com/rpc',
         'method' => 'POST',
+        'headers' => array('Content-Type' => 'application/json'),
+        'body' => NULL,
+        'prepare' => 'google_plus_prepare_request',
         'callback' => 'google_plus_count_callback',
       ),
       'delicious' => array(
@@ -66,6 +69,11 @@ abstract class ShareaholicShareCount {
         'url' => 'http://buttons.reddit.com/button_info.json?url=%s',
         'method' => 'GET',
         'callback' => 'reddit_count_callback',
+      ),
+      'vk' => array(
+        'url' => 'http://vk.com/share.php?act=count&url=%s',
+        'method' => 'GET',
+        'callback' => 'vk_count_callback',
       ),
     );
   }
@@ -120,6 +128,40 @@ abstract class ShareaholicShareCount {
 
 
   /**
+   * A preprocess function to be called necessary to prepare
+   * the request to the service.
+   *
+   * One may customize the headers or body to their liking
+   * before the request is sent. The customization should
+   * update the services config where it will be read by
+   * the get_counts() function
+   *
+   * @param $url The url needed by google_plus to be passed in to the body
+   * @param $config The services configuration object to be updated
+   */
+  public function google_plus_prepare_request($url, &$config) {
+    $post_fields = array(
+      array(
+        'method' => 'pos.plusones.get',
+        'id' => 'p',
+        'params' => array(
+          'nolog' => true,
+          'id' => $url,
+          'source' => 'widget',
+          'userId' => '@viewer',
+          'groupId' => '@self',
+        ),
+        'jsonrpc' => '2.0',
+        'key' => 'p',
+        'apiVersion' => 'v1',
+      )
+    );
+
+    $config['google_plus']['body'] = $post_fields;
+  }
+
+
+  /**
    * Callback function for google plus count API
    * Gets the google plus counts from response
    *
@@ -127,8 +169,11 @@ abstract class ShareaholicShareCount {
    * @return Integer The counts from the API
    */
   public function google_plus_count_callback($response) {
-    // TODO: implement this function
-    return 0;
+    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
+       return 0;
+    }
+    $body = json_decode($response['body'], true);
+    return isset($body[0]['result']['metadata']['globalCounts']['count']) ? intval($body[0]['result']['metadata']['globalCounts']['count']) : 0;
   }
 
 
@@ -210,6 +255,27 @@ abstract class ShareaholicShareCount {
     }
     $body = json_decode($response['body'], true);
     return isset($body['data']['children'][0]['data']['ups']) ? $body['data']['children'][0]['data']['ups'] : 0;
+  }
+
+
+  /**
+   * Callback function for vk count API
+   * Gets the vk counts from response
+   *
+   * @param Array $response The response from calling the API
+   * @return Integer The counts from the API
+   */
+  public function vk_count_callback($response) {
+    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
+      return 0;
+    }
+
+    // This weird API does not return JSON. Just plain text JS. Example:
+    // 'VK.Share.count(0, 3779);'
+    // From documentation, need to just grab the 2nd param: http://vk.com/developers.php?oid=-17680044&p=Share
+    $matches = array();
+    preg_match('/^VK\.Share\.count\(\d, (\d+)\);$/i', $response['body'], $matches);
+    return isset($matches[1]) ? intval($matches[1]) : 0;
   }
 
 

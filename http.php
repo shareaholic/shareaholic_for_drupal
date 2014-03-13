@@ -54,10 +54,10 @@ class ShareaholicHttp {
   private static function send_with_drupal($url, $options, $ignore_error) {
     $request = array();
     $result = array();
-    $request['method'] = isset($option['method']) ? $option['method'] : 'GET';
-    $request['headers'] = isset($option['headers']) ? $option['headers'] : array();
-    $request['max_redirects'] = isset($option['redirection']) ? $option['redirection'] : 5;
-    $request['timeout'] = isset($option['timeout']) ? $option['timeout'] : 15;
+    $request['method'] = isset($options['method']) ? $options['method'] : 'GET';
+    $request['headers'] = isset($options['headers']) ? $options['headers'] : array();
+    $request['max_redirects'] = isset($options['redirection']) ? $options['redirection'] : 5;
+    $request['timeout'] = isset($options['timeout']) ? $options['timeout'] : 15;
 
     if(isset($options['body'])) {
       if(isset($request['headers']['Content-Type']) && $request['headers']['Content-Type'] === 'application/json') {

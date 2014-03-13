@@ -42,9 +42,15 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
         continue;
       }
 
+      if(isset($config[$service]['prepare'])) {
+        $this->$config[$service]['prepare']($this->url, $config);
+      }
+
       $options = array(
         'method' => $config[$service]['method'],
         'timeout' => 2,
+        'headers' => isset($config[$service]['headers']) ? $config[$service]['headers'] : array(),
+        'body' => isset($config[$service]['body']) ? $config[$service]['body'] : NULL,
       );
 
       $result = ShareaholicHttp::send(sprintf($config[$service]['url'], $this->url), $options);
