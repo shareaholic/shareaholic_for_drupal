@@ -72,6 +72,9 @@ class ShareaholicHttp {
     $response = drupal_http_request($url, $request);
 
     if(isset($response->error)) {
+      if(!$ignore_error) {
+        ShareaholicUtilities::log('ShareaholicHttp Error for ' . $url . ' with error ' . $response->error);
+      }
       return false;
     }
 
