@@ -75,6 +75,11 @@ abstract class ShareaholicShareCount {
         'method' => 'GET',
         'callback' => 'vk_count_callback',
       ),
+      'odnoklassniki' => array(
+        'url' => 'http://www.odnoklassniki.ru/dk?st.cmd=extLike&uid=odklcnt0&ref=%s',
+        'method' => 'GET',
+        'callback' => 'odnoklassniki_count_callback',
+      ),
     );
   }
 
@@ -275,6 +280,26 @@ abstract class ShareaholicShareCount {
     // From documentation, need to just grab the 2nd param: http://vk.com/developers.php?oid=-17680044&p=Share
     $matches = array();
     preg_match('/^VK\.Share\.count\(\d, (\d+)\);$/i', $response['body'], $matches);
+    return isset($matches[1]) ? intval($matches[1]) : 0;
+  }
+
+
+  /**
+   * Callback function for odnoklassniki count API
+   * Gets the odnoklassniki counts from response
+   *
+   * @param Array $response The response from calling the API
+   * @return Integer The counts from the API
+   */
+  public function odnoklassniki_count_callback($response) {
+    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
+      return 0;
+    }
+
+    // Another weird API. Similar to vk, extract the 2nd param from the response:
+    // 'ODKL.updateCount('odklcnt0','14198');'
+    $matches = array();
+    preg_match('/^ODKL\.updateCount\(\'odklcnt0\',\'(\d+)\'\);$/i', $response['body'], $matches);
     return isset($matches[1]) ? intval($matches[1]) : 0;
   }
 
