@@ -1,6 +1,7 @@
 <?php
 
 require_once('seq_share_count.php');
+require_once('http.php');
 
 class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
 {
@@ -169,5 +170,17 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
    $this->assertNotNull($config['google_plus']['body'], 'The post body for google plus should not be null');
 
  }
+
+  public function testGetCount() {
+    // test that this function returns the expected API response
+    $share_count = new ShareaholicSeqShareCount($this->url, $this->services);
+    $response = $share_count->get_counts();
+
+    $this->assertNotNull($response, 'The response array should not be null');
+
+    foreach($this->services as $service) {
+      $this->assertNotNull($response[$service], 'The ' . $service . ' count should not be null');
+    }
+  }
 
 }
