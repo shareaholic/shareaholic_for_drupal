@@ -56,41 +56,14 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
       // Create the curl handle
       $curl_handles[$service] = curl_init();
 
-      // set the url to make the curl request
-      curl_setopt($curl_handles[$service], CURLOPT_URL, sprintf($config[$service]['url'], $this->url));
+      // set the curl options to make the request
+      $this->curl_setopts($curl_handles[$service], $config, $service);
 
-      // other necessary settings
-      curl_setopt($curl_handles[$service], CURLOPT_HEADER, 0);
-      curl_setopt($curl_handles[$service], CURLOPT_RETURNTRANSFER, 1);
-
-      // set the timeout
-      curl_setopt($curl_handles[$service], CURLOPT_TIMEOUT, 2);
-
-      // set the http method
-      if($config[$service]['method'] === 'POST') {
-        curl_setopt($curl_handles[$service], CURLOPT_POST, 1);
-      }
-
-      // set the body and headers
-      $headers = isset($config[$service]['headers']) ? $config[$service]['headers'] : array();
-      $body = isset($config[$service]['body']) ? $config[$service]['body'] : NULL;
-
-      if(isset($body)) {
-        if(isset($headers['Content-Type']) && $headers['Content-Type'] === 'application/json') {
-          $data_string = json_encode($body);
-
-          curl_setopt($curl_handles[$service], CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_string))
-          );
-
-          curl_setopt($curl_handles[$service], CURLOPT_POSTFIELDS, $data_string);
-        }
-      }
-
+      // add the handle to curl_multi_handle
       curl_multi_add_handle($multi_handle, $curl_handles[$service]);
     }
 
+    // Run curl_multi only if there are some actual curl handles
     if(count($curl_handles) > 0) {
       // execute the handles
       $running = NULL;
@@ -112,6 +85,46 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
       curl_multi_close($multi_handle);
     }
     return $response;
+  }
+
+  private function curl_setopts($curl_handle, $config, $service) {
+    // set the url to make the curl request
+    curl_setopt($curl_handle, CURLOPT_URL, sprintf($config[$service]['url'], $this->url));
+
+    // other necessary settings:
+    // CURLOPT_HEADER means include header in output, which we do not want
+    // CURLOPT_RETURNTRANSER means return output as string or not
+    curl_setopt($curl_handle, CURLOPT_HEADER, 0);
+    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+
+    // set the timeout
+    curl_setopt($curl_handle, CURLOPT_TIMEOUT, 2);
+
+    // set the http method: default is GET
+    if($config[$service]['method'] === 'POST') {
+      curl_setopt($curl_handle, CURLOPT_POST, 1);
+    }
+
+    // set the body and headers
+    $headers = isset($config[$service]['headers']) ? $config[$service]['headers'] : array();
+    $body = isset($config[$service]['body']) ? $config[$service]['body'] : NULL;
+
+    if(isset($body)) {
+      if(isset($headers['Content-Type']) && $headers['Content-Type'] === 'application/json') {
+        $data_string = json_encode($body);
+
+        curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+          'Content-Type: application/json',
+          'Content-Length: ' . strlen($data_string))
+        );
+
+        curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $data_string);
+      }
+    }
+
+    // set the useragent
+    $useragent = isset($config[$service]['User-Agent']) ? $config[$service]['User-Agent'] : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0';
+    curl_setopt($curl_handle, CURLOPT_USERAGENT, $useragent);
   }
 
 
