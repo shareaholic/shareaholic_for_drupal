@@ -1,8 +1,11 @@
 <?php
 /**
- * Shareaholic Share Count
+ * Shareaholic's Social Share Counts Library
+ *
+ * https://github.com/shareaholic/social-share-counts
  *
  * @package shareaholic
+ * @version 1.0.0.0
  */
 
 /**
@@ -275,7 +278,7 @@ abstract class ShareaholicShareCount {
       return 0;
     }
 
-    // This weird API does not return JSON. Just plain text JS. Example:
+    // This API does not return JSON. Just plain text JS. Example:
     // 'VK.Share.count(0, 3779);'
     // From documentation, need to just grab the 2nd param: http://vk.com/developers.php?oid=-17680044&p=Share
     $matches = array();
@@ -318,6 +321,5 @@ abstract class ShareaholicShareCount {
    * @return Array an associative array of service => counts
    */
   public abstract function get_counts();
-
 
 }

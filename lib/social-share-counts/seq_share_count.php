@@ -3,6 +3,7 @@
  * Shareaholic Sequential Share Count
  *
  * @package shareaholic
+ * @version 1.0.0.0
  */
 
 require_once('share_count.php');
@@ -58,6 +59,4 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
     }
     return $response;
   }
-
-
 }
