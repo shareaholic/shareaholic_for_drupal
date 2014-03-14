@@ -15,7 +15,6 @@ module_load_include('php', 'shareaholic', 'admin');
 module_load_include('php', 'shareaholic', 'public');
 module_load_include('php', 'shareaholic', 'content_manager');
 module_load_include('php', 'shareaholic', 'content_settings');
-module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 // Include files
 module_load_include('php', 'shareaholic', 'includes/node');
@@ -194,26 +193,6 @@ function _prepare_template_form_variables(&$variables, $form_id) {
  * @return String json response of services => share counts
  */
 function shareaholic_share_counts_api() {
-  set_error_handler('shareaholic_custom_error_handler');
-  $url = $_GET['url'];
-  $services = $_GET['services'];
-  $shares = new ShareaholicSeqShareCount($url, $services);
-  $result = $shares->get_counts();
-  header('Content-Type: application/json');
-  echo json_encode($result);
-}
-
-/**
- * Custom error handler
- *
- * @param integer $errno The error level as an integer
- * @param string $errstr The error string
- * @param string $errfile The file where the error occurred
- * @param string $errline The line number where the error occurred
- */
-function shareaholic_custom_error_handler($errno, $errstr, $errfile, $errline) {
-  ShareaholicUtilities::log($errstr);
-  ShareaholicUtilities::log($errfile);
-  ShareaholicUtilities::log($errline);
+  ShareaholicPublic::share_counts_api();
 }
 

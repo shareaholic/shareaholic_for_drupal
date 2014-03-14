@@ -4,7 +4,6 @@
  * A class of static helper functions
  *
  */
-require_once(SHAREAHOLIC_DIR . '/http.php');
 
 class ShareaholicUtilities {
   const MODULE_VERSION = '7.x-3.2';
