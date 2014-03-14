@@ -38,7 +38,6 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
       $service = $this->services[$i];
 
       if(!isset($config[$service])) {
-        $response[$service] = 0;
         continue;
       }
 
@@ -48,7 +47,7 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
 
       $options = array(
         'method' => $config[$service]['method'],
-        'timeout' => 2,
+        'timeout' => 1,
         'headers' => isset($config[$service]['headers']) ? $config[$service]['headers'] : array(),
         'body' => isset($config[$service]['body']) ? $config[$service]['body'] : NULL,
       );

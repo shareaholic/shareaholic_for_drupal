@@ -69,6 +69,11 @@ class ShareaholicHttp {
       $request['body'] = NULL;
     }
 
+    // set the user agent header if not set
+    if(!isset($request['headers']['User-Agent'])) {
+      $request['headers']['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0';
+    }
+
     $response = drupal_http_request($url, $request);
 
     if(isset($response->error)) {
