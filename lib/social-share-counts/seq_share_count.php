@@ -5,7 +5,7 @@
  * @package shareaholic
  */
 
-require_once('share_counts.php');
+require_once('share_count.php');
 
 /**
  * A class that implements ShareaholicShareCounts

@@ -15,7 +15,7 @@ module_load_include('php', 'shareaholic', 'admin');
 module_load_include('php', 'shareaholic', 'public');
 module_load_include('php', 'shareaholic', 'content_manager');
 module_load_include('php', 'shareaholic', 'content_settings');
-module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_counts');
+module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 // Include files
 module_load_include('php', 'shareaholic', 'includes/node');
