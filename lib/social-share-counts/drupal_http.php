@@ -91,5 +91,3 @@ class ShareaholicHttp {
     return $result;
   }
 }
-
-?>
