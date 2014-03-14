@@ -95,11 +95,14 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
     // other necessary settings:
     // CURLOPT_HEADER means include header in output, which we do not want
     // CURLOPT_RETURNTRANSER means return output as string or not
-    curl_setopt($curl_handle, CURLOPT_HEADER, 0);
-    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
-
-    // set the timeout
-    curl_setopt($curl_handle, CURLOPT_TIMEOUT, 2);
+    curl_setopt_array($curl_handle, array(
+      CURLOPT_HEADER => 0,
+      CURLOPT_RETURNTRANSFER => 1,
+      CURLOPT_TIMEOUT => 2,
+      CURLOPT_SSL_VERIFYPEER => false,
+      CURLOPT_SSL_VERIFYHOST => false,
+      CURLOPT_FRESH_CONNECT => true,
+    ));
 
     // set the http method: default is GET
     if($config[$service]['method'] === 'POST') {
