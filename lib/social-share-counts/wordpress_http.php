@@ -50,45 +50,41 @@ class ShareaholicHttp {
    * @return mixed It returns an associative array of name value pairs or false if there was an error.
    */
   public static function send($url, $options = array(), $ignore_error = false) {
-    return self::send_with_drupal($url, $options, $ignore_error);
+    return self::send_with_wp($url, $options, $ignore_error);
   }
 
-  private static function send_with_drupal($url, $options, $ignore_error) {
+  private static function send_with_wp($url, $options, $ignore_error) {
     $request = array();
     $result = array();
     $request['method'] = isset($options['method']) ? $options['method'] : 'GET';
     $request['headers'] = isset($options['headers']) ? $options['headers'] : array();
-    $request['max_redirects'] = isset($options['redirection']) ? $options['redirection'] : 5;
+    $request['redirection'] = isset($options['redirection']) ? $options['redirection'] : 5;
     $request['timeout'] = isset($options['timeout']) ? $options['timeout'] : 15;
-    $request['headers']['User-Agent'] = isset($options['user-agent']) ? $options['user-agent'] : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0';
+    $request['user-agent'] = isset($options['user-agent']) ? $options['user-agent'] : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0';
 
     if(isset($options['body'])) {
       if(isset($request['headers']['Content-Type']) && $request['headers']['Content-Type'] === 'application/json') {
-        $request['data'] = json_encode($options['body']);
+        $request['body'] = json_encode($options['body']);
       } else {
-        $request['data'] = http_build_query($options['body']);
+        $request['body'] = $options['body'];
       }
     } else {
       $request['body'] = NULL;
     }
+    $request['sslverify'] = false;
 
-    $response = drupal_http_request($url, $request);
+    $response = wp_remote_request($url, $request);
 
-    if(isset($response->error)) {
-      if(!$ignore_error) {
-        ShareaholicUtilities::log('ShareaholicHttp Error for ' . $url . ' with error ' . $response->error);
+    if (is_wp_error($response)) {
+      $error_message = $response->get_error_message();
+      ShareaholicUtilities::log($error_message);
+      if (!$ignore_error) {
+        ShareaholicUtilities::log_event('CurlRequestFailure', array('error_message' => $error_message, 'url' => $url));
       }
       return false;
     }
 
-    $result['headers'] = $response->headers;
-    $result['body'] = $response->data;
-    $result['response'] = array(
-      'code' => $response->code,
-      'message' => $response->status_message,
-    );
-
-    return $result;
+    return $response;
   }
 }
 
