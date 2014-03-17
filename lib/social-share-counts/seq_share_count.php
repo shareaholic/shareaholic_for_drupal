@@ -34,6 +34,7 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
     $services_length = count($this->services);
     $config = $this->get_services_config();
     $response = array();
+    $response['status'] = 200;
 
     for($i = 0; $i < $services_length; $i++) {
       $service = $this->services[$i];
@@ -54,8 +55,11 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
       );
 
       $result = ShareaholicHttp::send(sprintf($config[$service]['url'], $this->url), $options);
+      if(!$result) {
+        $response['status'] = 500;
+      }
       $callback = $config[$service]['callback'];
-      $response[$service] = $this->$callback($result);
+      $response['data'][$service] = $this->$callback($result);
     }
     return $response;
   }

@@ -179,7 +179,7 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
     $this->assertNotNull($response, 'The response array should not be null');
 
     foreach($this->services as $service) {
-      $this->assertNotNull($response[$service], 'The ' . $service . ' count should not be null');
+      $this->assertNotNull($response['data'][$service], 'The ' . $service . ' count should not be null');
     }
   }
 

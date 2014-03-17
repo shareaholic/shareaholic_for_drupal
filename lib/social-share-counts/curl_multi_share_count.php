@@ -34,6 +34,7 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
     $services_length = count($this->services);
     $config = $this->get_services_config();
     $response = array();
+    $response['status'] = 200;
 
     // array of curl handles
     $curl_handles = array();
@@ -74,6 +75,9 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
 
       // handle the responses
       foreach($curl_handles as $service => $handle) {
+        if(curl_errno($handle)) {
+          $response['status'] = 500;
+        }
         $result = array(
           'body' => curl_multi_getcontent($handle),
           'response' => array(
@@ -81,7 +85,7 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
           ),
         );
         $callback = $config[$service]['callback'];
-        $response[$service] = $this->$callback($result);
+        $response['data'][$service] = $this->$callback($result);
       }
       curl_multi_close($multi_handle);
     }
