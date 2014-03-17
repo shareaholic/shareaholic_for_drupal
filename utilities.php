@@ -4,6 +4,7 @@
  * A class of static helper functions
  *
  */
+
 class ShareaholicUtilities {
   const MODULE_VERSION = '7.x-3.2';
   const URL = 'http://spreadaholic.com:8080';

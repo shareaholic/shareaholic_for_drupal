@@ -1,0 +1,49 @@
+<?php
+/**
+ * @file
+ * Tests for the shareaholic http class
+ */
+class ShareaholicHttpTestCase extends DrupalWebTestCase {
+
+  public static function getInfo(){
+    return array(
+      'name' => 'ShareaholicHttp class functionality',
+      'description' => 'Tests the functionality of the ShareholicHttp class',
+      'group' => 'Shareaholic',
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('shareaholic');
+  }
+
+
+  public function testSend() {
+    $url = 'https://www.google.com';
+    $options = array(
+      'method' => 'GET'
+    );
+
+    $result = ShareaholicHttp::send($url, $options);
+
+    $this->assertTrue($result != false, 'The request should not return false');
+  }
+
+  public function testSendWithTwitterAPI() {
+    $api = 'http://cdn.api.twitter.com/1/urls/count.json?url=%s';
+    $url = sprintf($api, urlencode('https://blog.shareaholic.com'));
+    $options = array(
+      'method' => 'GET'
+    );
+    $result = ShareaholicHttp::send($url, $options);
+    $this->assertNotNull($result, 'The result should not be null');
+    $this->assertNotNull($result['headers'], 'The headers is not null');
+    $this->assertNotNull($result['body'], 'The body is not null');
+    $json = json_decode($result['body'], true);
+    $this->assertNotNull($json, 'The body should be valid json');
+    $this->assertNotNull($json['count'], 'The count should not be null');
+    $this->assertTrue($json['count'] > 0, 'The count should be greater than zero');
+  }
+
+
+}

@@ -5,8 +5,8 @@
  * Allows site owner to add share buttons/recommendations on their website
  */
 
-define('SHAREAHOLIC_MODULE_PATH', drupal_get_path('module', 'shareaholic'));
-define('SHAREAHOLIC_ASSET_DIR', SHAREAHOLIC_MODULE_PATH . '/assets/');
+define('SHAREAHOLIC_DIR', drupal_get_path('module', 'shareaholic'));
+define('SHAREAHOLIC_ASSET_DIR', SHAREAHOLIC_DIR . '/assets/');
 define('SHAREAHOLIC_DEBUG', getenv('SHAREAHOLIC_DEBUG'));
 
 // Required global files
@@ -36,6 +36,8 @@ function shareaholic_init() {
   ShareaholicPublic::set_xua_compatible_header();
   if(!ShareaholicUtilities::is_admin_page()) {
     ShareaholicPublic::insert_content_meta_tags();
+    ShareaholicPublic::insert_disable_analytics_meta_tag();
+    ShareaholicPublic::insert_script_tag();
   }
 }
 
@@ -79,6 +81,14 @@ function shareaholic_menu() {
     'type' => MENU_NORMAL_ITEM,
     'weight' => 1
   );
+
+  // Path for the shareaholic share count API
+  $menu['shareaholic/api/share_counts/v1'] = array(
+    'page callback' => 'shareaholic_share_counts_api',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
   return $menu;
 }
 
@@ -113,48 +123,35 @@ function shareaholic_admin_settings() {
 function shareaholic_theme() {
   return array(
     'shareaholic_admin_advanced' => array(
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_admin_advanced',
     ),
     'shareaholic_admin_settings' => array(
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_admin_settings',
     ),
     'shareaholic_tos_modal' => array(
       'render element' => 'form',
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_tos_modal',
     ),
     'shareaholic_failure_modal' => array(
       'render element' => 'form',
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_failure_modal',
     ),
     'shareaholic_apps_configuration' => array(
       'render element' => 'form',
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_apps_configuration'
     ),
     'shareaholic_verify_api_key' => array(
-      'path' => SHAREAHOLIC_MODULE_PATH . '/templates',
+      'path' => SHAREAHOLIC_DIR . '/templates',
       'template' => 'shareaholic_verify_api_key',
     ),
   );
 }
 
-
-/**
- * Implements hook_page_alter()
- *
- * Adds certain html tags to the head of the document
- * of public pages before it is rendered by Drupal
- * independent of what is on that page
- *
- */
-function shareaholic_page_alter(&$page) {
-  ShareaholicPublic::insert_disable_analytics_meta_tag();
-  ShareaholicPublic::insert_script_tag();
-}
 
 
 /**
@@ -186,5 +183,16 @@ function _prepare_template_form_variables(&$variables, $form_id) {
     }
   }
   $variables[$form_id]['hidden'] = implode($hidden);
+}
+
+
+/**
+ * Returns the share counts for the given url and services
+ * Requires the url and services to be passed into GET params
+ *
+ * @return String json response of services => share counts
+ */
+function shareaholic_share_counts_api() {
+  ShareaholicPublic::share_counts_api();
 }
 
