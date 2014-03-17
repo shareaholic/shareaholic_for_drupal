@@ -12,6 +12,10 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.7 =
+* Removing packaging info from shareaholic.info
+* Adding social shares API library with endpoint
+
 = 7.x-3.6 =
 * Bug fix: incorrect use of l() function: remove the slash
 
