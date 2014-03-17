@@ -8,4 +8,3 @@ files[] = tests/utilities.test
 files[] = tests/admin.test
 files[] = tests/public.test
 files[] = tests/http.test
-
