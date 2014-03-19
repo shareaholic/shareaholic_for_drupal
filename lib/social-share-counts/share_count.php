@@ -23,7 +23,7 @@ abstract class ShareaholicShareCount {
     $this->services = $services;
   }
 
-  public function get_services_config() {
+  public static function get_services_config() {
     return array(
       'facebook' => array(
         'url' => 'https://api.facebook.com/method/links.getStats?format=json&urls=%s',
@@ -86,17 +86,30 @@ abstract class ShareaholicShareCount {
     );
   }
 
+  /**
+   * Check if calling the service returned any type of error
+   *
+   * @param object $response A response object
+   * @return bool true if it has an error or false if it does not
+   */
+  public function has_http_error($response) {
+    if(!$response || !isset($response['response']['code']) || !preg_match('/20*/', $response['response']['code']) || !isset($response['body'])) {
+      return true;
+    }
+    return false;
+  }
+
 
   /**
    * Callback function for facebook count API
    * Gets the facebook counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function facebook_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body[0]['total_count']) ? $body[0]['total_count'] : 0;
@@ -108,11 +121,11 @@ abstract class ShareaholicShareCount {
    * Gets the twitter counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function twitter_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body['count']) ? $body['count'] : 0;
@@ -124,11 +137,11 @@ abstract class ShareaholicShareCount {
    * Gets the linkedin counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function linkedin_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body['count']) ? $body['count'] : 0;
@@ -174,11 +187,11 @@ abstract class ShareaholicShareCount {
    * Gets the google plus counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function google_plus_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-       return 0;
+    if($this->has_http_error($response)) {
+       return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body[0]['result']['metadata']['globalCounts']['count']) ? intval($body[0]['result']['metadata']['globalCounts']['count']) : 0;
@@ -190,11 +203,11 @@ abstract class ShareaholicShareCount {
    * Gets the delicious counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function delicious_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body[0]['total_posts']) ? $body[0]['total_posts'] : 0;
@@ -206,11 +219,11 @@ abstract class ShareaholicShareCount {
    * Gets the pinterest counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function pinterest_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $response['body'] = substr($response['body'], 2, strlen($response['body']) - 3);
     $body = json_decode($response['body'], true);
@@ -223,11 +236,11 @@ abstract class ShareaholicShareCount {
    * Gets the buffer share counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function buffer_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body['shares']) ? $body['shares'] : 0;
@@ -239,11 +252,11 @@ abstract class ShareaholicShareCount {
    * Gets the stumbleupon counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function stumbleupon_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body['result']['views']) ? $body['result']['views'] : 0;
@@ -255,11 +268,11 @@ abstract class ShareaholicShareCount {
    * Gets the reddit counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function reddit_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
     $body = json_decode($response['body'], true);
     return isset($body['data']['children'][0]['data']['ups']) ? $body['data']['children'][0]['data']['ups'] : 0;
@@ -271,11 +284,11 @@ abstract class ShareaholicShareCount {
    * Gets the vk counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function vk_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
 
     // This API does not return JSON. Just plain text JS. Example:
@@ -292,11 +305,11 @@ abstract class ShareaholicShareCount {
    * Gets the odnoklassniki counts from response
    *
    * @param Array $response The response from calling the API
-   * @return Integer The counts from the API
+   * @return mixed The counts from the API or false if error
    */
   public function odnoklassniki_count_callback($response) {
-    if(!$response || !preg_match('/20*/', $response['response']['code'])) {
-      return 0;
+    if($this->has_http_error($response)) {
+      return false;
     }
 
     // Another weird API. Similar to vk, extract the 2nd param from the response:

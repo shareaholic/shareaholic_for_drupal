@@ -7,7 +7,7 @@ class ShareaholicCurlMultiShareCountsTest extends PHPUnit_Framework_TestCase
   public function setUp() {
     $this->url = 'https://blog.shareaholic.com';
     $counts = new ShareaholicCurlMultiShareCount($this->url, array());
-    $this->services = array_keys($counts->get_services_config());
+    $this->services = array_keys(ShareaholicCurlMultiShareCount::get_services_config());
 
     // all callbacks take a predefined response structure
     $this->response = array(

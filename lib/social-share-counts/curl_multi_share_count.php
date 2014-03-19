@@ -32,7 +32,7 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
    */
   public function get_counts() {
     $services_length = count($this->services);
-    $config = $this->get_services_config();
+    $config = self::get_services_config();
     $response = array();
     $response['status'] = 200;
 
@@ -85,7 +85,10 @@ class ShareaholicCurlMultiShareCount extends ShareaholicShareCount {
           ),
         );
         $callback = $config[$service]['callback'];
-        $response['data'][$service] = $this->$callback($result);
+        $counts = $this->$callback($result);
+        if(is_numeric($counts)) {
+          $response['data'][$service] = $counts;
+        }
       }
       curl_multi_close($multi_handle);
     }
