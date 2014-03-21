@@ -12,6 +12,15 @@ module_load_include('php', 'shareaholic', 'content_manager');
 module_load_include('php', 'shareaholic', 'content_settings');
 
 /**
+ * Implements hook_install().
+ * When the user installs the module,
+ * log the event
+ */
+function shareaholic_install() {
+  ShareaholicUtilities::log_event('Install_Fresh');
+}
+
+/**
  * Implements hook_uninstall().
  * When the user uninstalls the module,
  * delete all shareaholic settings
@@ -19,18 +28,29 @@ module_load_include('php', 'shareaholic', 'content_settings');
  */
 function shareaholic_uninstall() {
   ShareaholicUtilities::destroy_settings();
+  ShareaholicUtilities::log_event('Uninstall');
 }
 
 /**
  * Implements hook_enable().
  * When the module is enabled, call CM single domain worker
- *
+ * and log the enable event
  */
 function shareaholic_enable() {
   if(ShareaholicUtilities::has_accepted_terms_of_service() &&
       ShareaholicUtilities::get_option('api_key')) {
     ShareaholicContentManager::single_domain_worker();
   }
+  ShareaholicUtilities::log_event('Activate');
+}
+
+/**
+ * Implements hook_disable().
+ * When the module is disabled,
+ * and log the enable event
+ */
+function shareaholic_disable() {
+  ShareaholicUtilities::log_event('Deactivate');
 }
 
 /**

@@ -29,6 +29,7 @@ class ShareaholicUtilities {
    */
   public static function accept_terms_of_service() {
     variable_set('shareaholic_has_accepted_tos', true);
+    ShareaholicUtilities::log_event('AcceptedToS');
   }
 
 
