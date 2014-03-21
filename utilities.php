@@ -5,8 +5,10 @@
  *
  */
 
+module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http');
+
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.2';
+  const MODULE_VERSION = '7.x-3.8';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
@@ -315,7 +317,7 @@ class ShareaholicUtilities {
    */
   public static function log($message) {
     if(SHAREAHOLIC_DEBUG) {
-      watchdog('Shareaholic', $message);
+      watchdog('Shareaholic', print_r($message, true));
     }
   }
 
@@ -575,6 +577,61 @@ class ShareaholicUtilities {
     } else {
       return false;
     }
+  }
+
+
+  /**
+   * This is a wrapper for the Event API
+   *
+   * @param string $event_name    the name of the event
+   * @param array  $extra_params  any extra data points to be included
+   */
+  public static function log_event($event_name = 'Default', $extra_params = false) {
+
+    $event_metadata = array(
+  	  'plugin_version' => self::get_version(),
+  	  'api_key' => self::get_option('api_key'),
+  	  'domain' => $GLOBALS['base_url'],
+  	  'language' => $GLOBALS['language']->language,
+  	  'stats' => array (
+  		  'posts_total' => 0,
+  		  'pages_total' => 0,
+  		  'comments_total' => 0,
+  		  'users_total' => self::total_users(),
+      ),
+      'diagnostics' => array (
+  		  'php_version' => phpversion(),
+  		  'drupal_version' => 7,
+  		  'theme' => $GLOBALS['theme'],
+  		  'active_plugins' => module_list(),
+  	  ),
+  	  'features' => array (
+  		  'share_buttons' => self::get_option('share_buttons'),
+  		  'recommendations' => self::get_option('recommendations'),
+  	  )
+    );
+
+    if ($extra_params) {
+  	  $event_metadata = array_merge($event_metadata, $extra_params);
+    }
+
+  	$event_api_url = self::API_URL . '/api/events';
+  	$event_params = array('name' => "Drupal:".$event_name, 'data' => json_encode($event_metadata) );
+  	$options = array(
+  	  'method' => 'POST',
+  	  'headers' => array('Content-Type' => 'application/json'),
+  	  'body' => $event_params,
+  	);
+    ShareaholicHttp::send($event_api_url, $options, true);
+  }
+
+  /**
+   * Get the total number of users for this site
+   *
+   * @return integer The total number of users
+   */
+  public static function total_users() {
+    return db_query("SELECT count(uid) FROM {users}")->fetchField();
   }
 
 

@@ -54,6 +54,10 @@ class ShareaholicHttp {
   }
 
   private static function send_with_drupal($url, $options, $ignore_error) {
+    ShareaholicUtilities::log($url);
+    ShareaholicUtilities::log($options);
+    ShareaholicUtilities::log('-----------------');
+
     $request = array();
     $result = array();
     $request['method'] = isset($options['method']) ? $options['method'] : 'GET';
@@ -75,8 +79,9 @@ class ShareaholicHttp {
     $response = drupal_http_request($url, $request);
 
     if(isset($response->error)) {
+      ShareaholicUtilities::log($response->error);
       if(!$ignore_error) {
-        ShareaholicUtilities::log('ShareaholicHttp Error for ' . $url . ' with error ' . $response->error);
+        ShareaholicUtilities::log_event('CurlRequestFailure', array('error_message' => $response->error, 'url' => $url));
       }
       return false;
     }
