@@ -26,23 +26,27 @@ abstract class ShareaholicShareCount {
   public static function get_services_config() {
     return array(
       'facebook' => array(
-        'url' => 'https://api.facebook.com/method/links.getStats?format=json&urls=%s',
+        'url' => 'https://graph.facebook.com/fql?q=SELECT%20url,normalized_url,total_count%20FROM%20link_stat%20WHERE%20url%20=%20"%s"',
         'method' => 'GET',
+        'timeout' => 3,  // in number of seconds
         'callback' => 'facebook_count_callback',
       ),
       'twitter' => array(
         'url' => 'http://cdn.api.twitter.com/1/urls/count.json?url=%s',
         'method' => 'GET',
+        'timeout' => 3,
         'callback' => 'twitter_count_callback',
       ),
       'linkedin' => array(
         'url' => 'http://www.linkedin.com/countserv/count/share?format=json&url=%s',
         'method' => 'GET',
+        'timeout' => 3,
         'callback' => 'linkedin_count_callback',
       ),
       'google_plus' => array(
         'url' => 'https://clients6.google.com/rpc',
         'method' => 'POST',
+        'timeout' => 1,
         'headers' => array('Content-Type' => 'application/json'),
         'body' => NULL,
         'prepare' => 'google_plus_prepare_request',
@@ -51,36 +55,43 @@ abstract class ShareaholicShareCount {
       'delicious' => array(
         'url' => 'http://feeds.delicious.com/v2/json/urlinfo/data?url=%s',
         'method' => 'GET',
+        'timeout' => 3,
         'callback' => 'delicious_count_callback',
       ),
       'pinterest' => array(
         'url' => 'http://api.pinterest.com/v1/urls/count.json?url=%s&callback=f',
         'method' => 'GET',
+        'timeout' => 3,
         'callback' => 'pinterest_count_callback',
       ),
       'buffer' => array(
         'url' => 'https://api.bufferapp.com/1/links/shares.json?url=%s',
         'method' => 'GET',
+        'timeout' => 1,
         'callback' => 'buffer_count_callback',
       ),
       'stumbleupon' => array(
         'url' => 'http://www.stumbleupon.com/services/1.01/badge.getinfo?url=%s',
         'method' => 'GET',
+        'timeout' => 1,
         'callback' => 'stumbleupon_count_callback',
       ),
       'reddit' => array(
         'url' => 'http://buttons.reddit.com/button_info.json?url=%s',
         'method' => 'GET',
+        'timeout' => 1,
         'callback' => 'reddit_count_callback',
       ),
       'vk' => array(
         'url' => 'http://vk.com/share.php?act=count&url=%s',
         'method' => 'GET',
+        'timeout' => 1,
         'callback' => 'vk_count_callback',
       ),
       'odnoklassniki' => array(
         'url' => 'http://www.odnoklassniki.ru/dk?st.cmd=extLike&uid=odklcnt0&ref=%s',
         'method' => 'GET',
+        'timeout' => 1,
         'callback' => 'odnoklassniki_count_callback',
       ),
     );
@@ -112,7 +123,7 @@ abstract class ShareaholicShareCount {
       return false;
     }
     $body = json_decode($response['body'], true);
-    return isset($body[0]['total_count']) ? $body[0]['total_count'] : 0;
+    return isset($body['data'][0]['total_count']) ? $body['data'][0]['total_count'] : 0;
   }
 
 

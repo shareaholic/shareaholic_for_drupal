@@ -79,7 +79,7 @@ class ShareaholicHttp {
       $error_message = $response->get_error_message();
       ShareaholicUtilities::log($error_message);
       if (!$ignore_error) {
-        ShareaholicUtilities::log_event('CurlRequestFailure', array('error_message' => $error_message, 'url' => $url));
+        ShareaholicUtilities::log_event('HttpRequestFailure', array('error_message' => $error_message, 'url' => $url));
       }
       return false;
     }

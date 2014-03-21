@@ -54,7 +54,7 @@ class ShareaholicSeqShareCount extends ShareaholicShareCount {
         'body' => isset($config[$service]['body']) ? $config[$service]['body'] : NULL,
       );
 
-      $result = ShareaholicHttp::send(sprintf($config[$service]['url'], $this->url), $options);
+      $result = ShareaholicHttp::send(str_replace('%s', $this->url, $config[$service]['url']), $options);
       if(!$result) {
         $response['status'] = 500;
       }
