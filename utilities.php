@@ -593,12 +593,7 @@ class ShareaholicUtilities {
   	  'api_key' => self::get_option('api_key'),
   	  'domain' => $GLOBALS['base_url'],
   	  'language' => $GLOBALS['language']->language,
-  	  'stats' => array (
-  		  'posts_total' => 0,
-  		  'pages_total' => 0,
-  		  'comments_total' => 0,
-  		  'users_total' => self::total_users(),
-      ),
+  	  'stats' => self::get_stats(),
       'diagnostics' => array (
   		  'php_version' => phpversion(),
   		  'drupal_version' => 7,
@@ -632,6 +627,38 @@ class ShareaholicUtilities {
    */
   public static function total_users() {
     return db_query("SELECT count(uid) FROM {users}")->fetchField();
+  }
+
+
+  /**
+   * Get the total number of comments for this site
+   *
+   * @return integer The total number of comments
+   */
+  public static function total_comments() {
+    return db_query("SELECT count(cid) FROM {comment}")->fetchField();
+  }
+
+  /**
+   * Get the stats for this website
+   * Stats include: total number of pages by type, total comments, total users
+   *
+   * @return array an associative array of stats => counts
+   */
+  public static function get_stats() {
+    $stats = array();
+    // Query the database for content types and add to stats
+    $result = db_query("SELECT type, count(*) as count FROM {node} GROUP BY type");
+    foreach ($result as $record) {
+      $stats[$record->type . '_total'] = $record->count;
+    }
+
+    // Get the total users
+    $stats['users_total'] = self::total_users();
+
+    // Get the total comments
+    $stats['comments_total'] = self::total_comments();
+    return $stats;
   }
 
 
