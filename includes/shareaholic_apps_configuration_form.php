@@ -65,6 +65,7 @@
       }
     }
     ShareaholicUtilities::set_settings($settings);
+    ShareaholicUtilities::log_event('UpdatedSettings');
     drupal_set_message(t('Shareaholic Settings Saved'), 'status');
   }
 
