@@ -115,7 +115,7 @@ DOC;
    */
   public static function update_check() {
     $version = ShareaholicUtilities::get_option('version');
-    if (is_string($version) && $version != ShareaholicUtilities::get_version()) {
+    if (ShareaholicUtilities::get_option('api_key') && $version != ShareaholicUtilities::get_version()) {
       ShareaholicUtilities::set_version(ShareaholicUtilities::get_version());
       ShareaholicUtilities::log_event('Upgrade', array ('previous_plugin_version' => $version));
     }

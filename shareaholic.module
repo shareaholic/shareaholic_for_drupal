@@ -100,7 +100,7 @@ function shareaholic_menu() {
  */
 function shareaholic_admin_advanced() {
   // check for module update
-  ShareaholicUtilities::update_check();
+  ShareaholicAdmin::update_check();
   return theme('shareaholic_admin_advanced');
 }
 
@@ -111,7 +111,7 @@ function shareaholic_admin_advanced() {
  */
 function shareaholic_admin_settings() {
   // check for module update
-  ShareaholicUtilities::update_check();
+  ShareaholicAdmin::update_check();
   return theme('shareaholic_admin_settings');
 }
 

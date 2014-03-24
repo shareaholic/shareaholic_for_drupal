@@ -318,7 +318,7 @@ class ShareaholicUtilities {
    *
    */
   public static function log($message) {
-    if(SHAREAHOLIC_DEBUG) {
+    if(defined('SHAREAHOLIC_DEBUG') && SHAREAHOLIC_DEBUG) {
       watchdog('Shareaholic', print_r($message, true));
     }
   }
