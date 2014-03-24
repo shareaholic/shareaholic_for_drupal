@@ -281,7 +281,7 @@ class ShareaholicUtilities {
       ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
       ShareaholicContentManager::single_domain_worker();
     } else {
-      self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
+      ShareaholicUtilities::log_event('FailedToCreateApiKey', array('reason' => 'no location name ids the response was: ' . $response['data']));
     }
   }
 
@@ -292,21 +292,21 @@ class ShareaholicUtilities {
    */
   public static function has_bad_response($response, $type, $json_parse = FALSE) {
     if(!$response) {
-      self::log($type . ': There was no response');
+      ShareaholicUtilities::log_event($type, array('reason' => 'there was no response'));
       return true;
     }
     $response = (array) $response;
     if(isset($response['error'])) {
       $error_message = print_r($response['error'], true);
-      self::log($type . ': There was an error: ' . $error_message);
+      ShareaholicUtilities::log_event($type, array('reason' => 'there was an error: ' . $error_message));
       return true;
     }
-    if(!($response['code'] >= 200 && $response['code'] < 210)) {
-      self::log($type . ': The server responded with code ' . $response['code']);
+    if(!preg_match('/20*/', $response['code'])) {
+      ShareaholicUtilities::log_event($type, array('reason' => 'the server responded with code ' . $response['code']));
       return true;
     }
     if($json_parse && json_decode($response['data']) === NULL) {
-      self::log($type . ': Could not parse JSON. The response was: ' . $response['data']);
+      ShareaholicUtilities::log_event($type, array('reason' => 'could not parse JSON. The response was: ' . $response['data']));
       return true;
     }
     return false;
