@@ -241,6 +241,7 @@ class ShareaholicUtilities {
     $response = (array) $response;
     $json_response = json_decode($response['data'], true);
     self::update_options(array(
+      'version' => self::get_version(),
       'api_key' => $json_response['api_key'],
       'verification_key' => $verification_key,
       'location_name_ids' => $json_response['location_name_ids']
@@ -385,6 +386,13 @@ class ShareaholicUtilities {
    */
   public static function get_version() {
     return self::MODULE_VERSION;
+  }
+
+  /**
+   * Sets the current version of this module in the database
+   */
+  public static function set_version($version) {
+    self::update_options(array('version' => $version));
   }
 
   /**

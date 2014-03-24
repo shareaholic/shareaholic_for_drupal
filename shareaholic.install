@@ -18,6 +18,7 @@ module_load_include('php', 'shareaholic', 'content_settings');
  */
 function shareaholic_install() {
   ShareaholicUtilities::log_event('Install_Fresh');
+  ShareaholicUtilities::set_version(ShareaholicUtilities::get_version());
 }
 
 /**
