@@ -19,6 +19,10 @@ module_load_include('php', 'shareaholic', 'content_settings');
 function shareaholic_install() {
   ShareaholicUtilities::log_event('Install_Fresh');
   ShareaholicUtilities::set_version(ShareaholicUtilities::get_version());
+  // If they already accepted ToS, then get or create api key
+  if (ShareaholicUtilities::has_accepted_terms_of_service()) {
+    ShareaholicUtilities::get_or_create_api_key();
+  }
 }
 
 /**

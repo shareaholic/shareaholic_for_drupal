@@ -605,7 +605,7 @@ class ShareaholicUtilities {
   	  'stats' => self::get_stats(),
       'diagnostics' => array (
   		  'php_version' => phpversion(),
-  		  'drupal_version' => 7,
+  		  'drupal_version' => self::get_drupal_version(),
   		  'theme' => $GLOBALS['theme'],
   		  'active_plugins' => module_list(),
   	  ),
@@ -668,6 +668,16 @@ class ShareaholicUtilities {
     // Get the total comments
     $stats['comments_total'] = self::total_comments();
     return $stats;
+  }
+
+  /**
+   * Get the drupal version via VERSION constant if it exists
+   */
+  public static function get_drupal_version() {
+    if (defined('VERSION')) {
+      return VERSION;
+    }
+    return '7';
   }
 
 
