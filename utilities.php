@@ -603,7 +603,7 @@ class ShareaholicUtilities {
       'diagnostics' => array (
   		  'php_version' => phpversion(),
   		  'drupal_version' => self::get_drupal_version(),
-  		  'theme' => $GLOBALS['theme'],
+  		  'theme' => variable_get('theme_default', $GLOBALS['theme']),
   		  'active_plugins' => module_list(),
   	  ),
   	  'features' => array (
