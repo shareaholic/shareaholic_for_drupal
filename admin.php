@@ -109,5 +109,17 @@ DOC;
     }
   }
 
+  /**
+   * Sends an event when the user has updated
+   * the Drupal module
+   */
+  public static function update_check() {
+    $version = ShareaholicUtilities::get_option('version');
+    if (ShareaholicUtilities::get_option('api_key') && $version != ShareaholicUtilities::get_version()) {
+      ShareaholicUtilities::set_version(ShareaholicUtilities::get_version());
+      ShareaholicUtilities::log_event('Upgrade', array ('previous_plugin_version' => $version));
+    }
+  }
+
 }
 

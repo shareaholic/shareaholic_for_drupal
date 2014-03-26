@@ -5,8 +5,10 @@
  *
  */
 
+module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http');
+
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.2';
+  const MODULE_VERSION = '7.x-3.8';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
@@ -27,6 +29,7 @@ class ShareaholicUtilities {
    */
   public static function accept_terms_of_service() {
     variable_set('shareaholic_has_accepted_tos', true);
+    ShareaholicUtilities::log_event('AcceptedToS');
   }
 
 
@@ -238,6 +241,7 @@ class ShareaholicUtilities {
     $response = (array) $response;
     $json_response = json_decode($response['data'], true);
     self::update_options(array(
+      'version' => self::get_version(),
       'api_key' => $json_response['api_key'],
       'verification_key' => $verification_key,
       'location_name_ids' => $json_response['location_name_ids']
@@ -278,7 +282,7 @@ class ShareaholicUtilities {
       ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
       ShareaholicContentManager::single_domain_worker();
     } else {
-      self::log('FailedToCreateApiKey: no location name ids the response was: ' . $response['data']);
+      ShareaholicUtilities::log_event('FailedToCreateApiKey', array('reason' => 'no location name ids the response was: ' . $response['data']));
     }
   }
 
@@ -289,21 +293,21 @@ class ShareaholicUtilities {
    */
   public static function has_bad_response($response, $type, $json_parse = FALSE) {
     if(!$response) {
-      self::log($type . ': There was no response');
+      ShareaholicUtilities::log_event($type, array('reason' => 'there was no response'));
       return true;
     }
     $response = (array) $response;
     if(isset($response['error'])) {
       $error_message = print_r($response['error'], true);
-      self::log($type . ': There was an error: ' . $error_message);
+      ShareaholicUtilities::log_event($type, array('reason' => 'there was an error: ' . $error_message));
       return true;
     }
-    if(!($response['code'] >= 200 && $response['code'] < 210)) {
-      self::log($type . ': The server responded with code ' . $response['code']);
+    if(!preg_match('/20*/', $response['code'])) {
+      ShareaholicUtilities::log_event($type, array('reason' => 'the server responded with code ' . $response['code']));
       return true;
     }
     if($json_parse && json_decode($response['data']) === NULL) {
-      self::log($type . ': Could not parse JSON. The response was: ' . $response['data']);
+      ShareaholicUtilities::log_event($type, array('reason' => 'could not parse JSON. The response was: ' . $response['data']));
       return true;
     }
     return false;
@@ -314,8 +318,8 @@ class ShareaholicUtilities {
    *
    */
   public static function log($message) {
-    if(SHAREAHOLIC_DEBUG) {
-      watchdog('Shareaholic', $message);
+    if(defined('SHAREAHOLIC_DEBUG') && SHAREAHOLIC_DEBUG) {
+      watchdog('Shareaholic', print_r($message, true));
     }
   }
 
@@ -382,6 +386,13 @@ class ShareaholicUtilities {
    */
   public static function get_version() {
     return self::MODULE_VERSION;
+  }
+
+  /**
+   * Sets the current version of this module in the database
+   */
+  public static function set_version($version) {
+    self::update_options(array('version' => $version));
   }
 
   /**
@@ -575,6 +586,98 @@ class ShareaholicUtilities {
     } else {
       return false;
     }
+  }
+
+
+  /**
+   * This is a wrapper for the Event API
+   *
+   * @param string $event_name    the name of the event
+   * @param array  $extra_params  any extra data points to be included
+   */
+  public static function log_event($event_name = 'Default', $extra_params = false) {
+
+    $event_metadata = array(
+  	  'plugin_version' => self::get_version(),
+  	  'api_key' => self::get_option('api_key'),
+  	  'domain' => $GLOBALS['base_url'],
+  	  'language' => $GLOBALS['language']->language,
+  	  'stats' => self::get_stats(),
+      'diagnostics' => array (
+  		  'php_version' => phpversion(),
+  		  'drupal_version' => self::get_drupal_version(),
+  		  'theme' => $GLOBALS['theme'],
+  		  'active_plugins' => module_list(),
+  	  ),
+  	  'features' => array (
+  		  'share_buttons' => self::get_option('share_buttons'),
+  		  'recommendations' => self::get_option('recommendations'),
+  	  )
+    );
+
+    if ($extra_params) {
+  	  $event_metadata = array_merge($event_metadata, $extra_params);
+    }
+
+  	$event_api_url = self::API_URL . '/api/events';
+  	$event_params = array('name' => "Drupal:".$event_name, 'data' => json_encode($event_metadata) );
+  	$options = array(
+  	  'method' => 'POST',
+  	  'headers' => array('Content-Type' => 'application/json'),
+  	  'body' => $event_params,
+  	);
+    ShareaholicHttp::send($event_api_url, $options, true);
+  }
+
+  /**
+   * Get the total number of users for this site
+   *
+   * @return integer The total number of users
+   */
+  public static function total_users() {
+    return db_query("SELECT count(uid) FROM {users}")->fetchField();
+  }
+
+
+  /**
+   * Get the total number of comments for this site
+   *
+   * @return integer The total number of comments
+   */
+  public static function total_comments() {
+    return db_query("SELECT count(cid) FROM {comment}")->fetchField();
+  }
+
+  /**
+   * Get the stats for this website
+   * Stats include: total number of pages by type, total comments, total users
+   *
+   * @return array an associative array of stats => counts
+   */
+  public static function get_stats() {
+    $stats = array();
+    // Query the database for content types and add to stats
+    $result = db_query("SELECT type, count(*) as count FROM {node} GROUP BY type");
+    foreach ($result as $record) {
+      $stats[$record->type . '_total'] = $record->count;
+    }
+
+    // Get the total users
+    $stats['users_total'] = self::total_users();
+
+    // Get the total comments
+    $stats['comments_total'] = self::total_comments();
+    return $stats;
+  }
+
+  /**
+   * Get the drupal version via VERSION constant if it exists
+   */
+  public static function get_drupal_version() {
+    if (defined('VERSION')) {
+      return VERSION;
+    }
+    return '7';
   }
 
 

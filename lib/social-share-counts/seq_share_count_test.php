@@ -8,7 +8,7 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
   public function setUp() {
     $this->url = 'https://blog.shareaholic.com';
     $counts = new ShareaholicSeqShareCount($this->url, array());
-    $this->services = array_keys($counts->get_services_config());
+    $this->services = array_keys(ShareaholicSeqShareCount::get_services_config());
 
     // all callbacks take a predefined response structure
     $this->response = array(
@@ -25,7 +25,7 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
   public function testFacebookCountCallback() {
     // given a typical facebook counts api response, test that
     // it gives back the expected result (the total_count which is 16)
-    $json = '[{"url":"https:\/\/blog.shareaholic.com\/","normalized_url":"https:\/\/blog.shareaholic.com\/","share_count":12,"like_count":4,"comment_count":0,"total_count":16,"click_count":0,"comments_fbid":350586041699622,"commentsbox_count":0}]';
+    $json = '{ "data": [{ "url": "https://blog.shareaholic.com", "normalized_url": "https://blog.shareaholic.com/", "total_count": 16 }]}';
     $this->response['body'] = $json;
 
     $share_count = new ShareaholicSeqShareCount($this->url, $this->services);
@@ -163,7 +163,7 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
 
  public function testGooglePlusPrepareRequest() {
    $count = new ShareaholicSeqShareCount($this->url, $this->services);
-   $config = $count->get_services_config();
+   $config = ShareaholicSeqShareCount::get_services_config();
 
    // check that the function sets the post body in the $config object
    $count->google_plus_prepare_request($this->url, $config);

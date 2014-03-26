@@ -99,6 +99,8 @@ function shareaholic_menu() {
  * @return The theme to render the advanced settings page
  */
 function shareaholic_admin_advanced() {
+  // check for module update
+  ShareaholicAdmin::update_check();
   return theme('shareaholic_admin_advanced');
 }
 
@@ -108,6 +110,8 @@ function shareaholic_admin_advanced() {
  * @return The theme to render the app manager page
  */
 function shareaholic_admin_settings() {
+  // check for module update
+  ShareaholicAdmin::update_check();
   return theme('shareaholic_admin_settings');
 }
 
