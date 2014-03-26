@@ -442,9 +442,6 @@ class ShareaholicUtilities {
     if (!empty($api_key)) {
     	$recommendations_url = self::REC_API_URL . "/v3/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=3&apiKey=" . $api_key;
       $response = drupal_http_request($recommendations_url, array('method' => 'GET'));
-      if(self::has_bad_response($response, 'FailedRecommendationsCheck')) {
-        return 'unknown';
-      }
       $response = (array) $response;
       if($response['code'] == 200) {
         return 'ready';
