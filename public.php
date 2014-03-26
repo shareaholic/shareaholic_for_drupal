@@ -390,7 +390,31 @@ DOC;
    * @return bool true or false that curl is installed
    */
   public static function has_curl() {
-    return function_exists('curl_version');
+    return function_exists('curl_version') && function_exists('curl_multi_init') && function_exists('curl_multi_add_handle') && function_exists('curl_multi_exec');
+  }
+
+  /**
+   * Insert the Open Graph Tags
+   */
+  public static function insert_og_tags($node = false) {
+    $markup = '';
+    $disable_og_tags_check = ShareaholicUtilities::get_option('disable_og_tags');
+    if ($disable_og_tags_check && $disable_og_tags_check == 'on') {
+      return;
+    }
+    if ($node) {
+      $image_url = self::get_image_url_for($node);
+      if (!empty($image_url)) {
+        $markup .= "\n<!-- Shareaholic Open Graph Tags -->\n";
+        $markup .= "<meta property='og:image' content='" . $image_url . "' />";
+        $markup .= "\n<!-- Shareaholic Open Graph Tags End -->\n";
+      }
+    }
+    $element = array(
+      '#type' => 'markup',
+      '#markup' => $markup,
+    );
+    drupal_add_html_head($element, 'shareaholic_og_tags');
   }
 
 }

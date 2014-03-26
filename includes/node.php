@@ -17,6 +17,7 @@
   function shareaholic_node_view($node, $view_mode, $langcode) {
     ShareaholicPublic::insert_content_meta_tags($node, $view_mode, $langcode);
     ShareaholicPublic::insert_widgets($node, $view_mode, $langcode);
+    ShareaholicPublic::insert_og_tags($node);
   }
 
 
