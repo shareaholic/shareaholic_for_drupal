@@ -121,5 +121,12 @@ DOC;
     }
   }
 
+  /**
+   * Renders SnapEngage
+   */
+  public static function include_snapengage() {
+    ShareaholicUtilities::load_template('script_snapengage');
+  }
+
 }
 

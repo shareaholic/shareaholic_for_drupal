@@ -690,5 +690,24 @@ class ShareaholicUtilities {
     return 'FAIL';
   }
 
+  /**
+   * Locate and require a template, and extract some variables
+   * to be used in that template.
+   *
+   * @param string $template  the name of the template
+   * @param array  $vars      any variables to be extracted into the template
+   */
+  public static function load_template($template, $vars = array()){
+    // you cannot let locate_template to load your template
+    // because WP devs made sure you can't pass
+    // variables to your template :(
+
+    $template_path = SHAREAHOLIC_DIR . '/templates/' . $template . '.php';
+
+    // load it
+    extract($vars);
+    require $template_path;
+  }
+
 
 }

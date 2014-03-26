@@ -36,3 +36,5 @@
     ?>
   </div>
 </div>
+
+<?php ShareaholicAdmin::include_snapengage(); ?>
