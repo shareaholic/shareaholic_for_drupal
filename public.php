@@ -402,7 +402,7 @@ DOC;
     if ($disable_og_tags_check && $disable_og_tags_check == 'on') {
       return;
     }
-    if ($node) {
+    if ($node && (!isset($node->shareaholic_options["shareaholic_exclude_og_tags"]) || !$node->shareaholic_options["shareaholic_exclude_og_tags"]) ) {
       $image_url = self::get_image_url_for($node);
       if (!empty($image_url)) {
         $markup .= "\n<!-- Shareaholic Open Graph Tags -->\n";
