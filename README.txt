@@ -12,6 +12,9 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.8 =
+* Miscellaneous bug fixes and performance enhancements
+
 = 7.x-3.7 =
 * Removing packaging info from shareaholic.info
 * Adding social shares API library with endpoint
