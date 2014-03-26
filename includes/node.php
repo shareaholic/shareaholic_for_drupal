@@ -102,6 +102,11 @@
       '#title' => 'Exclude from Related Content'
     );
 
+    $form['shareaholic_options']['shareaholic_exclude_og_tags'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Do not include Open Graph tags'
+    );
+
     if(!db_table_exists('shareaholic_content_settings')) {
       $form['shareaholic_options']['shareaholic_message'] = array(
         '#type' => 'markup',
@@ -119,6 +124,10 @@
 
     if($node->shareaholic_options['shareaholic_hide_share_buttons']) {
       $form['shareaholic_options']['shareaholic_hide_share_buttons']['#attributes'] = array('checked' => 'checked');
+    }
+
+    if($node->shareaholic_options['shareaholic_exclude_og_tags']) {
+      $form['shareaholic_options']['shareaholic_exclude_og_tags']['#attributes'] = array('checked' => 'checked');
     }
   }
 
@@ -139,6 +148,7 @@
         'shareaholic_exclude_from_recommendations' => false,
         'shareaholic_hide_recommendations' => false,
         'shareaholic_hide_share_buttons' => false,
+        'shareaholic_exclude_og_tags' => false,
       );
     }
   }
@@ -162,6 +172,9 @@
 
     $isChecked = ($values['shareaholic_hide_share_buttons'] === 1) ? true : false;
     $node->shareaholic_options['shareaholic_hide_share_buttons'] = $isChecked;
+
+    $isChecked = ($values['shareaholic_exclude_og_tags'] === 1) ? true : false;
+    $node->shareaholic_options['shareaholic_exclude_og_tags'] = $isChecked;
   }
 
 

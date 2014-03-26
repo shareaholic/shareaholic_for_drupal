@@ -113,6 +113,7 @@ class ShareaholicContentSettings {
         $node->shareaholic_options['shareaholic_exclude_from_recommendations'] = isset($settings['exclude_from_recommendations']) && $settings['exclude_from_recommendations'];
         $node->shareaholic_options['shareaholic_hide_recommendations'] = isset($settings['hide_recommendations']) && $settings['hide_recommendations'];
         $node->shareaholic_options['shareaholic_hide_share_buttons'] = isset($settings['hide_share_buttons']) && $settings['hide_share_buttons'];
+        $node->shareaholic_options['shareaholic_exclude_og_tags'] = isset($settings['exclude_og_tags']) && $settings['exclude_og_tags'];
       }
     }
   }
@@ -144,6 +145,7 @@ class ShareaholicContentSettings {
       'exclude_from_recommendations' => $node->shareaholic_options['shareaholic_exclude_from_recommendations'],
       'hide_recommendations' => $node->shareaholic_options['shareaholic_hide_recommendations'],
       'hide_share_buttons' => $node->shareaholic_options['shareaholic_hide_share_buttons'],
+      'exclude_og_tags' => $node->shareaholic_options['shareaholic_exclude_og_tags'],
     );
 
     return serialize($settings);
