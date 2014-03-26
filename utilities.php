@@ -677,5 +677,18 @@ class ShareaholicUtilities {
     return '7';
   }
 
+  /**
+   * Server Connectivity check
+   *
+   */
+  public static function connectivity_check() {
+    $health_check_url = self::API_URL . "/haproxy_health_check";
+    $response = ShareaholicHttp::send($health_check_url, array('method' => 'GET'), true);
+    if ($response && isset($response['body']) && $response['body'] == "OK") {
+      return 'SUCCESS';
+    }
+    return 'FAIL';
+  }
+
 
 }
