@@ -8,7 +8,7 @@ task :makerelease, :path do |task, args|
   sh "sed -i.bak '1,/localhost:3000/s/localhost:3000/cm-web.shareaholic.com/' #{args[:path]}/utilities.php"
   sh "sed -i.bak '1,/recommendations.stageaholic.com/s/recommendations.stageaholic.com/recommendations.shareaholic.com/' #{args[:path]}/utilities.php"
   sh "rm #{args[:path]}/utilities.php.bak"
-  sh "awk '{if(/http/){count++; if(count>=1 && count<=3){gsub(\"http\", \"https\");}} print}' #{args[:path]}/utilities.php > #{args[:path]}/utilities.php.tmp && mv #{args[:path]}/utilities.php.tmp #{args[:path]}/utilities.php"
+  sh "awk '{if(/http/){count++; if(count>=2 && count<=4){gsub(\"http\", \"https\");}} print}' #{args[:path]}/utilities.php > #{args[:path]}/utilities.php.tmp && mv #{args[:path]}/utilities.php.tmp #{args[:path]}/utilities.php"
   sh "rm -rf #{args[:path]}/tests"
   sh "rm -rf #{args[:path]}/Rakefile"
   sh "rm -rf #{args[:path]}/README.md"
@@ -20,6 +20,6 @@ task :makequickcopy, :path do |task, args|
   sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/stageaholic.com/' #{args[:path]}/utilities.php"
   sh "sed -i.bak '1,/localhost:3000/s/localhost:3000/cm.stageaholic.com/' #{args[:path]}/utilities.php"
   sh "rm #{args[:path]}/utilities.php.bak"
-  sh "awk '{if(/http/){count++; if(count>=1 && count<=3){gsub(\"http\", \"https\");}} print}' #{args[:path]}/utilities.php > #{args[:path]}/utilities.php.tmp && mv #{args[:path]}/utilities.php.tmp #{args[:path]}/utilities.php"
+  sh "awk '{if(/http/){count++; if(count>=2 && count<=4){gsub(\"http\", \"https\");}} print}' #{args[:path]}/utilities.php > #{args[:path]}/utilities.php.tmp && mv #{args[:path]}/utilities.php.tmp #{args[:path]}/utilities.php"
 end
 
