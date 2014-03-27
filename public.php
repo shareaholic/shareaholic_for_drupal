@@ -396,10 +396,13 @@ DOC;
   /**
    * Insert the Open Graph Tags
    */
-  public static function insert_og_tags($node = false) {
+  public static function insert_og_tags($node = false, $view_mode = '') {
     $markup = '';
     $disable_og_tags_check = ShareaholicUtilities::get_option('disable_og_tags');
     if ($disable_og_tags_check && $disable_og_tags_check == 'on') {
+      return;
+    }
+    if ($view_mode != 'full') {
       return;
     }
     if ($node && (!isset($node->shareaholic_options["shareaholic_exclude_og_tags"]) || !$node->shareaholic_options["shareaholic_exclude_og_tags"]) ) {
