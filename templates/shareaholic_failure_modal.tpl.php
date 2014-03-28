@@ -13,6 +13,10 @@
     <?php print $variables['shareaholic_failure_modal']['submit'] ?>
     <br /><br />
     <?php print l(t('or, try again later'), 'admin', array('attributes' => array('style' => 'font-size:12px; font-weight:normal;'))); ?>
+    <br /><br />
+    <span style="font-size:11px; font-weight:normal;">
+      <?php echo sprintf(t('If you continue to get this prompt for more than a few hours, try to check server connectivity or reset the plugin in %s'), l(t('advanced settings.'), 'admin/config/shareaholic/advanced')); ?> <?php echo sprintf(t('Also, if you have a question or have a bug to report, please %slet us know%s.'), '<a href="#" onclick="SnapEngage.startLink();">','</a>'); ?>
+    </span>
   </div>
   </div>
 </div>

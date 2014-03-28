@@ -19,7 +19,7 @@
   <div class="pvl">
     <?php print $variables['shareaholic_tos_modal']['hidden'] ?>
     <?php print $variables['shareaholic_tos_modal']['submit'] ?>
-    <p><small><?php print sprintf(t('By clicking "Get Started" you agree to Shareholic\'s %sTerms of Service%s and %sPrivacy Policy%s.'), '<a href="https://shareaholic.com/terms/?src=wp_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/privacy/?src=wp_admin" target="_new">', '</a>'); ?></p>
+    <p><small><?php print sprintf(t('By clicking "Get Started" you agree to Shareholic\'s %sTerms of Service%s and %sPrivacy Policy%s.'), '<a href="https://shareaholic.com/terms/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/privacy/?src=drupal_admin" target="_new">', '</a>'); ?></p>
   </div>
   </div>
 </div>

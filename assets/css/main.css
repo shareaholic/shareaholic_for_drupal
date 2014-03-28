@@ -215,7 +215,7 @@ s,m,l,n = small(5px),medium(10px),large(20px),none(0px)
 }
 
 .api-key-modal{
-  height: 350px;
+  height: 400px;
 }
 
 .blocking-modal .content{
@@ -450,4 +450,30 @@ div #shareaholic-form-container ul.nav  {
 div #shareaholic-form-container fieldset.app legend img  {
   width: 32px;
   height: 32px;
+}
+
+#shareaholic-form-container .key-status {
+  padding: 0.4em 1em;
+  color: #fff;
+  text-align: center;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  text-shadow: 0px 1px 0px rgba(0,0,0,0.4);
+}
+
+#shareaholic-form-container .key-description {
+  line-height: 1.6em;
+  margin-top:10px;
+}
+
+#shareaholic-form-container .key-status.failed {
+  background-color: #EB5353;
+  border: 1px solid #e62525;
+}
+
+#shareaholic-form-container .key-status.passed {
+  background-color: #45a147;
+  border: 1px solid #1E8520;
 }

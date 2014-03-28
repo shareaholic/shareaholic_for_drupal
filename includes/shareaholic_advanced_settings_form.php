@@ -15,6 +15,7 @@
    */
   function shareaholic_advanced_settings_form() {
     $disable_analytics_checked = ShareaholicUtilities::get_option('disable_analytics');
+    $disable_og_tags_checked = ShareaholicUtilities::get_option('disable_og_tags');
     $form['advanced_settings'] = array(
       '#prefix' => '<fieldset class="app"><legend><h2>' . t('Advanced') . '</h2></legend>',
       '#suffix' => '</fieldset>',
@@ -22,6 +23,10 @@
     $form['advanced_settings']['disable_analytics'] = array(
       '#type' => 'checkbox',
       '#title' => t('Disable Analytics (it is recommended NOT to disable analytics)'),
+    );
+    $form['advanced_settings']['disable_og_tags'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable ') . '<code>' . t('Open Graph') . '</code>' . t(' tags (it is recommended NOT to disable open graph tags)'),
     );
     $form['advanced_settings']['submit'] = array(
       '#type' => 'submit',
@@ -32,6 +37,9 @@
     if($disable_analytics_checked === 'on') {
       $form['advanced_settings']['disable_analytics']['#attributes'] = array('checked' => 'checked');
     }
+    if($disable_og_tags_checked === 'on') {
+      $form['advanced_settings']['disable_og_tags']['#attributes'] = array('checked' => 'checked');
+    }
     return $form;
   }
 
@@ -39,7 +47,8 @@
     if(ShareaholicUtilities::has_tos_and_apikey()) {
       $checked = ($form_state['values']['disable_analytics'] === 1) ? 'on' : 'off';
       ShareaholicUtilities::update_options(array(
-        'disable_analytics' => $checked
+        'disable_analytics' => $checked,
+        'disable_og_tags' => ($form_state['values']['disable_og_tags'] === 1) ? 'on' : 'off',
       ));
     drupal_set_message(t('Settings Saved: please clear your cache.'), 'status');
     }
