@@ -32,7 +32,7 @@ window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_k
     <li><?php print t('Additional themes for share buttons, related content, etc to match your site.'); ?></li>
     <li><?php print t('Opportunities to make money with your site, plus lots more!'); ?></li>
   </ul>
-  <button data-href='edit' id='general_settings' class="btn btn-large"><?php print t('Edit General Website Settings'); ?></button>
+  <button data-href='edit' id='general_settings' class="btn btn-success btn-large"><?php print t('Edit General Website Settings'); ?></button>
   <p class="signuppromo_note"><?php print t("Connecting is simple. Simply click the button above and sign in to your Shareaholic account to connect this module to your account. If you don't have an account already, simply create a new account — it takes just seconds and it's free!"); ?></p>
   </div>
 
