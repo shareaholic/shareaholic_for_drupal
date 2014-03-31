@@ -41,7 +41,7 @@ http://support.shareaholic.com
 * No major updates were introduced in this version
 
 = 7.x-3.0 =
-* Huge update! The plugin has been completely re-written from the ground up to be faster, simpler to use
+* Huge update! The module has been completely re-written from the ground up to be faster, simpler to use
 * Choose from snazzy new Related Post themes
 * Related Posts now come mobile optimized and responsive out of the box - Shareaholic automagically determines how many Related Posts to show given how much screen width it is given
 * Customize your "You may also like" Related Posts text
@@ -51,7 +51,7 @@ http://support.shareaholic.com
 * Advanced Settings: ability to disable analytics
 
 = 7.x-3.x-dev =
-* Revamp plugin to use new and improved share buttons with recommendations
+* Revamp module to use new and improved share buttons with recommendations
 
 = 7.x-2.x-dev =
 * Initial 7.x module dev release

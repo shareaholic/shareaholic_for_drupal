@@ -29,7 +29,7 @@ module_load_include('php', 'shareaholic', 'includes/shareaholic_apps_configurati
  * This gets called at the beginning of a non-cached page request
  * Ideal for setting response headers
  *
- * Force edge mode for IE so that our plugins will look nicer
+ * Force edge mode for IE so that our apps will look nicer
  *
  */
 function shareaholic_init() {

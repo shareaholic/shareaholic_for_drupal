@@ -41,7 +41,7 @@ If you have this repository cloned into your local workspace, you can create a s
 
 If you do not prefer this method, you can move this repository over to the Drupal modules path or use some other method. Otherwise, Drupal will not recognize the module.
 
-Then go to your Drupal site signed in as admin, go to Modules and enable the Shareaholic for Drupal plugin. You should not receive errors and be all set to use/develop the plugin
+Then go to your Drupal site signed in as admin, go to Modules and enable the Shareaholic for Drupal module. You should not receive errors and be all set to use/develop the module
 
 
 ### Testing

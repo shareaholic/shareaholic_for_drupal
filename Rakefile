@@ -1,6 +1,6 @@
 # Copyright Shareaholic, Inc. (www.shareaholic.com).  All Rights Reserved.
 
-desc 'Get plugin ready for Drupal directory'
+desc 'Get module ready for Drupal directory'
 task :makerelease, :path do |task, args|
   sh "rsync -av --exclude='.*' ./ #{args[:path]}"
   sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/shareaholic.com/' #{args[:path]}/utilities.php"

@@ -20,7 +20,7 @@
      $form['reset']['submit'] = array(
        '#type' => 'submit',
        '#prefix' => '<p>' . t('This will reset all of your settings and start you from scratch. This can not be undone.') . '</p>',
-       '#value' => t('Reset Plugin')
+       '#value' => t('Reset Module')
      );
      $form['reset']['submit']['#attributes']['class'][] = 'settings';
      $form['reset']['submit']['#attributes']['onclick'][] = 'this.value="Resetting..."';
@@ -36,6 +36,6 @@
    function shareaholic_reset_plugin_form_submit($form, &$form_state) {
      ShareaholicUtilities::destroy_settings();
      ShareaholicUtilities::get_or_create_api_key();
-     drupal_set_message(t('Plugin has been reset. Please clear your cache.'), 'status');
+     drupal_set_message(t('Module has been reset. Please clear your cache.'), 'status');
    }
 
