@@ -22,10 +22,15 @@ class ShareaholicCache {
   public static function get($key) {
     $cache = cache_get($key);
     // check if the cache is stale
-    if ($cache && isset($cache->expire) && REQUEST_TIME > $cache->expire) {
+    if (!$cache) {
       return FALSE;
     }
-    return $cache;
+
+    if (REQUEST_TIME > $cache->expire) {
+      return FALSE;
+    }
+
+    return $cache->data;
   }
 
 
