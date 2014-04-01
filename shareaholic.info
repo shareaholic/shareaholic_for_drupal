@@ -9,3 +9,4 @@ files[] = tests/admin.test
 files[] = tests/public.test
 files[] = tests/http.test
 files[] = tests/cache.test
+files[] = tests/public_js.test
