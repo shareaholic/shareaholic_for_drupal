@@ -6,6 +6,7 @@
  */
 
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http');
+module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 class ShareaholicUtilities {
   const MODULE_VERSION = '7.x-3.8';
@@ -707,6 +708,77 @@ class ShareaholicUtilities {
     // load it
     extract($vars);
     require $template_path;
+  }
+
+
+  /**
+   * Share Counts API Connectivity check
+   *
+   */
+   public static function share_counts_api_connectivity_check() {
+
+    // if we already checked and it is successful, then do not call the API again
+    $share_counts_connect_check = self::get_option('share_counts_connect_check');
+    if (isset($share_counts_connect_check) && $share_counts_connect_check == 'SUCCESS') {
+      return $share_counts_connect_check;
+    }
+
+    $services_config = ShareaholicSeqShareCount::get_services_config();
+    $services = array_keys($services_config);
+    $param_string = implode('&services[]=', $services);
+    $share_counts_api_url = url('shareaholic/api/share_counts/v1', array('absolute' => TRUE)) . '?action=shareaholic_share_counts_api&url=https%3A%2F%2Fwww.google.com%2F&services[]=' . $param_string;
+    $cache_key = 'share_counts_api_connectivity_check';
+    // fetch cached response if it exists or has not expired
+    $response = cache_get($cache_key);
+
+    if (!$response) {
+      $response = ShareaholicHttp::send($share_counts_api_url, array('method' => 'GET'), true);
+    }
+
+    $response_status = self::get_share_counts_api_status($response);
+    // if this was the first time we are doing this and it failed, disable
+    // the share counts API
+    if (empty($share_counts_connect_check) && $response_status == 'FAIL') {
+      self::update_options(array('disable_internal_share_counts_api' => 'on'));
+    }
+
+    if ($response_status == 'SUCCESS') {
+      //cache_set( $cache_key, $response, 'cache', SHARE_COUNTS_CHECK_CACHE_LENGTH );
+    }
+
+    self::update_options(array('share_counts_connect_check' => $response_status));
+    return $response_status;
+   }
+
+  /**
+   * Check the share counts API for empty response or missing services
+   */
+  public static function get_share_counts_api_status($response) {
+    if (!$response || !isset($response['body'])) {
+      return 'FAIL';
+    }
+
+    $response['body'] = json_decode($response['body'], TRUE);
+
+    if (!is_array($response['body'])) {
+      return 'FAIL';
+    }
+
+    // Did it return at least 8 services?
+    $has_majority_services = count(array_keys($response['body']['data'])) >= 8 ? true : false;
+    $has_important_services = true;
+    // Does it have counts for twtr, fb, linkedin, pinterest, and delicious?
+    foreach (array('twitter', 'facebook', 'linkedin', 'pinterest', 'delicious') as $service) {
+      if (!isset($response['body']['data'][$service]) || !is_numeric($response['body']['data'][$service])) {
+        $has_important_services = false;
+      }
+    }
+
+    if (!$has_majority_services || !$has_important_services) {
+      return 'FAIL';
+    }
+
+    return 'SUCCESS';
   }
 
 

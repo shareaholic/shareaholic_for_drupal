@@ -26,6 +26,13 @@
         <span class="key-status failed"><?php print t('Unable to reach any Shareaholic server'); ?></span> <a href="#" onClick="window.location.reload(); this.innerHTML='<?php print t('Checking...'); ?>';"><?php print t('Re-check'); ?></a>
         <div class="key-description"><?php echo sprintf( t('A network problem or firewall is blocking all connections from your web server to Shareaholic.com.  <strong>Shareaholic cannot work correctly until this is fixed.</strong>  Please contact your web host or firewall administrator and give them <a href="%s" target="_blank">this information about Shareaholic and firewalls</a>. Let us <a href="#" onclick="%s">know</a> too, so we can follow up!'), 'http://blog.shareaholic.com/shareaholic-hosting-faq/', 'SnapEngage.startLink();','</a>'); ?></div>
       <?php } ?>
+      <?php if (ShareaholicUtilities::share_counts_api_connectivity_check() == 'SUCCESS') { ?>
+        <span class="key-status passed"><?php echo t('Server-side Share Counts API is reachable'); ?></span>
+        <div class="key-description"><?php echo t('The server-side Share Counts API should be working correctly.'); ?> <?php echo t('All servers and services needed by the API are accessible.'); ?></div>
+      <?php } else { // can't connect to any server ?>
+        <span class="key-status failed"><?php echo t('Unable to reach the server-side Share Count API'); ?></span> <a href="#" onClick="window.location.reload(); this.innerHTML='<?php echo t('Checking...'); ?>';"><?php echo t('Re-check'); ?></a>
+        <div class="key-description"><?php echo sprintf( t('A network problem or firewall is blocking connections from your web server to various Share Count APIs.  <strong>The API cannot work correctly until this is fixed.</strong>  If you continue to face this issue, please contact <a href="#" onclick="%s">us</a> and we will follow up! In the meantime, if you disable the server-side Share Counts API from the Advanced options above, Shareaholic will default to using client-side APIs for share counts successfully -- so nothing to worry about!'), 'SnapEngage.startLink();'); ?></div>
+      <?php } ?>
     </fieldset>
 
     <?php
