@@ -184,6 +184,16 @@ class ShareaholicUtilities {
       return $api_key;
     }
 
+    // destroy the shareaholic settings except certain flags
+    $old_settings = self::get_settings();
+    self::destroy_settings();
+    // restore any old settings that should be preserved between resets
+    if (isset($old_settings['share_counts_connect_check'])) {
+      self::update_options(array(
+        'share_counts_connect_check' => $old_settings['share_counts_connect_check'],
+      ));
+    }
+
     $verification_key = md5(mt_rand());
     $page_types = self::page_types();
     $turned_on_recommendations_locations = array();
