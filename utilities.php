@@ -42,6 +42,7 @@ class ShareaholicUtilities {
   private static function defaults() {
     return array(
       'disable_analytics' => 'off',
+      'disable_internal_share_counts_api' => 'off',
       'api_key' => '',
       'verification_key' => '',
     );
