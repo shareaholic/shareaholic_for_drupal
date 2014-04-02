@@ -60,7 +60,7 @@ class ShareaholicPublic {
           if (rs && rs != 'complete' && rs != 'loaded') return;
           var site_id = '$api_key';
           var page_config = $page_config;
-          try { Shareaholic.init(site_id); } catch (e) {}
+          try { Shareaholic.init(site_id, page_config); } catch (e) {}
         };
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(shr, s);

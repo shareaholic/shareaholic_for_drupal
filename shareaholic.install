@@ -23,6 +23,8 @@ function shareaholic_install() {
   if (ShareaholicUtilities::has_accepted_terms_of_service()) {
     ShareaholicUtilities::get_or_create_api_key();
   }
+  // Do share counts connectivity check
+  ShareaholicUtilities::share_counts_api_connectivity_check();
 }
 
 /**

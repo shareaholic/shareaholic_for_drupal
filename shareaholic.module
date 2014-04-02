@@ -118,6 +118,7 @@ function shareaholic_admin_advanced() {
 function shareaholic_admin_settings() {
   // check for module update
   ShareaholicAdmin::update_check();
+  ShareaholicUtilities::share_counts_api_connectivity_check();
   return theme('shareaholic_admin_settings');
 }
 

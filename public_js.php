@@ -94,7 +94,7 @@ class ShareaholicPublicJS {
       cache: true,
       cache_ttl: '1 minute',
       url: '$ajax_url',
-      data: { action: 'shareaholic_share_counts_api', url: url, services: services },
+      data: { url: url, services: services },
       success: function(res) {
         if(res && res.data) {
           cb(res.data);
