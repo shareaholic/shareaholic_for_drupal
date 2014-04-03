@@ -400,15 +400,7 @@ class ShareaholicUtilities {
    * @return mixed: returns 1 if matched, 0 if no match, false if error occurs
    */
   public static function is_admin_page() {
-    return preg_match('/admin/', request_uri());
-  }
-
-  /**
-   * Checks if the current page is an edit page
-   * @return mixed: returns 1 if matched, 0 if no match, false if error occurs
-   */
-  public static function is_edit_page() {
-    return preg_match('/edit/', request_uri());
+    return path_is_admin(current_path());
   }
 
   /**
