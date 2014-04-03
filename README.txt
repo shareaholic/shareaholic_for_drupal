@@ -12,6 +12,9 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.10 =
+* Bug fix: removing regex causing share buttons to not show
+
 = 7.x-3.9 =
 * New feature: automatically generate open graph tags (includes a global setting to turn it off or a local setting to turn it off for certain nodes)
 * New feature: display connectivity status to Shareaholic servers
