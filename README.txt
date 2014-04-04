@@ -12,6 +12,10 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.11 =
+* New Feature: Internal service exposed to get Share Counts API
+* Bug Fix: images in the configuration page do not load properly
+
 = 7.x-3.10 =
 * Bug fix: removing regex causing share buttons to not show
 
