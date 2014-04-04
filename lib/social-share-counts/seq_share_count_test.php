@@ -6,7 +6,7 @@ require_once('http.php');
 class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
 {
   public function setUp() {
-    $this->url = 'https://blog.shareaholic.com';
+    $this->url = 'https://www.google.com';
     $counts = new ShareaholicSeqShareCount($this->url, array());
     $this->services = array_keys(ShareaholicSeqShareCount::get_services_config());
 
@@ -25,7 +25,7 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
   public function testFacebookCountCallback() {
     // given a typical facebook counts api response, test that
     // it gives back the expected result (the total_count which is 16)
-    $json = '{ "data": [{ "url": "https://blog.shareaholic.com", "normalized_url": "https://blog.shareaholic.com/", "total_count": 16 }]}';
+    $json = '{ "id": "https://blog.shareaholic.com", "shares": 16 }';
     $this->response['body'] = $json;
 
     $share_count = new ShareaholicSeqShareCount($this->url, $this->services);
@@ -171,6 +171,9 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
 
  }
 
+  /**
+   * This test may fail if the APIs fail
+   */
   public function testGetCount() {
     // test that this function returns the expected API response
     $share_count = new ShareaholicSeqShareCount($this->url, $this->services);
@@ -181,6 +184,19 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
     foreach($this->services as $service) {
       $this->assertNotNull($response['data'][$service], 'The ' . $service . ' count should not be null');
     }
+  }
+
+  /**
+   * This test may fail if the APIs fail
+   */
+  public function testMissingServices() {
+    // test that this function returns response WITHOUT facebook
+    $share_count = new ShareaholicSeqShareCount('https://dev.losloslos.com/', $this->services);
+    $response = $share_count->get_counts();
+
+    $this->assertNotNull($response, 'The response array should not be null');
+
+    $this->assertNull($response['data']['facebook'], 'The facebook count should be null');
   }
 
 }

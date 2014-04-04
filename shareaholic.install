@@ -23,6 +23,8 @@ function shareaholic_install() {
   if (ShareaholicUtilities::has_accepted_terms_of_service()) {
     ShareaholicUtilities::get_or_create_api_key();
   }
+  // Add post install flag
+  variable_set('Installed_Module_Shareaholic', 'shareaholic');
 }
 
 /**

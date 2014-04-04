@@ -1,0 +1,69 @@
+<?php
+/**
+ * @file
+ * Tests for the public class
+ */
+
+class ShareaholicPublicTestCase extends DrupalWebTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => 'ShareaholicPublicJS class functionality',
+      'description' => 'Acceptance Tests based on ShareaholicPublicJS',
+      'group' => 'Shareaholic'
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('shareaholic');
+  }
+
+  public function testPageHasShareCountsFunction() {
+    variable_set('shareaholic_has_accepted_tos', true);
+    variable_set('shareaholic_settings', array('api_key' => 'test'));
+    // login as anonymous user
+    $this->drupalLogin($this->drupalCreateUser(array()));
+
+    // set disable share counts api to off, and share counts connect check to SUCCESS
+    ShareaholicUtilities::update_options(array(
+      'disable_internal_share_counts_api' => 'off',
+      'share_counts_connect_check' => 'SUCCESS',
+    ));
+    $this->drupalGet('');
+    $this->assertRaw('"get_share_counts":', 'When the disable share counts api is off and the connection was successful, It should have the get_share_counts function on the page');
+  }
+
+
+  public function testPageHasNoShareCountsFunction() {
+    variable_set('shareaholic_has_accepted_tos', true);
+    variable_set('shareaholic_settings', array('api_key' => 'test'));
+    // login as anonymous user
+    $this->drupalLogin($this->drupalCreateUser(array()));
+
+    // set disable share counts api to on, and share counts connect check to SUCCESS
+    ShareaholicUtilities::update_options(array(
+      'disable_internal_share_counts_api' => 'on',
+      'share_counts_connect_check' => 'SUCCESS',
+    ));
+    $this->drupalGet('');
+    $this->assertNoRaw('"get_share_counts":', 'When the disable share counts api is on and the connection was successful, It should not have the get_share_counts function on the page');
+
+    // set disable share counts api to off, and share counts connect check to FAIL
+    ShareaholicUtilities::update_options(array(
+      'disable_internal_share_counts_api' => 'off',
+      'share_counts_connect_check' => 'FAIL',
+    ));
+    $this->drupalGet('');
+    $this->assertNoRaw('"get_share_counts":', 'When the disable share counts api is off and connect was failure, It should not have the get_share_counts function on the page');
+
+    // set disable share counts api to on, and share counts connect check to FAIL
+    ShareaholicUtilities::update_options(array(
+      'disable_internal_share_counts_api' => 'on',
+      'share_counts_connect_check' => 'FAIL',
+    ));
+    $this->drupalGet('');
+    $this->assertNoRaw('"get_share_counts":', 'When the disable share counts api is on and connect was failure, It should not have the get_share_counts function on the page');
+  }
+
+
+}

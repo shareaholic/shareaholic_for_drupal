@@ -5,7 +5,7 @@ require_once('curl_multi_share_count.php');
 class ShareaholicCurlMultiShareCountsTest extends PHPUnit_Framework_TestCase
 {
   public function setUp() {
-    $this->url = 'https://blog.shareaholic.com';
+    $this->url = 'https://www.google.com';
     $counts = new ShareaholicCurlMultiShareCount($this->url, array());
     $this->services = array_keys(ShareaholicCurlMultiShareCount::get_services_config());
 

@@ -9,6 +9,7 @@
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http');
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/curl_multi_share_count');
+module_load_include('php', 'shareaholic', 'public_js');
 
 /**
  * This class is all about drawing the stuff in publishers'
@@ -44,6 +45,7 @@ class ShareaholicPublic {
   private static function js_snippet() {
     $api_key = ShareaholicUtilities::get_option('api_key');
     $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
+    $page_config = ShareaholicPublicJS::get_page_config();
     $js_snippet = <<< DOC
   <script type='text/javascript' data-cfasync='false'>
     //<![CDATA[
@@ -56,7 +58,8 @@ class ShareaholicPublic {
           var rs = this.readyState;
           if (rs && rs != 'complete' && rs != 'loaded') return;
           var site_id = '$api_key';
-          try { Shareaholic.init(site_id); } catch (e) {}
+          var page_config = $page_config;
+          try { Shareaholic.init(site_id, page_config); } catch (e) {}
         };
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(shr, s);
@@ -351,18 +354,29 @@ DOC;
    *
    */
   public static function share_counts_api() {
+    // sometimes the drupal http request function throws errors so setting handler
     set_error_handler(array('ShareaholicPublic', 'custom_error_handler'));
-    $url = isset($_GET['url']) ? $_GET['url'] : NULL;
-    $services = isset($_GET['services']) ? $_GET['services'] : NULL;
-    $result = array();
 
-    if(is_array($services) && count($services) > 0 && !empty($url)) {
-      if(self::has_curl()) {
-        $shares = new ShareaholicCurlMultiShareCount($url, $services);
-      } else {
-        $shares = new ShareaholicSeqShareCount($url, $services);
+    $cache_key = 'shr_api_res-' . md5( $_SERVER['QUERY_STRING'] );
+    $result = ShareaholicCache::get($cache_key);
+
+    if (!$result) {
+      $url = isset($_GET['url']) ? $_GET['url'] : NULL;
+      $services = isset($_GET['services']) ? $_GET['services'] : NULL;
+      $result = array();
+
+      if(is_array($services) && count($services) > 0 && !empty($url)) {
+        if(self::has_curl()) {
+          $shares = new ShareaholicCurlMultiShareCount($url, $services);
+        } else {
+          $shares = new ShareaholicSeqShareCount($url, $services);
+        }
+        $result = $shares->get_counts();
+
+        if (isset($result['data'])) {
+          ShareaholicCache::set($cache_key, $result, SHARE_COUNTS_CHECK_CACHE_LENGTH);
+        }
       }
-      $result = $shares->get_counts();
     }
 
     header('Content-Type: application/json');

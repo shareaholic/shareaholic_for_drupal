@@ -6,8 +6,12 @@
  */
 
 define('SHAREAHOLIC_DIR', drupal_get_path('module', 'shareaholic'));
-define('SHAREAHOLIC_ASSET_DIR', SHAREAHOLIC_DIR . '/assets/');
+define('SHAREAHOLIC_ASSET_DIR', $GLOBALS['base_url'] . '/' . SHAREAHOLIC_DIR . '/assets/');
 define('SHAREAHOLIC_DEBUG', getenv('SHAREAHOLIC_DEBUG'));
+
+// Caching
+if( !defined( 'SHARE_COUNTS_CHECK_CACHE_LENGTH' ) ) define( 'SHARE_COUNTS_CHECK_CACHE_LENGTH', 180 ); // 180 seconds
+if( !defined( 'RECOMMENDATIONS_STATUS_CHECK_CACHE_LENGTH' ) ) define( 'RECOMMENDATIONS_STATUS_CHECK_CACHE_LENGTH', 60 ); // 60 seconds
 
 // Required global files
 module_load_include('php', 'shareaholic', 'utilities');
@@ -15,6 +19,7 @@ module_load_include('php', 'shareaholic', 'admin');
 module_load_include('php', 'shareaholic', 'public');
 module_load_include('php', 'shareaholic', 'content_manager');
 module_load_include('php', 'shareaholic', 'content_settings');
+module_load_include('php', 'shareaholic', 'cache');
 
 // Include files
 module_load_include('php', 'shareaholic', 'includes/node');
@@ -39,6 +44,9 @@ function shareaholic_init() {
     ShareaholicPublic::insert_disable_analytics_meta_tag();
     ShareaholicPublic::insert_script_tag();
     ShareaholicPublic::insert_og_tags();
+  } else {
+    // execute post install functions
+    ShareaholicAdmin::post_install();
   }
 }
 
@@ -113,6 +121,7 @@ function shareaholic_admin_advanced() {
 function shareaholic_admin_settings() {
   // check for module update
   ShareaholicAdmin::update_check();
+  ShareaholicUtilities::share_counts_api_connectivity_check();
   return theme('shareaholic_admin_settings');
 }
 

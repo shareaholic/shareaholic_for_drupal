@@ -2,7 +2,7 @@
   <?php $page_types = ShareaholicUtilities::page_types(); ?>
   <?php $settings = ShareaholicUtilities::get_settings(); ?>
   <fieldset class="app">
-    <legend><h2><img src="<?php echo '/' . SHAREAHOLIC_ASSET_DIR; ?>img/sharebuttons@2x.png" /> <?php print t('Share Buttons'); ?></h2></legend>
+    <legend><h2><img src="<?php echo SHAREAHOLIC_ASSET_DIR; ?>img/sharebuttons@2x.png" /> <?php print t('Share Buttons'); ?></h2></legend>
 
     <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want your buttons to be displayed. Click "Customize" to customize look & feel, themes, share counters, alignment, etc.'); ?></span>
 
@@ -34,7 +34,7 @@
   <div class='clear'></div>
 
   <fieldset class="app">
-    <legend><h2><img src="<?php echo '/' . SHAREAHOLIC_ASSET_DIR; ?>/img/related_content@2x.png" /> <?php print t('Related Content / Recommendations'); ?></h2></legend>
+    <legend><h2><img src="<?php echo SHAREAHOLIC_ASSET_DIR; ?>/img/related_content@2x.png" /> <?php print t('Related Content / Recommendations'); ?></h2></legend>
 
     <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want Related Content to be displayed. Click "Customize" to customize look & feel, themes, block lists, etc.'); ?></span>
     <?php foreach($page_types as $key => $page_type) { ?>
@@ -66,9 +66,9 @@
     <?php
       $status = ShareaholicUtilities::recommendations_status_check();
       if ($status == 'processing' || $status == 'unknown'){
-        echo '<img class="shrsb_health_icon" align="top" src="/' . SHAREAHOLIC_ASSET_DIR . '/img/circle_yellow.png" />' . t('Processing');
+        echo '<img class="shrsb_health_icon" align="top" src="' . SHAREAHOLIC_ASSET_DIR . '/img/circle_yellow.png" />' . t('Processing');
       } else {
-        echo '<img class="shrsb_health_icon" align="top" src="/' . SHAREAHOLIC_ASSET_DIR . '/img/circle_green.png" />' . t('Ready');
+        echo '<img class="shrsb_health_icon" align="top" src="' . SHAREAHOLIC_ASSET_DIR . '/img/circle_green.png" />' . t('Ready');
       }
     ?>
 

@@ -63,7 +63,7 @@ class ShareaholicAdmin {
    * @return String The html for the notice as a string
    */
   private static function header_message_html($message) {
-    $img_check = '/' . SHAREAHOLIC_ASSET_DIR . '/img/check.png';
+    $img_check = SHAREAHOLIC_ASSET_DIR . '/img/check.png';
     $html = <<< DOC
   <div id="shareaholic-wrap-container" style="padding: 0 20px 0px 15px; background-color: #45a147; margin: 25px 0px 20px -18px;">
     <img src="$img_check" style="vertical-align:middle;" />
@@ -126,6 +126,19 @@ DOC;
    */
   public static function include_snapengage() {
     ShareaholicUtilities::load_template('script_snapengage');
+  }
+
+  /**
+   * This function will run post install tasks
+   * when a shareaholic flag is set
+   */
+  public static function post_install() {
+    if (variable_get('Installed_Module_Shareaholic', '') == 'shareaholic') {
+      // delete this so we do not check again
+      variable_del('Installed_Module_Shareaholic');
+      // Do share counts check
+      ShareaholicUtilities::share_counts_api_connectivity_check();
+    }
   }
 
 }

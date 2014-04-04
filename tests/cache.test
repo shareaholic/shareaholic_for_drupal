@@ -1,0 +1,47 @@
+<?php
+/**
+ * @file
+ * Tests for the shareaholic cache class
+ */
+class ShareaholicCacheTestCase extends DrupalWebTestCase {
+
+  public static function getInfo(){
+    return array(
+      'name' => 'ShareaholicCache class functionality',
+      'description' => 'Tests the functionality of the ShareholicCache class',
+      'group' => 'Shareaholic',
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('shareaholic');
+  }
+
+
+  public function testGet() {
+    $key = 'shareaholic_test';
+    $data = array('key' => 'value');
+    ShareaholicCache::set($key, $data, 180);
+
+    // get back the cached item and check it is what you expect
+    $cache = ShareaholicCache::get($key);
+
+    $this->assertTrue($cache != FALSE, 'The cache should not return false');
+    $this->assertTrue(isset($cache['key']), 'The cache return an assoc array with the expected property');
+    $this->assertTrue($cache['key'] == 'value', 'The cache return an assoc array with the expected value');
+  }
+
+  public function testExpire() {
+    $key = 'shareaholic_test_expire';
+    $data = array('key' => 'value');
+
+    // Cache with negative expire time to force stale data
+    ShareaholicCache::set($key, $data, -1);
+
+    $cache = ShareaholicCache::get($key);
+
+    $this->assertFalse($cache, 'When the cache has expired, the cache should be false');
+  }
+
+
+}
