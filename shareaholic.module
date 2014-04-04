@@ -6,7 +6,7 @@
  */
 
 define('SHAREAHOLIC_DIR', drupal_get_path('module', 'shareaholic'));
-define('SHAREAHOLIC_ASSET_DIR', SHAREAHOLIC_DIR . '/assets/');
+define('SHAREAHOLIC_ASSET_DIR', $GLOBALS['base_url'] . '/' . SHAREAHOLIC_DIR . '/assets/');
 define('SHAREAHOLIC_DEBUG', getenv('SHAREAHOLIC_DEBUG'));
 
 // Caching

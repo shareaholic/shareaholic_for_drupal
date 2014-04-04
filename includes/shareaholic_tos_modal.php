@@ -26,7 +26,7 @@
    */
   function template_preprocess_shareaholic_tos_modal(&$variables) {
     _prepare_template_form_variables($variables, 'shareaholic_tos_modal');
-    $variables['image_url'] = '/' . SHAREAHOLIC_ASSET_DIR . '/img';
+    $variables['image_url'] = SHAREAHOLIC_ASSET_DIR . '/img';
   }
 
   /**
