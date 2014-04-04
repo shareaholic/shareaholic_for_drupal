@@ -44,6 +44,9 @@ function shareaholic_init() {
     ShareaholicPublic::insert_disable_analytics_meta_tag();
     ShareaholicPublic::insert_script_tag();
     ShareaholicPublic::insert_og_tags();
+  } else {
+    // execute post install functions
+    ShareaholicAdmin::post_install();
   }
 }
 
