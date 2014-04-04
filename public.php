@@ -25,7 +25,6 @@ class ShareaholicPublic {
    */
   public static function insert_script_tag() {
     if (!ShareaholicUtilities::is_admin_page() &&
-        !ShareaholicUtilities::is_edit_page() &&
         ShareaholicUtilities::has_tos_and_apikey()) {
         $markup = self::js_snippet();
         $element = array(

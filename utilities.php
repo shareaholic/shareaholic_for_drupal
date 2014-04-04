@@ -9,7 +9,7 @@ module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http')
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.8';
+  const MODULE_VERSION = '7.x-3.10';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
@@ -412,15 +412,7 @@ class ShareaholicUtilities {
    * @return mixed: returns 1 if matched, 0 if no match, false if error occurs
    */
   public static function is_admin_page() {
-    return preg_match('/admin/', request_uri());
-  }
-
-  /**
-   * Checks if the current page is an edit page
-   * @return mixed: returns 1 if matched, 0 if no match, false if error occurs
-   */
-  public static function is_edit_page() {
-    return preg_match('/edit/', request_uri());
+    return path_is_admin(current_path());
   }
 
   /**
