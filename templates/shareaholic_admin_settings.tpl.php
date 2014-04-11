@@ -41,5 +41,6 @@ window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_k
 
 <?php ShareaholicAdmin::draw_modal_popup(); ?>
 <?php ShareaholicAdmin::draw_verify_api_key(); ?>
+<?php ShareaholicAdmin::show_footer(); ?>
 <?php ShareaholicAdmin::include_snapengage(); ?>
 </div>

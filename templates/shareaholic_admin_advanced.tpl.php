@@ -35,6 +35,17 @@
       <?php } ?>
     </fieldset>
 
+    <fieldset class="app">
+      <legend><h2><?php echo t('Your Shareaholic Site ID'); ?></h2></legend>
+      <?php if (ShareaholicUtilities::get_option('api_key')) {
+        echo '<code>' . ShareaholicUtilities::get_option('api_key') . '</code>';
+      } else {
+        echo t('Not set.');
+      } ?>
+    </fieldset>
+
+    <div class='clear'></div>
+
     <?php
       $form = drupal_get_form('shareaholic_reset_plugin_form');
       print(drupal_render($form));
@@ -43,5 +54,5 @@
     ?>
   </div>
 </div>
-
+<?php ShareaholicAdmin::show_footer(); ?>
 <?php ShareaholicAdmin::include_snapengage(); ?>

@@ -785,4 +785,15 @@ class ShareaholicUtilities {
   }
 
 
+  /**
+   * Return host domain of Drupal install
+   *
+   * @return string
+   */
+  public static function get_host() {
+    $parse = parse_url($GLOBALS['base_url']);
+    return $parse['host'];
+  }
+
+
 }

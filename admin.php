@@ -141,5 +141,12 @@ DOC;
     }
   }
 
+  /**
+   * Renders footer
+   */
+  public static function show_footer() {
+    ShareaholicUtilities::load_template('footer');
+  }
+
 }
 
