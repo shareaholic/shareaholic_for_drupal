@@ -19,6 +19,10 @@ abstract class ShareaholicShareCount {
   protected $services;
 
   public function __construct($url, $services) {
+    // encode the url if needed
+    if (!$this->is_url_encoded($url)) {
+      $url = urlencode($url);
+    }
     $this->url = $url;
     $this->services = $services;
   }
@@ -98,6 +102,23 @@ abstract class ShareaholicShareCount {
   }
 
   /**
+   * Check if the url is encoded
+   *
+   * The check is very simple and will fail if the url is encoded
+   * more than once because the check only decodes once
+   *
+   * @param string $url the url to check if it is encoded
+   * @return boolean true if the url is encoded and false otherwise
+   */
+  public function is_url_encoded($url) {
+    $decoded = urldecode($url);
+    if (strcmp($url, $decoded) === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Check if calling the service returned any type of error
    *
    * @param object $response A response object
@@ -172,6 +193,9 @@ abstract class ShareaholicShareCount {
    * @param $config The services configuration object to be updated
    */
   public function google_plus_prepare_request($url, &$config) {
+    if ($this->is_url_encoded($url)) {
+      $url = urldecode($url);
+    }
     $post_fields = array(
       array(
         'method' => 'pos.plusones.get',

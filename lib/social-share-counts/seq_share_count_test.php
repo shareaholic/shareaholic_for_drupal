@@ -199,4 +199,16 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
     $this->assertNull($response['data']['facebook'], 'The facebook count should be null');
   }
 
+  /**
+   * This test may fail if the APIs fail
+   */
+  public function testIsUrlEncoded() {
+    $url = 'http://eatnabout.com/2014/03/29/bestie/#more-10144';
+    $encoded_url = 'http%3A%2F%2Featnabout.com%2F2014%2F03%2F29%2Fbestie%2F%23more-10144';
+    $share_count = new ShareaholicSeqShareCount($url, $this->services);
+
+    $this->assertTrue($share_count->is_url_encoded($encoded_url), 'It should return true when the url is encoded');
+    $this->assertFalse($share_count->is_url_encoded($url), 'It should return false when the url is not encoded');
+  }
+
 }
