@@ -15,6 +15,7 @@ class AdminTestCase extends DrupalWebTestCase {
 
   public function setUp() {
     parent::setUp('shareaholic');
+    $this->user_admin_access = $this->drupalCreateUser(array('administer site configuration', 'access administration pages'));
   }
 
   public function testDrawModalPopup() {
@@ -49,6 +50,31 @@ class AdminTestCase extends DrupalWebTestCase {
     $output = ob_get_clean();
     $result = (strpos($output, $tos_modal) === false && strpos($output, $api_key_modal) === false);
     $this->assertTrue($result, 'It should not show any modals when the user accepted ToS and has apikey');
+  }
+
+  public function testShowFooter() {
+    variable_set('shareaholic_has_accepted_tos', true);
+    variable_set('shareaholic_settings', array('api_key' => 'test'));
+    $this->drupalLogin($this->user_admin_access);
+
+    // Check to see if the footer appears in app manager page
+    $this->drupalGet('admin/config/shareaholic/settings');
+    $this->assertRaw("Made with much love in Boston, Massachusetts.", 'If I am in the app manager page, I should see the footer');
+
+    // Check to see if the footer appears in advanced settings page
+    $this->drupalGet('admin/config/shareaholic/advanced');
+    $this->assertRaw("Made with much love in Boston, Massachusetts.", 'If I am in the app manager page, I should see the footer');
+  }
+
+  public function testShowSiteIdSection() {
+    variable_set('shareaholic_has_accepted_tos', true);
+    variable_set('shareaholic_settings', array('api_key' => 'test_api_key'));
+    $this->drupalLogin($this->user_admin_access);
+
+    // Check to see if the site ID section appears in advanced settings page
+    $this->drupalGet('admin/config/shareaholic/advanced');
+    $this->assertRaw("Your Shareaholic Site ID", 'If I am in the app manager page, I should see the Site Id section');
+    $this->assertRaw("test_api_key", 'If I am in the app manager page, I should see the expected api key');
   }
 
 }

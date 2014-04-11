@@ -51,12 +51,12 @@ class ShareaholicTestCase extends DrupalWebTestCase {
     // Check to see if the home page has Shareaholic JS code
     $this->drupalGet('');
     $this->assertRaw('/assets/pub/shareaholic.js', 'It should have the JS script in the page');
-    $this->assertRaw('Shareaholic.init(site_id)', 'It should have the JS init call in the page');
+    $this->assertRaw('Shareaholic.init(site_id, page_config)', 'It should have the JS init call in the page');
 
     // Check that the admin pages do not have Shareaholic JS code
     $this->drupalGet('admin/modules');
     $this->assertNoRaw('/assets/pub/shareaholic.js', 'It should not have the JS script in the page');
-    $this->assertNoRaw('Shareaholic.init(site_id)', 'It should not have the JS init call in the page');
+    $this->assertNoRaw('Shareaholic.init(site_id, page_config)', 'It should not have the JS init call in the page');
   }
 
 
