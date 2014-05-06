@@ -21,13 +21,34 @@ class ShareaholicAdmin {
    */
   public static function draw_modal_popup() {
     if(!ShareaholicUtilities::has_accepted_terms_of_service()) {
-      $form = drupal_get_form('shareaholic_tos_modal_form');
-      print(drupal_render($form));
+      self::draw_tos_popup();
     } else if (!ShareaholicUtilities::get_option('api_key')) {
-      $form = drupal_get_form('shareaholic_failure_modal_form');
-      print(drupal_render($form));
+      self::draw_failure_popup();
     }
   }
+
+
+  /**
+   * Outputs the actual html for either the terms_of_service modal
+   * to be rendered on the admin pages
+   *
+   */
+  public static function draw_tos_popup() {
+    $form = drupal_get_form('shareaholic_tos_modal_form');
+    print(drupal_render($form));
+  }
+
+
+  /**
+   * Outputs the actual html for either the terms_of_service modal
+   * to be rendered on the admin pages
+   *
+   */
+  public static function draw_failure_popup() {
+    $form = drupal_get_form('shareaholic_failure_modal_form');
+    print(drupal_render($form));
+  }
+
 
   /**
    * Show the terms of service notice on admin pages

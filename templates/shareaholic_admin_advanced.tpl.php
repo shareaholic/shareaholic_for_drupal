@@ -49,7 +49,9 @@
     <?php
       $form = drupal_get_form('shareaholic_reset_plugin_form');
       print(drupal_render($form));
-      ShareaholicAdmin::draw_modal_popup();
+      if (!ShareaholicUtilities::has_accepted_terms_of_service()) {
+        ShareaholicAdmin::draw_tos_popup();
+      }
       print '</div>';
     ?>
   </div>
