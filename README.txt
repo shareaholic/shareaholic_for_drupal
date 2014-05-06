@@ -12,8 +12,14 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.12 =
+* New Feature: display Site ID for better debugging and cross referencing
+* Bugfix: Removed an unneeded conditional check from the server side Share Counts API to make it more reliable
+* Bugfix: Removed modal from blocking the advanced settings page
+
 = 7.x-3.11 =
-* New Feature: Internal service exposed to get Share Counts API
+* New Feature: Share Counts for Google+, Reddit, StumbleUpon, VK, Buffer, etc! This release features an optional and all new server side Share Counts API. Toggle this option under the "Advanced Settings" section.
+* Major performance upgrade and speed boost! Your pages will load faster for your visitors as share count lookups are now consolidated to one single HTTP request per page load (vs a call for each sharing service). The share counts are also heavily cached on both the client and server for super fast lookups and page performance.
 * Bug Fix: images in the configuration page do not load properly
 
 = 7.x-3.10 =
