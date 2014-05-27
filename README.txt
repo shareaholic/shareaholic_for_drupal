@@ -12,6 +12,10 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.13 =
+* New Feature: Added footer navigation for more information on Shareaholic products
+* Bugfix: Prevent share counts from being called on private pages
+
 = 7.x-3.12 =
 * New Feature: display Site ID for better debugging and cross referencing
 * Bugfix: Removed an unneeded conditional check from the server side Share Counts API to make it more reliable
