@@ -345,6 +345,16 @@ DOC;
       $visibility = 'private';
     }
 
+    // Check if a site visitor can see the content
+    try {
+      $anonymous_user = user_load(0);
+      if ($anonymous_user && !node_access('view', $node, $anonymous_user)) {
+        $visibility = 'private';
+      }
+    } catch (Exception $e) {
+      ShareaholicUtilities::log('Error in checking node_access: ' . $e->getMessage());
+    }
+
     return $visibility;
   }
 

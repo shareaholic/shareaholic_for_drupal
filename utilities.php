@@ -444,10 +444,11 @@ class ShareaholicUtilities {
   public static function recommendations_status_check() {
     $api_key = self::get_option('api_key');
     if (!empty($api_key)) {
-    	$recommendations_url = self::REC_API_URL . "/v3/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=3&apiKey=" . $api_key;
+    	$recommendations_url = self::REC_API_URL . "/v4/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=0&api_key=" . $api_key;
       $response = drupal_http_request($recommendations_url, array('method' => 'GET'));
       $response = (array) $response;
-      if($response['code'] == 200) {
+      $json = isset($response['data']) ? json_decode($response['data'], true) : array();
+      if(isset($json['internal']) && !empty($json['internal'])) {
         return 'ready';
       } else {
         return 'processing';
