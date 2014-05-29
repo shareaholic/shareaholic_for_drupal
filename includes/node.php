@@ -29,9 +29,7 @@
    */
   function shareaholic_node_update($node) {
     ShareaholicContentSettings::update($node);
-    if(ShareaholicUtilities::should_notify_cm()) {
-      ShareaholicContentManager::single_page_worker($node);
-    }
+    ShareaholicContentManager::single_page_worker($node);
   }
 
 
@@ -55,9 +53,7 @@
    */
   function shareaholic_node_insert($node) {
     ShareaholicContentSettings::insert($node);
-    if(ShareaholicUtilities::should_notify_cm()) {
-      ShareaholicContentManager::single_page_worker($node);
-    }
+    ShareaholicContentManager::single_page_worker($node);
   }
 
 
