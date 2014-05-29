@@ -566,8 +566,26 @@ class ShareaholicUtilities {
     }
     return false;
   }
+  
 
-
+  /**
+   * Clears Facebook Open Graph cache for provided node
+   *
+   * @param Object $node
+   */
+  public static function clear_fb_opengraph($node) {
+    $page_link = url('node/'. $node->nid, array('absolute' => TRUE));
+    if(isset($page_link)) {
+      $fb_graph_url = "https://graph.facebook.com/?id=". urlencode($page_link) ."&scrape=true";
+      $options = array(
+        'method' => 'POST',
+        'timeout' => 5,
+        );
+      $result = drupal_http_request($fb_graph_url, $options);
+    }
+  }
+  
+  
   /**
    * Answers whether we should ping CM
    *
