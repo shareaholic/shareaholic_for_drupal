@@ -566,27 +566,24 @@ class ShareaholicUtilities {
     }
     return false;
   }
-
+  
 
   /**
-   * Answers whether we should ping CM
+   * Clears Facebook Open Graph cache for provided node
    *
-   * @return bool
+   * @param Object $node
    */
-  public static function should_notify_cm() {
-    $settings = ShareaholicUtilities::get_settings();
-    $recommendations_settings = isset($settings['recommendations']) ?
-      $settings["recommendations"] :
-      null;
+  public static function clear_fb_opengraph($node) {
+    if ($node->status !== NODE_PUBLISHED) return;
 
-    if (is_array($recommendations_settings)) {
-      if (in_array("on", $recommendations_settings)) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+    $page_link = url('node/'. $node->nid, array('absolute' => TRUE));
+    if(isset($page_link)) {
+      $fb_graph_url = "https://graph.facebook.com/?id=". urlencode($page_link) ."&scrape=true";
+      $options = array(
+        'method' => 'POST',
+        'timeout' => 5,
+        );
+      $result = drupal_http_request($fb_graph_url, $options);
     }
   }
 
@@ -631,15 +628,6 @@ class ShareaholicUtilities {
     ShareaholicHttp::send($event_api_url, $options, true);
   }
 
-  /**
-   * Get the total number of users for this site
-   *
-   * @return integer The total number of users
-   */
-  public static function total_users() {
-    return db_query("SELECT count(uid) FROM {users}")->fetchField();
-  }
-
 
   /**
    * Get the total number of comments for this site
@@ -647,6 +635,9 @@ class ShareaholicUtilities {
    * @return integer The total number of comments
    */
   public static function total_comments() {
+    if (!db_table_exists('comment')) {
+      return array();
+    }
     return db_query("SELECT count(cid) FROM {comment}")->fetchField();
   }
 
@@ -663,9 +654,6 @@ class ShareaholicUtilities {
     foreach ($result as $record) {
       $stats[$record->type . '_total'] = $record->count;
     }
-
-    // Get the total users
-    $stats['users_total'] = self::total_users();
 
     // Get the total comments
     $stats['comments_total'] = self::total_comments();

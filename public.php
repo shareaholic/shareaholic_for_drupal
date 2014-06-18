@@ -190,6 +190,9 @@ DOC;
    */
   public static function get_keywords_for($node) {
     $terms = array();
+    if (!db_table_exists('taxonomy_index')) {
+      return $terms;
+    }
     $results = db_query('SELECT tid FROM {taxonomy_index} WHERE nid = :nid', array(':nid' => $node->nid));
     foreach ($results as $result) {
       $term = taxonomy_term_load($result->tid);

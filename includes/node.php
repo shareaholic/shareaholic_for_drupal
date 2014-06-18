@@ -24,14 +24,14 @@
   /**
    * Implements hook_node_update().
    * When a node is updated, notify CM to scrape its details
+   * and clear FB cache
    *
    * @param $node The node that has been updated
    */
   function shareaholic_node_update($node) {
     ShareaholicContentSettings::update($node);
-    if(ShareaholicUtilities::should_notify_cm()) {
-      ShareaholicContentManager::single_page_worker($node);
-    }
+    ShareaholicContentManager::single_page_worker($node);
+    ShareaholicUtilities::clear_fb_opengraph($node);
   }
 
 
@@ -50,14 +50,14 @@
   /**
    * Implements hook_node_insert().
    * When a node is created, notify CM to scrape its details
+   * and clear FB cache
    *
    * @param $node The node that has been created
    */
   function shareaholic_node_insert($node) {
     ShareaholicContentSettings::insert($node);
-    if(ShareaholicUtilities::should_notify_cm()) {
-      ShareaholicContentManager::single_page_worker($node);
-    }
+    ShareaholicContentManager::single_page_worker($node);
+    ShareaholicUtilities::clear_fb_opengraph($node);
   }
 
 
