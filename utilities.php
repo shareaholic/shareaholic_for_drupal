@@ -628,15 +628,6 @@ class ShareaholicUtilities {
     ShareaholicHttp::send($event_api_url, $options, true);
   }
 
-  /**
-   * Get the total number of users for this site
-   *
-   * @return integer The total number of users
-   */
-  public static function total_users() {
-    return db_query("SELECT count(uid) FROM {users}")->fetchField();
-  }
-
 
   /**
    * Get the total number of comments for this site
@@ -644,6 +635,9 @@ class ShareaholicUtilities {
    * @return integer The total number of comments
    */
   public static function total_comments() {
+    if (!db_table_exists('comment')) {
+      return array();
+    }
     return db_query("SELECT count(cid) FROM {comment}")->fetchField();
   }
 
@@ -660,9 +654,6 @@ class ShareaholicUtilities {
     foreach ($result as $record) {
       $stats[$record->type . '_total'] = $record->count;
     }
-
-    // Get the total users
-    $stats['users_total'] = self::total_users();
 
     // Get the total comments
     $stats['comments_total'] = self::total_comments();
