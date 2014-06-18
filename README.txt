@@ -12,6 +12,10 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.14 =
+* Bugfix: Fixed issue with querying for non-existent database tables
+* New Feature: clear FB cache when user creates and/or updates an piece of content
+
 = 7.x-3.13 =
 * New Feature: Added footer navigation for more information on Shareaholic products
 * Bugfix: Prevent share counts from being called on private pages
