@@ -477,3 +477,27 @@ div #shareaholic-form-container fieldset.app legend img  {
   background-color: #45a147;
   border: 1px solid #1E8520;
 }
+
+.help_links{
+  border: 1px solid #d8d8d8;
+	border-radius: 6px;
+	padding: 20px 20px;
+	color: #45A147;
+	font-size: 14px;
+	float: right;
+	margin: 25px 0 0 20px;
+	width: 250px;
+}
+
+.help_links ul{
+  margin: 0px 0px 0px 15px;
+  list-style-type: square;
+}
+
+.help_links ul li{
+  color: #555;
+  float: left;
+  font: 400 12px/18px "open sans","helvetica neue",helvetica,arial,sans-serif;
+  margin: 0 0 4px 0;
+  text-align: left;
+}

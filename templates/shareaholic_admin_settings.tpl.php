@@ -25,16 +25,24 @@ window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_k
 </div>
 
   <div class="signuppromo unit size1of5">
-  <p class="promoh1"><?php print t('Unlock additional customization options when you connect this module to your FREE Shareaholic account.'); ?></p>
+  <p class="promoh1"><?php print t('Sign up for a FREE Shareaholic account to unlock more features.'); ?></p>
   <ul>
-    <li><?php print t('Brand your social shares. For example, you can make all Twitter shares say "by @Twitterhandle"'); ?></li>
-    <li><?php print t('Pick your favorite URL shortener, including support for branded bitly short links.'); ?></li>
-    <li><?php print t('Additional themes for share buttons, related content, etc to match your site.'); ?></li>
-    <li><?php print t('Opportunities to make money with your site, plus lots more!'); ?></li>
+    <li><?php print t('Get the Floated Share Buttons app'); ?></li>
+    <li><?php print t('Monetize your site, plus lots more!'); ?></li>
   </ul>
-  <button data-href='edit' id='general_settings' class="btn btn-success btn-large"><?php print t('Edit General Website Settings'); ?></button>
-  <p class="signuppromo_note"><?php print t("Connecting is simple. Simply click the button above and sign in to your Shareaholic account to connect this module to your account. If you don't have an account already, simply create a new account — it takes just seconds and it's free!"); ?></p>
+  <button data-href='edit' id='general_settings' class="btn btn-success btn-large"><?php print t('Unlock more features, for free'); ?></button>
+  <p class="signuppromo_note"><?php print t("Click the button above to sign up or log in to your free Shareaholic account. It takes just seconds to sign up and it's free!"); ?></p>
   </div>
+
+  <div class="help_links unit size1of5">
+    <ul>
+      <li><a href="http://support.shareaholic.com/" target="_blank"><?php print t('Need help? Visit the Shareaholic Helpdesk'); ?></a></li>
+      <li><a href="https://localize.drupal.org/translate/downloads?project=shareaholic" target="_blank"><?php print t('Submit a new or updated language translation'); ?></a></li>
+      <li><a href="https://shareaholic.com/tools/browser/" target="_blank"><?php print t('Get the Shareaholic Browser Extension to share content from anywhere on the web'); ?></a></li>
+      <li><a href="http://support.shareaholic.com/hc/en-us/articles/201770175?utm_source=wp_plugin&utm_medium=appsett&utm_campaign=psa_faq" target="_blank"><?php print t('Why am I seeing ads?'); ?></a></li>
+    </ul>
+  </div>
+
 
 </div>
 
