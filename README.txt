@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.15 =
+* New Feature: Now you can earn revenue from your existing product links with zero additional effort.
+* New Feature: Added support for Shareaholic ads.
 
 = 7.x-3.14 =
 * Bugfix: Fixed issue with querying for non-existent database tables
