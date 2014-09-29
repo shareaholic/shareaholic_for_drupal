@@ -49,9 +49,6 @@ div#shareaholic-form-container legend {
 	position: relative;
 	top:-4px;
 }
-.btn {
-	margin-left:20px;
-}
 
 .helper {
 	display: block;
@@ -102,10 +99,29 @@ h3 {
 
 .reveal-modal {
   width: 720px;
-  height: 600px;
+  height: 550px;
   margin-left: -335px;
   position: fixed;
   /* display: none; */
+}
+
+.reveal-modal.has-shortcode iframe,
+.reveal-modal.has-shortcode #iframe_container {
+  height: 550px;
+}
+
+.fieldset-footer {
+  clear: both;
+  padding-top: 10px;
+  overflow: hidden;
+}
+
+.fieldset-footer button{
+  float: left;
+}
+
+.fieldset-footer .app-status{
+  float: left;
 }
 
 #editing_modal {
@@ -113,7 +129,7 @@ h3 {
 }
 
 #editing_modal #iframe_container iframe {
-  height: 600px;
+  height: 550px;
 }
 
 .wp-submenu-wrap ul {
@@ -500,4 +516,46 @@ div #shareaholic-form-container fieldset.app legend img  {
   font: 400 12px/18px "open sans","helvetica neue",helvetica,arial,sans-serif;
   margin: 0 0 4px 0;
   text-align: left;
+}
+
+i.icon.icon-share_buttons {
+  background-position: 0 0px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-recommendations {
+  background-position: 0 -16px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-affiliate {
+  background-position: 0 -160px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-analytics {
+  background-position: 0 -32px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-website {
+  background-position: 0 -96px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon {
+  vertical-align: middle;
+  background-image: url(../img/shareaholic_com_sprite.png);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-right: 7px;
 }

@@ -25,13 +25,15 @@ window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_k
 </div>
 
   <div class="signuppromo unit size1of5">
-  <p class="promoh1"><?php print t('Sign up for a FREE Shareaholic account to unlock more features.'); ?></p>
+  <p class="promoh1"><?php print t('Gain access to more features with a FREE Shareaholic account:'); ?></p>
   <ul>
-    <li><?php print t('Get the Floated Share Buttons app'); ?></li>
-    <li><?php print t('Monetize your site, plus lots more!'); ?></li>
+    <li><?php print t('Floated Share Buttons'); ?></li>
+    <li><?php print t('Follow Buttons'); ?></li>
+    <li><?php print t('Revenue Generating Apps'); ?></li>
+    <li><?php print t('Social Analytics, plus lots more!'); ?></li>
   </ul>
-  <button data-href='edit' id='general_settings' class="btn btn-success btn-large"><?php print t('Unlock more features, for free'); ?></button>
-  <p class="signuppromo_note"><?php print t("Click the button above to sign up or log in to your free Shareaholic account. It takes just seconds to sign up and it's free!"); ?></p>
+  <button data-href='edit' id='general_settings' class="btn btn-success btn-large"><?php print t('Configure additional features'); ?></button>
+  <p class="signuppromo_note"><?php print t("Already have a Shareaholic account? Click the button above to log in."); ?></p>
   </div>
 
   <div class="help_links unit size1of5">
@@ -39,7 +41,7 @@ window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_k
       <li><a href="http://support.shareaholic.com/" target="_blank"><?php print t('Need help? Visit the Shareaholic Helpdesk'); ?></a></li>
       <li><a href="https://localize.drupal.org/translate/downloads?project=shareaholic" target="_blank"><?php print t('Submit a new or updated language translation'); ?></a></li>
       <li><a href="https://shareaholic.com/tools/browser/" target="_blank"><?php print t('Get the Shareaholic Browser Extension to share content from anywhere on the web'); ?></a></li>
-      <li><a href="http://support.shareaholic.com/hc/en-us/articles/201770175?utm_source=wp_plugin&utm_medium=appsett&utm_campaign=psa_faq" target="_blank"><?php print t('Why am I seeing ads?'); ?></a></li>
+      <li><a href="http://support.shareaholic.com/hc/en-us/articles/201770175?utm_source=drupal_plugin&utm_medium=appsett&utm_campaign=psa_faq" target="_blank"><?php print t('Why am I seeing ads?'); ?></a></li>
     </ul>
   </div>
 
