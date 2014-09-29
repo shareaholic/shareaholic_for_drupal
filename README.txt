@@ -11,6 +11,10 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.16 =
+* New Feature: Additional settings for configuring share buttons and related and promoted content
+* New Feature: Configure monetization settings from affiliate linking to post share ads
+
 = 7.x-3.15 =
 * New Feature: Now you can earn revenue from your existing product links with zero additional effort.
 * New Feature: Added support for Shareaholic ads.
