@@ -49,9 +49,6 @@ div#shareaholic-form-container legend {
 	position: relative;
 	top:-4px;
 }
-.btn {
-	margin-left:20px;
-}
 
 .helper {
 	display: block;
@@ -102,10 +99,29 @@ h3 {
 
 .reveal-modal {
   width: 720px;
-  height: 600px;
+  height: 550px;
   margin-left: -335px;
   position: fixed;
   /* display: none; */
+}
+
+.reveal-modal.has-shortcode iframe,
+.reveal-modal.has-shortcode #iframe_container {
+  height: 550px;
+}
+
+.fieldset-footer {
+  clear: both;
+  padding-top: 10px;
+  overflow: hidden;
+}
+
+.fieldset-footer button{
+  float: left;
+}
+
+.fieldset-footer .app-status{
+  float: left;
 }
 
 #editing_modal {
@@ -113,7 +129,7 @@ h3 {
 }
 
 #editing_modal #iframe_container iframe {
-  height: 600px;
+  height: 550px;
 }
 
 .wp-submenu-wrap ul {

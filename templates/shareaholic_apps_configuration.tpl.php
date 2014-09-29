@@ -22,25 +22,27 @@
             <button data-app='recommendations'
                     data-location_id='<?php echo $location_id ?>'
                     data-href="recommendations/locations/{{id}}/edit"
-                    class="btn btn-success">
+                    class="mll btn btn-success">
             <?php print t('Customize'); ?></button>
           </div>
       </fieldset>
     <?php } ?>
 
-    <div class='clear'></div>
-
-    <strong><?php print t('Related Content:'); ?></strong>
-
-    <?php
-      $status = ShareaholicUtilities::recommendations_status_check();
-      if ($status == 'processing' || $status == 'unknown'){
-        echo '<img class="shrsb_health_icon" align="top" src="' . SHAREAHOLIC_ASSET_DIR . '/img/circle_yellow.png" />' . t('Processing');
-      } else {
-        echo '<img class="shrsb_health_icon" align="top" src="' . SHAREAHOLIC_ASSET_DIR . '/img/circle_green.png" />' . t('Ready');
-      }
-    ?>
-
+    <div class="fieldset-footer">
+      <span class="helper_secondary"><i class="icon-star"></i> Re-crawl your content, exclude certain pages from being recommended, etc.</span>
+      <button class='app_wide_settings btn' data-href='recommendations/edit'><?php print t('Edit Related & Promoted Content Settings'); ?></button>
+      <div class="app-status">
+        &nbsp;&nbsp;&nbsp;&nbsp;<strong><?php print t('Status:'); ?></strong>
+        <?php
+          $status = ShareaholicUtilities::recommendations_status_check();
+          if ($status == 'processing' || $status == 'unknown'){
+            echo '<img class="shrsb_health_icon" align="top" src="' . SHAREAHOLIC_ASSET_DIR . '/img/circle_yellow.png" />' . t('Processing');
+          } else {
+            echo '<img class="shrsb_health_icon" align="top" src="' . SHAREAHOLIC_ASSET_DIR . '/img/circle_green.png" />' . t('Ready');
+          }
+        ?>
+      </div>
+    </div>
   </fieldset>
 
   <div class='clear'></div>
@@ -67,12 +69,22 @@
             <button data-app='share_buttons'
                     data-location_id='<?php echo $location_id ?>'
                     data-href='share_buttons/locations/{{id}}/edit'
-                    class="btn btn-success">
+                    class="mll btn btn-success">
             <?php print t('Customize'); ?></button>
           </div>
       <?php } ?>
     </fieldset>
     <?php } ?>
+    <div class='fieldset-footer'>
+      <span class="helper_secondary"><i class="icon-star"></i> Brand your shares with your @Twitterhandle, pick your favorite URL shortener, share buttons for images, etc.</span>
+      <button class='app_wide_settings btn' data-href='share_buttons/edit'>Edit Share Button Settings</button>
+    </div>
+  </fieldset>
+
+  <fieldset class="app">
+    <legend><h2><i class="icon icon-affiliate"></i><?php echo t('Monetization'); ?></h2></legend>
+    <span class="helper"><i class="icon-star"></i> <?php echo t('Configure your  monetization settings from one place, including Promoted Content, Affiliate Links App, etc.'); ?></span>
+    <button class='app_wide_settings btn' data-href='monetizations/edit'><?php echo t('Edit Monetization Settings'); ?></button>
   </fieldset>
 </div>
 
