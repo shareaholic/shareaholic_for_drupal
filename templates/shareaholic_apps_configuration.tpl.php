@@ -29,7 +29,7 @@
     <?php } ?>
 
     <div class="fieldset-footer">
-      <span class="helper_secondary"><i class="icon-star"></i> Re-crawl your content, exclude certain pages from being recommended, etc.</span>
+      <span class="helper"><i class="icon-star"></i> Re-crawl your content, exclude certain pages from being recommended, etc.</span>
       <button class='app_wide_settings btn' data-href='recommendations/edit'><?php print t('Edit Related & Promoted Content Settings'); ?></button>
       <div class="app-status">
         &nbsp;&nbsp;&nbsp;&nbsp;<strong><?php print t('Status:'); ?></strong>
@@ -76,7 +76,7 @@
     </fieldset>
     <?php } ?>
     <div class='fieldset-footer'>
-      <span class="helper_secondary"><i class="icon-star"></i> Brand your shares with your @Twitterhandle, pick your favorite URL shortener, share buttons for images, etc.</span>
+      <span class="helper"><i class="icon-star"></i> Brand your shares with your @Twitterhandle, pick your favorite URL shortener, share buttons for images, etc.</span>
       <button class='app_wide_settings btn' data-href='share_buttons/edit'>Edit Share Button Settings</button>
     </div>
   </fieldset>

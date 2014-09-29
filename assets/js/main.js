@@ -56,7 +56,7 @@
         'general_settings': {
             selector: '#general_settings',
             url: function(button) {
-                return first_part_of_url + 'edit'
+                return first_part_of_url + 'websites/edit/'
                     + '?verification_key=' + verification_key;
             }
         },
