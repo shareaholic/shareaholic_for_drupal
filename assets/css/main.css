@@ -501,3 +501,45 @@ div #shareaholic-form-container fieldset.app legend img  {
   margin: 0 0 4px 0;
   text-align: left;
 }
+
+i.icon.icon-share_buttons {
+  background-position: 0 0px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-recommendations {
+  background-position: 0 -16px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-affiliate {
+  background-position: 0 -160px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-analytics {
+  background-position: 0 -32px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon.icon-website {
+  background-position: 0 -96px;
+  width: 16px;
+  height: 16px;
+}
+
+i.icon {
+  vertical-align: middle;
+  background-image: url(../img/shareaholic_com_sprite.png);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-right: 7px;
+}

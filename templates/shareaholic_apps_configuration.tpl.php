@@ -1,40 +1,9 @@
 <div id='app_settings'>
   <?php $page_types = ShareaholicUtilities::page_types(); ?>
   <?php $settings = ShareaholicUtilities::get_settings(); ?>
-  <fieldset class="app">
-    <legend><h2><img src="<?php echo SHAREAHOLIC_ASSET_DIR; ?>img/sharebuttons@2x.png" /> <?php print t('Share Buttons'); ?></h2></legend>
-
-    <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want your buttons to be displayed. Click "Customize" to customize look & feel, themes, share counters, alignment, etc.'); ?></span>
-
-    <?php foreach($page_types as $key => $page_type) { ?>
-    <fieldset id='sharebuttons'>
-      <legend><?php echo ucwords($page_type->name) ?></legend>
-      <?php foreach(array('above', 'below') as $position) { ?>
-        <?php if (isset($settings['location_name_ids']['share_buttons']["{$page_type->type}_{$position}_content"])) { ?>
-          <?php $location_id = $settings['location_name_ids']['share_buttons']["{$page_type->type}_{$position}_content"] ?>
-        <?php } else { $location_id = ''; } ?>
-          <div>
-            <input type="checkbox" id="share_buttons_<?php echo "{$page_type->type}_{$position}_content" ?>" name="share_buttons[<?php echo "{$page_type->type}_{$position}_content" ?>]" class="check"
-            <?php if (isset($settings['share_buttons']["{$page_type->type}_{$position}_content"])) { ?>
-              <?php echo ($settings['share_buttons']["{$page_type->type}_{$position}_content"] == 'on' ? 'checked' : '') ?>
-            <?php } ?>>
-            <input type="hidden" id="share_buttons_<?php echo "{$page_type->type}_{$position}_content_location_id" ?>" name="share_buttons[<?php echo "{$page_type->type}_{$position}_content_location_id" ?>]" value="<?php echo $location_id ?>"/>
-            <label for="share_buttons_<?php echo "{$page_type->type}_{$position}_content" ?>"><?php echo ucfirst($position) ?> Content</label>
-            <button data-app='share_buttons'
-                    data-location_id='<?php echo $location_id ?>'
-                    data-href='share_buttons/locations/{{id}}/edit'
-                    class="btn btn-success">
-            <?php print t('Customize'); ?></button>
-          </div>
-      <?php } ?>
-    </fieldset>
-    <?php } ?>
-  </fieldset>
-
-  <div class='clear'></div>
 
   <fieldset class="app">
-    <legend><h2><img src="<?php echo SHAREAHOLIC_ASSET_DIR; ?>/img/related_content@2x.png" /> <?php print t('Related Content / Recommendations'); ?></h2></legend>
+    <legend><h2><i class="icon icon-recommendations"></i><?php print t('Related & Promoted Content'); ?></h2></legend>
 
     <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want Related Content to be displayed. Click "Customize" to customize look & feel, themes, block lists, etc.'); ?></span>
     <?php foreach($page_types as $key => $page_type) { ?>
@@ -72,6 +41,38 @@
       }
     ?>
 
+  </fieldset>
+
+  <div class='clear'></div>
+
+  <fieldset class="app">
+    <legend><h2><i class="icon icon-share_buttons"></i><?php print t('Share Buttons'); ?></h2></legend>
+
+    <span class="helper"><i class="icon-star"></i> <?php print t('Pick where you want your buttons to be displayed. Click "Customize" to customize look & feel, themes, share counters, alignment, etc.'); ?></span>
+
+    <?php foreach($page_types as $key => $page_type) { ?>
+    <fieldset id='sharebuttons'>
+      <legend><?php echo ucwords($page_type->name) ?></legend>
+      <?php foreach(array('above', 'below') as $position) { ?>
+        <?php if (isset($settings['location_name_ids']['share_buttons']["{$page_type->type}_{$position}_content"])) { ?>
+          <?php $location_id = $settings['location_name_ids']['share_buttons']["{$page_type->type}_{$position}_content"] ?>
+        <?php } else { $location_id = ''; } ?>
+          <div>
+            <input type="checkbox" id="share_buttons_<?php echo "{$page_type->type}_{$position}_content" ?>" name="share_buttons[<?php echo "{$page_type->type}_{$position}_content" ?>]" class="check"
+            <?php if (isset($settings['share_buttons']["{$page_type->type}_{$position}_content"])) { ?>
+              <?php echo ($settings['share_buttons']["{$page_type->type}_{$position}_content"] == 'on' ? 'checked' : '') ?>
+            <?php } ?>>
+            <input type="hidden" id="share_buttons_<?php echo "{$page_type->type}_{$position}_content_location_id" ?>" name="share_buttons[<?php echo "{$page_type->type}_{$position}_content_location_id" ?>]" value="<?php echo $location_id ?>"/>
+            <label for="share_buttons_<?php echo "{$page_type->type}_{$position}_content" ?>"><?php echo ucfirst($position) ?> Content</label>
+            <button data-app='share_buttons'
+                    data-location_id='<?php echo $location_id ?>'
+                    data-href='share_buttons/locations/{{id}}/edit'
+                    class="btn btn-success">
+            <?php print t('Customize'); ?></button>
+          </div>
+      <?php } ?>
+    </fieldset>
+    <?php } ?>
   </fieldset>
 </div>
 
