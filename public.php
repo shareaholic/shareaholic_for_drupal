@@ -369,24 +369,42 @@ DOC;
   public static function share_counts_api() {
     // sometimes the drupal http request function throws errors so setting handler
     set_error_handler(array('ShareaholicPublic', 'custom_error_handler'));
-
+    $debug_mode = isset($_GET['debug']) && $_GET['debug'] === '1';
     $cache_key = 'shr_api_res-' . md5( $_SERVER['QUERY_STRING'] );
     $result = ShareaholicCache::get($cache_key);
+    $has_curl_multi = self::has_curl();
 
     if (!$result) {
       $url = isset($_GET['url']) ? $_GET['url'] : NULL;
       $services = isset($_GET['services']) ? $_GET['services'] : NULL;
       $result = array();
+      $options = array();
+
+      if ($debug_mode && isset($_GET['timeout'])) {
+        $options['timeout'] = intval($_GET['timeout']);
+      }
 
       if(is_array($services) && count($services) > 0 && !empty($url)) {
-        if(self::has_curl()) {
-          $shares = new ShareaholicCurlMultiShareCount($url, $services);
+        if ($debug_mode && isset($_GET['client'])) {
+          if ($has_curl_multi && $_GET['client'] !== 'seq') {
+            $shares = new ShareaholicCurlMultiShareCount($url, $services, $options);
+          } else {
+            $shares = new ShareaholicSeqShareCount($url, $services, $options);
+          }
+        } else if($has_curl_multi) {
+          $shares = new ShareaholicCurlMultiShareCount($url, $services, $options);
         } else {
-          $shares = new ShareaholicSeqShareCount($url, $services);
+          $shares = new ShareaholicSeqShareCount($url, $services, $options);
         }
         $result = $shares->get_counts();
 
-        if (isset($result['data'])) {
+        if ($debug_mode) {
+          $result['has_curl_multi'] = $has_curl_multi;
+          $result['curl_type'] = get_class($shares);
+          $result['raw'] = $shares->raw_response;
+        }
+
+        if (isset($result['data']) && !$debug_mode) {
           ShareaholicCache::set($cache_key, $result, SHARE_COUNTS_CHECK_CACHE_LENGTH);
         }
       }
