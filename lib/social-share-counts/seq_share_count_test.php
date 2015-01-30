@@ -23,6 +23,42 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
 
   }
 
+  public function testHasHttpError() {
+    $response = NULL;
+    $this->assertTrue($this->share_count->has_http_error($response), 'should return true for null response');
+
+    $response = array();
+    $this->assertTrue($this->share_count->has_http_error($response), 'should return true for empty response');
+
+    $response = array(
+      'response' => array(
+        'code' => 200
+      ),
+      'body' => ''
+    );
+    $this->assertFalse($this->share_count->has_http_error($response), 'should return false');
+  }
+
+  public function testGetClientIp() {
+    $expected = '12345';
+    $_SERVER['HTTP_CLIENT_IP'] = $expected;
+    $result = $this->share_count->get_client_ip();
+    $this->assertEquals($expected, $result);
+
+    $expected = '23456';
+    $_SERVER['HTTP_CLIENT_IP'] = '';
+    $_SERVER['HTTP_X_FORWARDED_FOR'] = $expected;
+    $result = $this->share_count->get_client_ip();
+    $this->assertEquals($expected, $result);
+
+    $expected = '34567';
+    $_SERVER['HTTP_CLIENT_IP'] = '';
+    $_SERVER['HTTP_X_FORWARDED_FOR'] = '';
+    $_SERVER['REMOTE_ADDR'] = $expected;
+    $result = $this->share_count->get_client_ip();
+    $this->assertEquals($expected, $result);
+  }
+
   public function testFacebookCountCallback() {
     // given a typical facebook counts api response, test that
     // it gives back the expected result (the total_count which is 16)
@@ -60,6 +96,18 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
     $this->response['body'] = $json;
     $google_plus_count = $this->share_count->google_plus_count_callback($this->response);
     $this->assertEquals(10, $google_plus_count, 'It should get the correct google_plus count');
+
+    // test when google returns unexpected json response in case they change
+    $json = '{"test": "test"}';
+    $this->response['body'] = $json;
+    $google_plus_count = $this->share_count->google_plus_count_callback($this->response);
+    $this->assertEquals(0, $google_plus_count, 'It should return zero google plus count for unexpected JSON');
+
+    // test when google return non JSON response
+    $json = 'hello';
+    $this->response['body'] = $json;
+    $google_plus_count = $this->share_count->google_plus_count_callback($this->response);
+    $this->assertEquals(0, $google_plus_count, 'It should return zero google plus count for non JSON');
  }
 
 
@@ -136,6 +184,11 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
    $this->share_count->google_plus_prepare_request($this->url, $config);
    $this->assertNotNull($config['google_plus']['body'], 'The post body for google plus should not be null');
 
+   // mock the ip address and check that the userIp is set
+   $mockIp = 'mockIp';
+   $_SERVER['REMOTE_ADDR'] = $mockIp;
+   $this->share_count->google_plus_prepare_request($this->url, $config);
+   $this->assertEquals($mockIp, $config['google_plus']['body'][0]['params']['userIp']);
  }
 
   /**
