@@ -17,14 +17,18 @@ abstract class ShareaholicShareCount {
 
   protected $url;
   protected $services;
+  protected $options;
+  public $raw_response;
 
-  public function __construct($url, $services) {
+  public function __construct($url, $services, $options) {
     // encode the url if needed
     if (!$this->is_url_encoded($url)) {
       $url = urlencode($url);
     }
     $this->url = $url;
     $this->services = $services;
+    $this->options = $options;
+    $this->raw_response = array();
   }
 
   public static function get_services_config() {
@@ -50,7 +54,7 @@ abstract class ShareaholicShareCount {
       'google_plus' => array(
         'url' => 'https://clients6.google.com/rpc',
         'method' => 'POST',
-        'timeout' => 1,
+        'timeout' => 2,
         'headers' => array('Content-Type' => 'application/json'),
         'body' => NULL,
         'prepare' => 'google_plus_prepare_request',
