@@ -11,6 +11,10 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.17 =
+* Enhancement: Modified curl multi to conserve on cpu usage for server side share counts
+* Enhancement: Added Google API key to authenticate API calls for Google Plus share counts for improved the reliability
+
 = 7.x-3.16 =
 * New Feature: Additional settings for configuring share buttons and related and promoted content
 * New Feature: Configure monetization settings from affiliate linking to post share ads
