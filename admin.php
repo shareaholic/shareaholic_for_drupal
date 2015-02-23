@@ -106,6 +106,7 @@ DOC;
     $module_path = drupal_get_path('module', 'shareaholic');
     drupal_add_css('//fonts.googleapis.com/css?family=Open+Sans:400,300,700', array('type' => 'external', 'group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/bootstrap.css', array('group' => CSS_DEFAULT));
+    drupal_add_css(ShareaholicUtilities::asset_url('application.css'), array('type' => 'external', 'group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/bootstrap-responsive.css', array('group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/reveal.css', array('group' => CSS_DEFAULT));
     drupal_add_css($module_path . '/assets/css/main.css', array('group' => CSS_DEFAULT));
