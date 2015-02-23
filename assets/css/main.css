@@ -3,11 +3,6 @@ body {
   font-family: sans-serif;
 }
 
-body #footer {
-  padding: 0;
-  border: none;
-}
-
 #app_settings{
   padding-top:20px;
 }
