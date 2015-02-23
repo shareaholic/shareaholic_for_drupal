@@ -1,4 +1,4 @@
-<?php ShareaholicAdmin::include_css_js_assets(); ?>
+<?php ShareaholicUtilities::load_template('header'); ?>
 <div id="shareaholic-form-container">
 <ul class="nav nav-tabs">
   <li class="active"><?php print l(t('App Manager'), 'admin/config/shareaholic/settings'); ?></li>
@@ -10,12 +10,6 @@
   <div id='iframe_container' class='bg-loading-img' allowtransparency='true'></div>
   <a class="close-reveal-modal">&#215;</a>
 </div>
-
-<script>
-window.first_part_of_url = "<?php echo ShareaholicUtilities::URL . '/publisher_tools/' . ShareaholicUtilities::get_option('api_key')?>/";
-window.verification_key = "<?php echo ShareaholicUtilities::get_option('verification_key') ?>";
-window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_key'); ?>";
-</script>
 
 <div class='unit size3of5'>
 <?php

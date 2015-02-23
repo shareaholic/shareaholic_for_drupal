@@ -1,4 +1,4 @@
-<?php ShareaholicAdmin::include_css_js_assets(); ?>
+<?php ShareaholicUtilities::load_template('header'); ?>
 <div id="shareaholic-form-container">
   <ul class="nav nav-tabs">
     <li><?php print l(t('App Manager'), 'admin/config/shareaholic/settings'); ?></li>
