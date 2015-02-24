@@ -46,9 +46,13 @@ class ShareaholicPublic {
     $api_key = ShareaholicUtilities::get_option('api_key');
     $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
     $page_config = ShareaholicPublicJS::get_page_config();
+    $base_settings = json_encode(ShareaholicPublicJS::get_base_settings());
+
     $js_snippet = <<< DOC
   <script type='text/javascript' data-cfasync='false'>
     //<![CDATA[
+      _SHR_SETTINGS = $base_settings;
+
       (function() {
         var shr = document.createElement('script');
         shr.setAttribute('data-cfasync', 'false');

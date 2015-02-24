@@ -46,6 +46,17 @@ class ShareaholicPublicJS {
   }
 
   /**
+   *
+   */
+  public static function get_base_settings() {
+    return array(
+      'endpoints' => array(
+        'share_counts_url' => url('shareaholic/api/share_counts/v1', array('absolute' => TRUE))
+      )
+    );
+  }
+
+  /**
    * Get the share_buttons configuration to be used by Shareaholic.js
    *
    * This function returns an object for the share buttons configuration

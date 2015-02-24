@@ -1,13 +1,13 @@
 <?php ShareaholicAdmin::include_css_js_assets(); ?>
 <script>
-  window.first_part_of_url = "<?php echo ShareaholicUtilities::URL . '/publisher_tools/' . ShareaholicUtilities::get_option('api_key')?>/";
-  window.verification_key = "<?php echo ShareaholicUtilities::get_option('verification_key') ?>";
-  window.shareaholic_api_key = "<?php echo ShareaholicUtilities::get_option('api_key'); ?>";
+  window.first_part_of_url = "<?php echo $settings['base_link']; ?>";
+  window.verification_key = "<?php echo $settings['verification_key']; ?>";
+  window.shareaholic_api_key = "<?php echo $settings['api_key']; ?>";
   window.SHAREAHOLIC_PLUGIN_VERSION = '<?php echo ShareaholicUtilities::get_version(); ?>';
 </script>
 
 <script>
-  var oldJQuery = $;
+  // override default jquery with sQuery (from jquery_custom) on shareaholic admin pages only
   $ = jQuery = sQuery;
 </script>
 
@@ -38,12 +38,12 @@
           <span class="js-user username">Jones</span> <span class="fa fa-angle-down"></span></a>
         <ul class="user-menu">
           <li class="warning divider js-error-twitter" style="display:none;"><a href="#" class="js-action-twitterauth"><i class="caution-icon"></i> Reconnect Twitter Account</a></li>
-          <li><a href="#" class="dashboard js-action-dashboard">Website Dashboard</a></li>
-          <li><a href="#" class="js-action-admanager divider">Ad Manager</a></li>
-          <li><a href="#" class="js-action-profile">My Profile</a></li>
-          <li><a href="#" class="js-action-settings">Account</a></li>
+          <li><a href="<?php echo $settings['website_settings_link']; ?>" class="dashboard" target="_blank">Website Settings</a></li>
+          <li><a href="#" class="js-action-admanager divider" target="_blank">Ad Manager</a></li>
+          <li><a href="#" class="js-action-profile" target="_blank">My Profile</a></li>
+          <li><a href="#" class="js-action-settings" target="_blank">Account</a></li>
           <li><a href="#" class="js-action-logout divider">Log Out</a></li>
-          <li><a href="#" class="help js-action-help">Help</a></li>
+          <li><a href="#" class="help js-action-help" target="_blank">Help</a></li>
         </ul>
         <img class="avatar js-avatar">
       </div>
