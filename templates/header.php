@@ -81,7 +81,6 @@
 
     function formatUniversalHeader() {
       var $header = $('.new-design');
-      var $jsHeader = $header.children('header.header-section.js-header');
       var $target = $('.region.region-content');
 
       // move the header to the target and show it to the user
