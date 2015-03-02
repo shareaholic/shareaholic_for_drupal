@@ -13,7 +13,7 @@
 
 <script type="text/javascript"
         data-sorendpoint="<?php echo ShareaholicUtilities::URL ?>"
-        data-assetendpoint="<?php echo rtrim(ShareaholicUtilities::asset_url(''), '/') ?>"
+        data-sorassetbase="<?php echo rtrim(ShareaholicUtilities::asset_url(''), '/') ?>"
         src="<?php echo ShareaholicUtilities::asset_url('headerWidget.js') ?>">
 </script>
 <link href="<?php echo ShareaholicUtilities::asset_url('header.css'); ?>" media="all" rel="stylesheet" type="text/css">
