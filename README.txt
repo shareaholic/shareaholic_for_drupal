@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.19 =
+* Bugfix: prevent Share count calls on non-public pages
+
 = 7.x-3.18 =
 * Enhancement: Added Shareaholic navigation bar to the Shareaholic settings pages
 
