@@ -134,6 +134,7 @@ DOC;
       $tags = implode(', ', self::get_keywords_for($node));
       $image_url = self::get_image_url_for($node);
       $visibility = self::get_visibility($node);
+      $shareable = self::is_shareable($node);
 
       $content_tags .= "\n<meta name='shareaholic:url' content='$url' />";
       $content_tags .= "\n<meta name='shareaholic:article_published_time' content='$published_time' />";
@@ -148,6 +149,9 @@ DOC;
       }
       if(!empty($visibility)) {
         $content_tags .= "\n<meta name='shareaholic:article_visibility' content='$visibility' />";
+      }
+      if(!empty($shareable)) {
+        $content_tags .= "\n<meta name='shareaholic:shareable_page' content='$shareable' />";
       }
     }
     $content_tags .= "\n<!-- Shareaholic Content Tags End -->\n";
@@ -363,6 +367,37 @@ DOC;
     }
 
     return $visibility;
+  }
+
+
+
+  /**
+   * Determines the shareability of a piece of content
+   * and returns that value
+   *
+   * Possible values are: 'true', 'false', and NULL
+   *
+   * @param Object $node The content to determine its shareability
+   * @return String a string indicating if it is shareable or not
+   */
+  public static function is_shareable($node) {
+    $shareable = NULL;
+    // Check if it is a draft
+    if(isset($node->status) && $node->status == 0) {
+      $shareable = 'false';
+    }
+
+    // Check if a site visitor can see the content
+    try {
+      $anonymous_user = user_load(0);
+      if ($anonymous_user && !node_access('view', $node, $anonymous_user)) {
+        $shareable = 'false';
+      }
+    } catch (Exception $e) {
+      ShareaholicUtilities::log('Error in checking node_access: ' . $e->getMessage());
+    }
+
+    return $shareable;
   }
 
 
