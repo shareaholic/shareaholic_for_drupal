@@ -46,6 +46,9 @@
           <li><a href="#" class="help js-action-help" target="_blank">Help</a></li>
         </ul>
         <img class="avatar js-avatar">
+        <div class="hiring">
+          <a href="https://shareaholic.com/careers?utm_source=univ_header&utm_medium=link&utm_campaign=careers">We're Hiring</a>
+        </div>
       </div>
       <!-- Mobile Start -->
       <a href="#" class="mobile-menu-link"><span class="fa fa-bars"></span></a>
@@ -54,6 +57,9 @@
     <div class="mobile-menu">
       <!-- Logged Out-->
       <ul class="js-logged-out" style="display:none;">
+         <div class="hiring">
+          <a href="https://shareaholic.com/careers?utm_source=univ_header&utm_medium=link&utm_campaign=careers">We're Hiring</a>
+        </div>
         <li><a href="/publishers">For <strong>Publishers</strong></a></li>
         <li><a href="/advertisers">For <strong>Advertisers</strong></a></li>
         <li><a href="#" class="js-action-login">Log In</a></li>
