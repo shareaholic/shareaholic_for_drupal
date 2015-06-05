@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.20 =
+* Enhancement: added support for Yummly and Fancy server-side share counts
+
 = 7.x-3.19 =
 * Bugfix: prevent Share count calls on non-public pages
 
