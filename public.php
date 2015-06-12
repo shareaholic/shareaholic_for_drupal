@@ -75,24 +75,6 @@ DOC;
     return $js_snippet;
   }
 
-  /**
-   * Insert the disable analytics meta tag
-   */
-  public static function insert_disable_analytics_meta_tag() {
-    if(!ShareaholicUtilities::is_admin_page() &&
-        ShareaholicUtilities::has_tos_and_apikey() &&
-        ShareaholicUtilities::get_option('disable_analytics') === 'on') {
-      $element = array(
-        '#type' => 'html_tag',
-        '#tag' => 'meta',
-        '#attributes' => array(
-          'name' => 'shareaholic:analytics',
-          'content' => 'disabled'
-        ),
-      );
-      drupal_add_html_head($element, 'shareaholic_disable_analytics');
-    }
-  }
 
   /**
    * Inserts the xua-compatible header if the user has accepted
