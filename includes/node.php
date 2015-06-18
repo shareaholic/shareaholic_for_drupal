@@ -31,7 +31,6 @@
   function shareaholic_node_update($node) {
     ShareaholicContentSettings::update($node);
     ShareaholicContentManager::single_page_worker($node);
-    ShareaholicUtilities::clear_fb_opengraph($node);
   }
 
 
@@ -57,7 +56,6 @@
   function shareaholic_node_insert($node) {
     ShareaholicContentSettings::insert($node);
     ShareaholicContentManager::single_page_worker($node);
-    ShareaholicUtilities::clear_fb_opengraph($node);
   }
 
 

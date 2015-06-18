@@ -721,7 +721,7 @@ class ShareaholicUtilities {
     $share_counts_api_url = url('shareaholic/api/share_counts/v1', array('absolute' => TRUE)) . '?action=shareaholic_share_counts_api&url=https%3A%2F%2Fwww.google.com%2F&services[]=' . $param_string;
     $cache_key = 'share_counts_api_connectivity_check';
     // fetch cached response if it exists or has not expired
-    $response = FALSE;
+    $response = ShareaholicCache::get($cache_key);
 
     if (!$response) {
       $response = ShareaholicHttp::send($share_counts_api_url, array('method' => 'GET'), true);
@@ -735,7 +735,7 @@ class ShareaholicUtilities {
     }
 
     if ($response_status == 'SUCCESS') {
-
+      ShareaholicCache::set($cache_key, $response, SHARE_COUNTS_CHECK_CACHE_LENGTH);
     }
 
     self::update_options(array('share_counts_connect_check' => $response_status));
