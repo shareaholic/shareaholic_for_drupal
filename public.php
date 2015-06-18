@@ -410,7 +410,7 @@ DOC;
     set_error_handler(array('ShareaholicPublic', 'custom_error_handler'));
     $debug_mode = isset($_GET['debug']) && $_GET['debug'] === '1';
     $cache_key = 'shr_api_res-' . md5( $_SERVER['QUERY_STRING'] );
-    $result = ShareaholicCache::get($cache_key);
+    $result = FALSE;
     $has_curl_multi = self::has_curl();
 
     if (!$result) {
@@ -444,7 +444,7 @@ DOC;
         }
 
         if (isset($result['data']) && !$debug_mode) {
-          ShareaholicCache::set($cache_key, $result, SHARE_COUNTS_CHECK_CACHE_LENGTH);
+
         }
       }
     }
