@@ -41,7 +41,6 @@ function shareaholic_init() {
   ShareaholicPublic::set_xua_compatible_header();
   if(!ShareaholicUtilities::is_admin_page()) {
     ShareaholicPublic::insert_content_meta_tags();
-    ShareaholicPublic::insert_disable_analytics_meta_tag();
     ShareaholicPublic::insert_script_tag();
     ShareaholicPublic::insert_og_tags();
   } else {
