@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.21 =
+* Bugfix: removed code causing new node content to not appear until cache flush
+
 = 7.x-3.20 =
 * Enhancement: added support for Yummly and Fancy server-side share counts
 
