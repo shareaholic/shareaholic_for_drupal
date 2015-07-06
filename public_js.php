@@ -33,7 +33,7 @@ class ShareaholicPublicJS {
     return $base_settings;
   }
 
-  public static function staging_settings() {
+  public static function get_overrides() {
     $output = '';
 
     if (ShareaholicUtilities::get_env() === 'staging') {

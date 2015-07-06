@@ -368,7 +368,7 @@ class ShareaholicUtilities {
 
   /**
    * Returns the appropriate asset path for something from our
-   * rails app based on URL constant.
+   * rails app based on environment.
    *
    * @param string $asset
    * @return string
@@ -388,7 +388,6 @@ class ShareaholicUtilities {
   /**
    * Returns the appropriate environment based on URL constant
    *
-   * @param string $asset
    * @return string
    */
   public static function get_env() {
