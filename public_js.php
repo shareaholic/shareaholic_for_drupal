@@ -33,4 +33,18 @@ class ShareaholicPublicJS {
     return $base_settings;
   }
 
+  public static function staging_settings() {
+    $output = '';
+
+    if (ShareaholicUtilities::get_env() === 'staging') {
+      $output = <<< DOC
+        shr.setAttribute('data-shr-environment', 'stage');
+        shr.setAttribute('data-shr-assetbase', '//cdn-staging-shareaholic.s3.amazonaws.com/v2/');
+        shr.src = '//cdn-staging-shareaholic.s3.amazonaws.com/assets/pub/shareaholic.js';
+DOC;
+    }
+
+    return $output;
+  }
+
 }

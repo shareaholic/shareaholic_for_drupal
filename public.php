@@ -46,6 +46,7 @@ class ShareaholicPublic {
     $api_key = ShareaholicUtilities::get_option('api_key');
     $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
     $base_settings = json_encode(ShareaholicPublicJS::get_base_settings());
+    $staging_output = ShareaholicPublicJS::staging_settings();
 
     $js_snippet = <<< DOC
   <script type='text/javascript' data-cfasync='false'>
@@ -56,6 +57,7 @@ class ShareaholicPublic {
         var shr = document.createElement('script');
         shr.setAttribute('data-cfasync', 'false');
         shr.src = '$js_url';
+        $staging_output
         shr.type = 'text/javascript'; shr.async = 'true';
         shr.onload = shr.onreadystatechange = function() {
           var rs = this.readyState;
