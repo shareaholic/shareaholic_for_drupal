@@ -368,18 +368,35 @@ class ShareaholicUtilities {
 
   /**
    * Returns the appropriate asset path for something from our
-   * rails app based on URL constant.
+   * rails app based on environment.
    *
    * @param string $asset
    * @return string
    */
   public static function asset_url($asset) {
-    if (preg_match('/spreadaholic/', self::URL)) {
+    $env = self::get_env();
+    if ($env === 'development') {
       return 'http://spreadaholic.com:8080/assets/' . $asset;
-    } elseif (preg_match('/stageaholic/', self::URL)) {
+    } elseif ($env === 'staging') {
       return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
     } else {
       return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
+    }
+  }
+
+
+  /**
+   * Returns the appropriate environment based on URL constant
+   *
+   * @return string
+   */
+  public static function get_env() {
+    if (preg_match('/spreadaholic/', self::URL)) {
+      return 'development';
+    } elseif (preg_match('/stageaholic/', self::URL)) {
+      return 'staging';
+    } else {
+      return 'production';
     }
   }
 

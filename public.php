@@ -45,8 +45,8 @@ class ShareaholicPublic {
   private static function js_snippet() {
     $api_key = ShareaholicUtilities::get_option('api_key');
     $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
-    $page_config = ShareaholicPublicJS::get_page_config();
     $base_settings = json_encode(ShareaholicPublicJS::get_base_settings());
+    $overrides = ShareaholicPublicJS::get_overrides();
 
     $js_snippet = <<< DOC
   <script type='text/javascript' data-cfasync='false'>
@@ -58,12 +58,12 @@ class ShareaholicPublic {
         shr.setAttribute('data-cfasync', 'false');
         shr.src = '$js_url';
         shr.type = 'text/javascript'; shr.async = 'true';
+        $overrides
         shr.onload = shr.onreadystatechange = function() {
           var rs = this.readyState;
           if (rs && rs != 'complete' && rs != 'loaded') return;
           var site_id = '$api_key';
-          var page_config = $page_config;
-          try { Shareaholic.init(site_id, page_config); } catch (e) {}
+          try { Shareaholic.init(site_id); } catch (e) {}
         };
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(shr, s);
