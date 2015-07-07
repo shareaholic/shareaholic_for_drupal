@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.22 =
+* Bugfix: fixed issue with disabling server side share counts option
+
 = 7.x-3.21 =
 * Bugfix: removed code causing new node content to not appear until cache flush
 
