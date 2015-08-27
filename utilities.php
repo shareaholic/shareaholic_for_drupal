@@ -195,31 +195,10 @@ class ShareaholicUtilities {
 
     $verification_key = md5(mt_rand());
     $page_types = self::page_types();
-    $turned_on_recommendations_locations = array();
-    $turned_off_recommendations_locations = array();
-    $turned_on_share_buttons_locations = array();
-    $turned_off_share_buttons_locations = array();
-
-    foreach($page_types as $key => $page_type) {
-      $page_type_name = $page_type->type;
-      if($page_type_name === 'article' || $page_type_name === 'page') {
-        $turned_on_recommendations_locations[] = array(
-          'name' => $page_type_name . '_below_content'
-        );
-      } else {
-        $turned_off_recommendations_locations[] = array(
-          'name' => $page_type_name . '_below_content'
-        );
-      }
-
-      $turned_on_share_buttons_locations[] = array(
-        'name' => $page_type_name . '_below_content'
-      );
-
-      $turned_off_share_buttons_locations[] = array(
-        'name' => $page_type_name . '_above_content'
-      );
-    }
+    $turned_on_recommendations_locations = self::get_default_rec_on_locations();
+    $turned_off_recommendations_locations = self::get_default_rec_off_locations();
+    $turned_on_share_buttons_locations = self::get_default_sb_on_locations();
+    $turned_off_share_buttons_locations = self::get_default_sb_off_locations();
 
     $share_buttons_attributes = array_merge($turned_on_share_buttons_locations, $turned_off_share_buttons_locations);
     $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
@@ -259,41 +238,159 @@ class ShareaholicUtilities {
     ));
 
     if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids']) && isset($json_response['location_name_ids']['recommendations']) && isset($json_response['location_name_ids']['share_buttons'])) {
-
-      $turned_on_recommendations_keys = array();
-      foreach($turned_on_recommendations_locations as $loc) {
-        $turned_on_recommendations_keys[] = $loc['name'];
-      }
-
-      $turned_on_share_buttons_keys = array();
-      foreach($turned_on_share_buttons_locations as $loc) {
-        $turned_on_share_buttons_keys[] = $loc['name'];
-      }
-
-      $turned_off_recommendations_keys = array();
-      foreach($turned_off_recommendations_locations as $loc) {
-        $turned_off_recommendations_keys[] = $loc['name'];
-      }
-
-      $turned_off_share_buttons_keys = array();
-      foreach($turned_off_share_buttons_locations as $loc) {
-        $turned_off_share_buttons_keys[] = $loc['name'];
-      }
-
-      $turn_on = array(
-        'share_buttons' => self::associative_array_slice($json_response['location_name_ids']['share_buttons'], $turned_on_share_buttons_keys),
-        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_on_recommendations_keys)
-      );
-
-      $turn_off = array(
-        'share_buttons' => self::associative_array_slice($json_response['location_name_ids']['share_buttons'], $turned_off_share_buttons_keys),
-        'recommendations' => self::associative_array_slice($json_response['location_name_ids']['recommendations'], $turned_off_recommendations_keys)
-      );
-
-      ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
+      self::set_default_location_settings($json_response['location_name_ids']);
       ShareaholicContentManager::single_domain_worker();
     } else {
       ShareaholicUtilities::log_event('FailedToCreateApiKey', array('reason' => 'no location name ids the response was: ' . $response['data']));
+    }
+  }
+
+  /**
+   * Get share buttons locations that should be turned on by default
+   *
+   * @return {Array}
+   */
+  public static function get_default_sb_on_locations() {
+    $page_types = self::page_types();
+    $turned_on_share_buttons_locations = array();
+
+    foreach($page_types as $key => $page_type) {
+      $page_type_name = $page_type->type;
+
+      $turned_on_share_buttons_locations[] = array(
+        'name' => $page_type_name . '_below_content'
+      );
+    }
+
+    return $turned_on_share_buttons_locations;
+  }
+
+  /**
+   * Get share buttons locations that should be turned off by default
+   *
+   * @return {Array}
+   */
+  public static function get_default_sb_off_locations() {
+    $page_types = self::page_types();
+    $turned_off_share_buttons_locations = array();
+
+    foreach($page_types as $key => $page_type) {
+      $page_type_name = $page_type->type;
+
+      $turned_off_share_buttons_locations[] = array(
+        'name' => $page_type_name . '_above_content'
+      );
+    }
+
+    return $turned_off_share_buttons_locations;
+  }
+
+
+  /**
+   * Get recommendations locations that should be turned on by default
+   *
+   * @return {Array}
+   */
+  public static function get_default_rec_on_locations() {
+    $page_types = self::page_types();
+    $turned_on_recommendations_locations = array();
+
+    foreach($page_types as $key => $page_type) {
+      $page_type_name = $page_type->type;
+      if($page_type_name === 'article' || $page_type_name === 'page') {
+        $turned_on_recommendations_locations[] = array(
+          'name' => $page_type_name . '_below_content'
+        );
+      }
+    }
+
+    return $turned_on_recommendations_locations;
+  }
+
+  /**
+   * Get recommendations locations that should be turned off by default
+   *
+   * @return {Array}
+   */
+  public static function get_default_rec_off_locations() {
+    $page_types = self::page_types();
+    $turned_off_recommendations_locations = array();
+
+    foreach($page_types as $key => $page_type) {
+      $page_type_name = $page_type->type;
+      if($page_type_name !== 'article' && $page_type_name !== 'page') {
+        $turned_off_recommendations_locations[] = array(
+          'name' => $page_type_name . '_below_content'
+        );
+      }
+    }
+
+    return $turned_off_recommendations_locations;
+  }
+
+  /**
+   * Given an object, set the default on/off locations
+   * for share buttons and recommendations
+   *
+   */
+  public static function set_default_location_settings($location_name_ids) {
+    $turned_on_share_buttons_locations = self::get_default_sb_on_locations();
+    $turned_off_share_buttons_locations = self::get_default_sb_off_locations();
+
+    $turned_on_recommendations_locations = self::get_default_rec_on_locations();
+    $turned_off_recommendations_locations = self::get_default_rec_off_locations();
+
+    $turned_on_share_buttons_keys = array();
+    foreach($turned_on_share_buttons_locations as $loc) {
+      $turned_on_share_buttons_keys[] = $loc['name'];
+    }
+
+    $turned_on_recommendations_keys = array();
+    foreach($turned_on_recommendations_locations as $loc) {
+      $turned_on_recommendations_keys[] = $loc['name'];
+    }
+
+    $turned_off_share_buttons_keys = array();
+    foreach($turned_off_share_buttons_locations as $loc) {
+      $turned_off_share_buttons_keys[] = $loc['name'];
+    }
+
+    $turned_off_recommendations_keys = array();
+    foreach($turned_off_recommendations_locations as $loc) {
+      $turned_off_recommendations_keys[] = $loc['name'];
+    }
+
+    $turn_on = array(
+      'share_buttons' => self::associative_array_slice($location_name_ids['share_buttons'], $turned_on_share_buttons_keys),
+      'recommendations' => self::associative_array_slice($location_name_ids['recommendations'], $turned_on_recommendations_keys)
+    );
+
+    $turn_off = array(
+      'share_buttons' => self::associative_array_slice($location_name_ids['share_buttons'], $turned_off_share_buttons_keys),
+      'recommendations' => self::associative_array_slice($location_name_ids['recommendations'], $turned_off_recommendations_keys)
+    );
+
+    ShareaholicUtilities::turn_on_locations($turn_on, $turn_off);
+  }
+
+
+  /**
+   * Restore the plugin settings
+   *
+   */
+  public static function reset_settings() {
+    $settings = self::get_settings();
+    $api_key = self::get_option('api_key');
+
+    $response = drupal_http_request(self::API_URL . '/publisher_tools/'  . $api_key .  '/reset/', array(
+      'method' => 'POST',
+      'headers' => array('Content-Type' => 'application/json'),
+      'data' => json_encode($settings)
+    ));
+
+    // set the location on/off back to their defaults
+    if (isset($settings['location_name_ids']) && is_array($settings['location_name_ids'])) {
+      self::set_default_location_settings($settings['location_name_ids']);
     }
   }
 
