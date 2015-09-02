@@ -34,8 +34,7 @@
     *
     */
    function shareaholic_reset_plugin_form_submit($form, &$form_state) {
-     ShareaholicUtilities::destroy_settings();
-     ShareaholicUtilities::get_or_create_api_key();
+     ShareaholicUtilities::reset_settings();
      drupal_set_message(t('Module has been reset. Please clear your cache.'), 'status');
    }
 
