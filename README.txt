@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.23 =
+* Enhancement: updated the reset plugin routine to not create new key
+
 = 7.x-3.22 =
 * Bugfix: fixed issue with disabling server side share counts option
 
