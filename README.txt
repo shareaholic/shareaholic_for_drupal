@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.24 =
+* Enhancement: updated javascript snippet to version 2
+
 = 7.x-3.23 =
 * Enhancement: updated the reset plugin routine to not create new key
 
