@@ -12,7 +12,7 @@ http://support.shareaholic.com
 
 == Changelog ==
 = 7.x-3.24 =
-* Enhancement: updated javascript snippet to version 2
+* Enhancement: updated Shareaholic JavaScript snippet - now a lot simpler!
 
 = 7.x-3.23 =
 * Enhancement: updated the reset plugin routine to not create new key
