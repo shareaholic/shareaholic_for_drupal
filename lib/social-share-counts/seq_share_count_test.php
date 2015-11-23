@@ -69,16 +69,6 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
   }
 
 
-  public function testTwitterCountCallback() {
-    // given a typical twitter counts api response, test that
-    // it gives back the expected result (the count which is 3)
-    $json = '{"count":3,"url":"https:\/\/blog.shareaholic.com\/"}';
-    $this->response['body'] = $json;
-    $twitter_count = $this->share_count->twitter_count_callback($this->response);
-    $this->assertEquals(3, $twitter_count, 'It should get the correct twtr count');
-  }
-
-
  public function testLinkedinCountCallback() {
     // given a typical linkedin counts api response, test that
     // it gives back the expected result (the count which is 8)
@@ -175,6 +165,20 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
    $this->response['body'] = $body;
    $count = $this->share_count->odnoklassniki_count_callback($this->response);
    $this->assertEquals(1, $count, 'It should get the correct odnoklassniki count');
+ }
+
+ public function testYummlyCountCallback() {
+   $body = '{"count":760}';
+   $this->response['body'] = $body;
+   $count = $this->share_count->yummly_count_callback($this->response);
+   $this->assertEquals(760, $count, 'It should get the correct yummly count');
+ }
+
+ public function testFancyCountCallback() {
+   $body = '__FIB.collectCount({"url": "http://www.google.com", "count": 26, "thing_url": "http://fancy.com/things/263001623", "showcount": 1});';
+   $this->response['body'] = $body;
+   $count = $this->share_count->fancy_count_callback($this->response);
+   $this->assertEquals(26, $count, 'It should get the correct fancy count');
  }
 
  public function testGooglePlusPrepareRequest() {
