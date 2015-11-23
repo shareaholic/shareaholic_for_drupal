@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.25 =
+* Bugfix: removed deprecated Twitter tweet count API call.
+
 = 7.x-3.24 =
 * Enhancement: updated Shareaholic JavaScript snippet - now a lot simpler!
 
