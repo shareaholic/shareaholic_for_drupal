@@ -74,7 +74,7 @@ DOC;
   public static function set_xua_compatible_header() {
     if(ShareaholicUtilities::has_tos_and_apikey() &&
         !drupal_get_http_header('X-UA-Compatible')) {
-      drupal_add_http_header('X-UA-Compatible', 'IE=edge,chrome=1');
+      drupal_add_http_header('X-UA-Compatible', 'IE=edge');
     }
   }
   /**

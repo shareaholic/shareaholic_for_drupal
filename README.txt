@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.26 =
+* Bugfix: Update to fix W3C HTML5 validation
+
 = 7.x-3.25 =
 * Bugfix: removed deprecated Twitter tweet count API call.
 
