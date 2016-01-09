@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.27 =
+* Bugfix: Removed Delicious count call from server-side connectivity check
+
 = 7.x-3.26 =
 * Bugfix: Update to fix W3C HTML5 validation
 
