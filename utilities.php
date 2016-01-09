@@ -872,8 +872,8 @@ class ShareaholicUtilities {
     // Did it return at least 8 services?
     $has_majority_services = count(array_keys($response['body']['data'])) >= 8 ? true : false;
     $has_important_services = true;
-    // Does it have counts for twtr, fb, linkedin, pinterest, and delicious?
-    foreach (array('facebook', 'linkedin', 'pinterest', 'delicious') as $service) {
+    // Does it have counts for fb, linkedin, pinterest?
+    foreach (array('facebook', 'linkedin', 'pinterest') as $service) {
       if (!isset($response['body']['data'][$service]) || !is_numeric($response['body']['data'][$service])) {
         $has_important_services = false;
       }
