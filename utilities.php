@@ -9,7 +9,7 @@ module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http')
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.26';
+  const MODULE_VERSION = '7.x-3.27';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
@@ -870,10 +870,10 @@ class ShareaholicUtilities {
     }
 
     // Did it return at least 8 services?
-    $has_majority_services = count(array_keys($response['body']['data'])) >= 8 ? true : false;
+    $has_majority_services = count(array_keys($response['body']['data'])) >= 6 ? true : false;
     $has_important_services = true;
-    // Does it have counts for twtr, fb, linkedin, pinterest, and delicious?
-    foreach (array('facebook', 'linkedin', 'pinterest', 'delicious') as $service) {
+    // Does it have counts for fb, linkedin, pinterest?
+    foreach (array('facebook', 'linkedin', 'pinterest') as $service) {
       if (!isset($response['body']['data'][$service]) || !is_numeric($response['body']['data'][$service])) {
         $has_important_services = false;
       }

@@ -101,16 +101,6 @@ class ShareaholicSeqShareCountsTest extends PHPUnit_Framework_TestCase
  }
 
 
- public function testDeliciousCountCallback() {
-    // given a typical delicious counts api response, test that
-    // it gives back the expected result (the total_posts which is 5462)
-    $json = '[{"url": "http://www.delicious.com/", "total_posts": 5462, "top_tags": {"web2.0": 1, "web": 1, "search": 1, "technology": 1, "bookmarking": 1, "del.icio.us": 1, "delicious": 1, "social": 1, "home": 1, "tools": 1}, "hash": "ea83167936715d3f712f4fb6c78f92d2", "title": "Delicious"}]';
-    $this->response['body'] = $json;
-    $delicious_count = $this->share_count->delicious_count_callback($this->response);
-    $this->assertEquals(5462, $delicious_count, 'It should get the correct delicious count');
- }
-
-
  public function testPinterestCountCallback() {
     // given a typical pinterest counts api response, test that
     // it gives back the expected result (the count which is 1)
