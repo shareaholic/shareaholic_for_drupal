@@ -11,6 +11,9 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 http://support.shareaholic.com
 
 == Changelog ==
+= 7.x-3.28 =
+* Bugfix: Updating social counts library to be php7 compatible
+
 = 7.x-3.27 =
 * Bugfix: Removed Delicious count call from server-side connectivity check
 
