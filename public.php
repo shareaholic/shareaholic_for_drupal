@@ -56,9 +56,9 @@ class ShareaholicPublic {
   </script>
 
   <script type='text/javascript'
+    data-cfasync='false'
     src='$js_url'
     data-shr-siteid='$api_key'
-    data-cfasync='false'
     async='async' $overrides>
   </script>
 
