@@ -14,6 +14,7 @@ http://support.shareaholic.com
 
 = 7.x-3.29 =
 * Bugfix: Fix for Cloudflare compatibility
+* Bugfix: We’ve further improved the server connectivity check. If you’ve been getting the ‘retry’ error message after installing Shareaholic, this one is for you.
 
 = 7.x-3.28 =
 * Bugfix: Updating social counts library to be php7 compatible
