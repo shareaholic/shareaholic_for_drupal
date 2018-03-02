@@ -551,28 +551,6 @@ class ShareaholicUtilities {
   }
 
   /**
-   * This is a wrapper for the Recommendations API
-   *
-   */
-  public static function recommendations_status_check() {
-    $api_key = self::get_option('api_key');
-    if (!empty($api_key)) {
-    	$recommendations_url = self::REC_API_URL . "/v4/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=0&api_key=" . $api_key;
-      $response = drupal_http_request($recommendations_url, array('method' => 'GET'));
-      $response = (array) $response;
-      $json = isset($response['data']) ? json_decode($response['data'], true) : array();
-      if(isset($json['internal']) && !empty($json['internal'])) {
-        return 'ready';
-      } else {
-        return 'processing';
-      }
-    } else {
-      return 'unknown';
-    }
-  }
-
-
-  /**
    * Give back only the request keys from an array. The first
    * argument is the array to be sliced, and after that it can
    * either be a variable-length list of keys or one array of keys.
@@ -790,7 +768,6 @@ class ShareaholicUtilities {
   public static function connectivity_check() {
     $health_check_url = self::API_URL . "/haproxy_health_check";
     $response = ShareaholicHttp::send($health_check_url, array('method' => 'GET'), true);
-    
     if(is_array($response) && array_key_exists('body', $response)) {
       $response_code = $response['response']['code'];
       if ($response_code == "200"){
