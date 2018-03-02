@@ -790,10 +790,17 @@ class ShareaholicUtilities {
   public static function connectivity_check() {
     $health_check_url = self::API_URL . "/haproxy_health_check";
     $response = ShareaholicHttp::send($health_check_url, array('method' => 'GET'), true);
-    if ($response && isset($response['body']) && $response['body'] == "OK") {
-      return 'SUCCESS';
+    
+    if(is_array($response) && array_key_exists('body', $response)) {
+      $response_code = $response['response']['code'];
+      if ($response_code == "200"){
+        return "SUCCESS";
+      } else {
+        return "FAIL";
+      }
+    } else {
+      return "FAIL";
     }
-    return 'FAIL';
   }
 
   /**
