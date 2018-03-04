@@ -85,6 +85,9 @@ class ShareaholicUtilities {
    * Deletes the settings option
    */
   public static function destroy_settings() {
+    // Delete cloud site id
+    ShareaholicUtilities::delete_api_key();
+    // Delete local Drupal site id
     variable_del('shareaholic_settings');
   }
 
@@ -175,7 +178,9 @@ class ShareaholicUtilities {
    */
   public static function get_or_create_api_key() {
     $api_key = self::get_option('api_key');
-    if ($api_key) {
+    
+    // ensure api key set is atleast 30 characters, if not, retry to set new api key
+    if ($api_key && (strlen($api_key) > 30)) {
       return $api_key;
     }
 
@@ -388,6 +393,23 @@ class ShareaholicUtilities {
     if (isset($settings['location_name_ids']) && is_array($settings['location_name_ids'])) {
       self::set_default_location_settings($settings['location_name_ids']);
     }
+  }
+  
+  /**
+   * Deletes the api key
+   *
+   */
+   public static function delete_api_key () {
+     $payload = array(
+       'site_id' => self::get_option('api_key'),
+       'verification_key' => self::get_option('verification_key')
+     );
+     
+     $response = drupal_http_request(self::API_URL . '/integrations/plugin/delete', array(
+       'method' => 'POST',
+       'headers' => array('Content-Type' => 'application/json'),
+       'data' => json_encode($payload)
+     ));     
   }
 
   /**
