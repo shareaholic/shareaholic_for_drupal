@@ -24,7 +24,7 @@
     );
     $form['advanced_settings']['disable_internal_share_counts_api'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Disable server-side Share Counts API (unless there are issues with calling the service, it is recommended NOT to disable this API)'),
+      '#title' => t('Disable server-side Share Counts API (This feature uses server resources. When "enabled" share counts will appear for additional social networks.)'),
     );
     $form['advanced_settings']['submit'] = array(
       '#type' => 'submit',
