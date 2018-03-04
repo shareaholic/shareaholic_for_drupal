@@ -1,7 +1,7 @@
 <div class='reveal-modal blocking-modal' id='terms_of_service_modal'>
   <h4><?php print sprintf(t('Thanks for Installing!')); ?></h4>
   <div class="content pal">
-  <p><?php print sprintf(t('%sShareaholic%s gives you the essential tools you need to become a successful publisher.'), '<strong>', '</strong>'); ?></p>
+  <p><?php print sprintf(t('%sShareaholic%s gives you the essential tools you need to grow your website.'), '<strong>', '</strong>'); ?></p>
   <div class="line pvl">
   <div class="unit size1of3">
     <img src="<?php print $variables['image_url'] ?>/sharebuttons@2x.png" alt="Share Buttons" width="200" height="200" />

@@ -1,7 +1,7 @@
 <div style="margin-top:45px;"></div>
 <div class='clear'>
   <small class="muted">
-    <?php echo sprintf(t('%sShareaholic for Drupal v'. ShareaholicUtilities::get_version() .'%s | %sPrivacy Policy%s | %sTerms of Service%s | %sSupport Center%s | %sAPI%s | %sSocial Analytics%s'), '<a href="https://shareaholic.com/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/privacy/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/terms/?src=drupal_admin" target="_new">', '</a>', '<a href="http://support.shareaholic.com/" target="_new">', '</a>', '<a href="https://shareaholic.com/api/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/publishers/analytics/'. ShareaholicUtilities::get_host() .'/30?src=drupal_admin" target="_new">', '</a>'); ?>
+    <?php echo sprintf(t('%sShareaholic for Drupal v'. ShareaholicUtilities::get_version() .'%s | %sPrivacy Policy%s | %sTerms of Service%s | %sSupport Center%s | %sAPI%s | %sSocial Analytics%s'), '<a href="https://shareaholic.com/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/privacy/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/terms/?src=drupal_admin" target="_new">', '</a>', '<a href="https://support.shareaholic.com/" target="_new">', '</a>', '<a href="https://shareaholic.com/api/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/publishers/analytics/'. ShareaholicUtilities::get_host() .'/30?src=drupal_admin" target="_new">', '</a>'); ?>
   </small>
   <br />
   <small class="muted">

@@ -13,7 +13,7 @@ class ShareaholicUtilities {
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
-  const REC_API_URL = 'http://recommendations.stageaholic.com';
+  
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL
@@ -24,7 +24,6 @@ class ShareaholicUtilities {
     return variable_get('shareaholic_has_accepted_tos');
   }
 
-
   /**
    * Accepts the terms of service by setting the variable to true
    */
@@ -32,7 +31,6 @@ class ShareaholicUtilities {
     variable_set('shareaholic_has_accepted_tos', true);
     ShareaholicUtilities::log_event('AcceptedToS');
   }
-
 
   /**
    * Returns the defaults for shareaholic settings
@@ -58,7 +56,6 @@ class ShareaholicUtilities {
     return variable_get('shareaholic_settings', self::defaults());
   }
 
-
   /**
    * Wrapper for wordpress's get_option: for Drupal
    *
@@ -83,7 +80,6 @@ class ShareaholicUtilities {
     $new_settings = self::array_merge_recursive_distinct($old_settings, $array);
     variable_set('shareaholic_settings', $new_settings);
   }
-
 
   /**
    * Deletes the settings option
