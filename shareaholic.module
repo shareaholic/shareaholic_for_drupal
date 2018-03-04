@@ -82,7 +82,7 @@ function shareaholic_menu() {
   // Path to the shareaholic app manager page
   $menu['admin/config/shareaholic/settings'] = array(
     'title' => 'Shareaholic App Manager',
-    'description' => 'Manage Share Buttons and Recommendations for your site',
+    'description' => 'Manage various Social Tools like Share Buttons and Related Posts',
     'page callback' => 'shareaholic_admin_settings',
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,

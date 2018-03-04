@@ -54,7 +54,7 @@ class ShareaholicPublic {
       _SHR_SETTINGS = $base_settings;
     //]]>
   </script>
-
+  <!-- This site is powered by Shareaholic - https://shareaholic.com -->
   <script type='text/javascript'
     data-cfasync='false'
     src='$js_url'
