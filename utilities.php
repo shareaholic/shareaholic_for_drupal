@@ -14,6 +14,12 @@ class ShareaholicUtilities {
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
   
+  /*
+  const URL = 'https://web.shareaholic.com';
+  const API_URL = 'https://web.shareaholic.com';
+  const CM_API_URL = 'http://localhost:3000';
+  */
+  
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL
@@ -39,7 +45,7 @@ class ShareaholicUtilities {
    */
   private static function defaults() {
     return array(
-      'disable_internal_share_counts_api' => 'off',
+      'disable_internal_share_counts_api' => 'on',
       'api_key' => '',
       'verification_key' => '',
     );
@@ -177,8 +183,8 @@ class ShareaholicUtilities {
    * @return string
    */
   public static function get_or_create_api_key() {
+
     $api_key = self::get_option('api_key');
-    
     // ensure api key set is atleast 30 characters, if not, retry to set new api key
     if ($api_key && (strlen($api_key) > 30)) {
       return $api_key;
@@ -222,10 +228,12 @@ class ShareaholicUtilities {
 
     $response = drupal_http_request(self::API_URL . '/publisher_tools/anonymous', array(
       'method' => 'POST',
-      'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
-      'data' => http_build_query($post_data)
+      'headers' => array(
+        'Content-Type' => 'application/json'
+      ),
+      'data' => json_encode($post_data)
     ));
-
+    
     if(self::has_bad_response($response, 'FailedToCreateApiKey', true)) {
       return NULL;
     }

@@ -1,4 +1,5 @@
 <?php ShareaholicAdmin::show_header(); ?>
+
 <div id="shareaholic-form-container">
 <ul class="nav nav-tabs">
   <li class="active"><?php print l(t('App Manager'), 'admin/config/shareaholic/settings'); ?></li>
@@ -41,7 +42,6 @@
 
 
 </div>
-
 
 <?php ShareaholicAdmin::draw_modal_popup(); ?>
 <?php ShareaholicAdmin::draw_verify_api_key(); ?>
