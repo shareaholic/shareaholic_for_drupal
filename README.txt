@@ -1,4 +1,4 @@
-Welcome to Shareaholic for Drupal.
+Welcome to Shareaholic for Drupal
 
 == Installing Shareaholic ==
 
@@ -13,6 +13,7 @@ http://support.shareaholic.com
 == Changelog ==
 
 = 7.x-3.29 =
+* Many performance updates!
 * Bugfix: Fix for Cloudflare compatibility
 * Bugfix: We’ve further improved the server connectivity check. If you’ve been getting the ‘retry’ error message after installing Shareaholic, this one is for you.
 

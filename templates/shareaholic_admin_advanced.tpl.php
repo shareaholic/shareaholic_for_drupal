@@ -4,11 +4,10 @@
     <li><?php print l(t('App Manager'), 'admin/config/shareaholic/settings'); ?></li>
     <li class="active"><?php print l(t('Advanced Settings'), 'admin/config/shareaholic/advanced'); ?></li>
   </ul>
-
   <div style="margin-top:20px;"></div>
   <div class='unit size4of5 wrap' style="min-height:300px;">
   <span class="helper">
-    <i class="icon-star"></i>
+    <i class="icon-star"></i>    
     <?php print t('You rarely should need to edit the settings on this page.'); ?>
     <?php print t('After changing any Shareaholic advanced setting, it is good practice to clear your cache.'); ?>
   </span>
