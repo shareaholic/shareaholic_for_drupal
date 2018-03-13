@@ -208,6 +208,9 @@ DOC;
     if(isset($node->field_image['und']['0']['uri'])) {
       return file_create_url($node->field_image['und']['0']['uri']);
     }
+    if(isset($node->field_simage['und']['0']['uri'])) {
+      return file_create_url($node->field_simage['und']['0']['uri']);
+    }
     if(isset($node->body) && isset($node->body['und']['0']['value'])) {
       return self::post_first_image($node->body['und']['0']['value']);
     }
@@ -222,15 +225,20 @@ DOC;
   public static function post_first_image($body) {
     preg_match_all('/<img.*?src=[\'"](.*?)[\'"].*?>/i', $body, $matches);
     if(isset($matches) && isset($matches[1][0]) ) {
-      // Exclude base64 images; meta tags require full URLs
+      // Exclude base64 images; meta tags require full URLs 
       if (strpos($matches[1][0], 'data:') === false) {
-        $first_img = $matches[1][0];
-      }
+        // file_create_url function doesn't convert paths starting with "/" so check for "/" and trim it off if present
+        if (substr($matches[1][0], 0, 1) === "/") {
+          $first_img = substr($matches[1][0], 1);
+        } else {
+          $first_img = $matches[1][0];
+        }
+      } 
     }
     if(empty($first_img)) { // return false if nothing there, makes life easier
       return false;
     }
-    return $first_img;
+    return file_create_url($first_img);
   }
 
   /**
