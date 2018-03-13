@@ -96,7 +96,12 @@ DOC;
     if (!empty($site_name)) {
       $content_tags .= "\n<meta name='shareaholic:site_name' content='$site_name' />";
     }
-    if (!empty($lang_code)) {
+    if (empty($lang_code)) {
+      if (isset($GLOBALS['language']->language)) {
+        $lang_code = $GLOBALS['language']->language;
+      }
+      $content_tags .= "\n<meta name='shareaholic:language' content='$lang_code' />";
+    } else {
       $content_tags .= "\n<meta name='shareaholic:language' content='$lang_code' />";
     }
     if (!empty($api_key)) {
