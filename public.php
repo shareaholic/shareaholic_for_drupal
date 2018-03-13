@@ -90,14 +90,22 @@ DOC;
     $site_name = ShareaholicUtilities::site_name();
     $api_key = ShareaholicUtilities::get_option('api_key');
     $module_version = ShareaholicUtilities::get_version();
-    $content_tags = <<<DOC
-
-<!-- Shareaholic Content Tags -->
-<meta name='shareaholic:site_name' content='$site_name' />
-<meta name='shareaholic:language' content='$lang_code' />
-<meta name='shareaholic:site_id' content='$api_key' />
-<meta name='shareaholic:drupal_version' content='$module_version' />
-DOC;
+    
+    $content_tags = "\n<!-- Shareaholic Content Tags -->";
+    
+    if (!empty($site_name)) {
+      $content_tags .= "\n<meta name='shareaholic:site_name' content='$site_name' />";
+    }
+    if (!empty($lang_code)) {
+      $content_tags .= "\n<meta name='shareaholic:language' content='$lang_code' />";
+    }
+    if (!empty($api_key)) {
+      $content_tags .= "\n<meta name='shareaholic:site_id' content='$api_key' />";
+    }
+    if (!empty($module_version)) {
+      $content_tags .= "\n<meta name='shareaholic:drupal_version' content='$module_version' />";
+    }
+    
     if(isset($node) && isset($view_mode) && $view_mode === 'full') {
       $url = $GLOBALS['base_root'] . request_uri();
       $published_time = date('c', $node->created);
