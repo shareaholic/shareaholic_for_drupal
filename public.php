@@ -220,9 +220,12 @@ DOC;
    * @return mixed either returns `false` or a string of the image src
    */
   public static function post_first_image($body) {
-    preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/i', $body, $matches);
+    preg_match_all('/<img.*?src=[\'"](.*?)[\'"].*?>/i', $body, $matches);
     if(isset($matches) && isset($matches[1][0]) ) {
+      // Exclude base64 images; meta tags require full URLs
+      if (strpos($matches[1][0], 'data:') === false) {
         $first_img = $matches[1][0];
+      }
     }
     if(empty($first_img)) { // return false if nothing there, makes life easier
       return false;
