@@ -84,7 +84,7 @@ DOC;
    *
    */
   public static function insert_content_meta_tags($node = NULL, $view_mode = NULL, $lang_code = NULL) {
-    if($view_mode === 'rss') {
+    if(isset($view_mode) && $view_mode === 'rss') {
       return;
     }
     $site_name = ShareaholicUtilities::site_name();
@@ -109,6 +109,9 @@ DOC;
     }
     if (!empty($module_version)) {
       $content_tags .= "\n<meta name='shareaholic:drupal_version' content='$module_version' />";
+    }
+    if(empty($view_mode) || (isset($view_mode) && ($view_mode === 'teaser' || $view_mode === 'search_result'))) {
+      $content_tags .= "\n<meta name='shareaholic:article_visibility' content='private' />";
     }
     
     if(isset($node) && isset($view_mode) && $view_mode === 'full') {
@@ -352,7 +355,6 @@ DOC;
     if(isset($node->shareaholic_options) && $node->shareaholic_options['shareaholic_exclude_from_recommendations']) {
       $visibility = 'private';
     }
-
     // Check if a site visitor can see the content
     try {
       $anonymous_user = user_load(0);
