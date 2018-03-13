@@ -303,7 +303,7 @@ DOC;
       if (isset($settings[$app]["{$page_type}_below_content"]) &&
           $settings[$app]["{$page_type}_below_content"] == 'on') {   
         $id = $settings['location_name_ids'][$app]["{$page_type}_below_content"];
-        $id_name = $page_type.'_above_content';
+        $id_name = $page_type.'_below_content';
         $node->content["shareaholic_{$app}_{$page_type}_below_content"] = array(
           '#markup' => self::canvas($id, $app, $id_name, $title, $link),
           '#weight' => ($app === 'share_buttons') ? $sb_below_weight : $rec_below_weight
