@@ -261,6 +261,7 @@ DOC;
     if($view_mode === 'rss') {
       return;
     }
+    
     if(isset($node->content)) {
       self::draw_canvases($node, $view_mode);
     }
@@ -292,17 +293,19 @@ DOC;
       if (isset($settings[$app]["{$page_type}_above_content"]) &&
           $settings[$app]["{$page_type}_above_content"] == 'on') {
         $id = $settings['location_name_ids'][$app]["{$page_type}_above_content"];
+        $id_name = $page_type.'_above_content';
         $node->content["shareaholic_{$app}_{$page_type}_above_content"] = array(
-          '#markup' => self::canvas($id, $app, $title, $link),
+          '#markup' => self::canvas($id, $app, $id_name, $title, $link),
           '#weight' => ($app === 'share_buttons') ? $sb_above_weight : $rec_above_weight
         );
       }
 
       if (isset($settings[$app]["{$page_type}_below_content"]) &&
-          $settings[$app]["{$page_type}_below_content"] == 'on') {
+          $settings[$app]["{$page_type}_below_content"] == 'on') {   
         $id = $settings['location_name_ids'][$app]["{$page_type}_below_content"];
+        $id_name = $page_type.'_above_content';
         $node->content["shareaholic_{$app}_{$page_type}_below_content"] = array(
-          '#markup' => self::canvas($id, $app, $title, $link),
+          '#markup' => self::canvas($id, $app, $id_name, $title, $link),
           '#weight' => ($app === 'share_buttons') ? $sb_below_weight : $rec_below_weight
         );
       }
@@ -315,23 +318,23 @@ DOC;
    *
    * @param string $id  the location id for configuration
    * @param string $app the type of app
+   * @param string $id_name location id name for configuration
    * @param string $title the title of URL
    * @param string $link url
    * @param string $summary summary text for URL
    */
-  public static function canvas($id, $app, $title = NULL, $link = NULL, $summary = NULL) {
-
+  public static function canvas($id, $app, $id_name = NULL, $title = NULL, $link = NULL, $summary = NULL) {
     $title = trim(htmlspecialchars($title, ENT_QUOTES));
     $link = trim($link);
     $summary = trim(htmlspecialchars(strip_tags($summary), ENT_QUOTES));
 
     $canvas = "<div class='shareaholic-canvas'
       data-app-id='$id'
+      data-app-id-name='$id_name'
       data-app='$app'
       data-title='$title'
       data-link='$link'
       data-summary='$summary'></div>";
-
     return trim(preg_replace('/\s+/', ' ', $canvas));
   }
 
