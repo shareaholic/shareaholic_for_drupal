@@ -14,12 +14,6 @@ class ShareaholicUtilities {
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
   
-  /*
-  const URL = 'https://web.shareaholic.com';
-  const API_URL = 'https://web.shareaholic.com';
-  const CM_API_URL = 'http://localhost:3000';
-  */
-  
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL

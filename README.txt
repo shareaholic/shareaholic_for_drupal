@@ -13,8 +13,12 @@ http://support.shareaholic.com
 == Changelog ==
 
 = 7.x-3.29 =
+* THIS IS A MAJOR UPDATE! Highly recommended upgrade.
 * Many performance updates!
-* Bugfix: Fix for Cloudflare compatibility
+* Enhancement: Better Cloudflare compatibility
+* Enhancements: Dramatically improved image selection logic
+* Enhancement: Exclude Base64 images from being set as Shareaholic and Open Graph images
+* Various meta tag bug fixes
 * Bugfix: We’ve further improved the server connectivity check. If you’ve been getting the ‘retry’ error message after installing Shareaholic, this one is for you.
 
 = 7.x-3.28 =
