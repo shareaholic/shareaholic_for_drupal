@@ -1,4 +1,5 @@
 <?php ShareaholicAdmin::include_css_js_assets(); ?>
+
 <script>
   window.first_part_of_url = "<?php echo $settings['base_link']; ?>";
   window.verification_key = "<?php echo $settings['verification_key']; ?>";

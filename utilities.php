@@ -13,7 +13,7 @@ class ShareaholicUtilities {
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
-  const REC_API_URL = 'http://recommendations.stageaholic.com';
+  
   /**
    * Returns whether the user has accepted our terms of service.
    * If the user has accepted, return true otherwise return NULL
@@ -24,7 +24,6 @@ class ShareaholicUtilities {
     return variable_get('shareaholic_has_accepted_tos');
   }
 
-
   /**
    * Accepts the terms of service by setting the variable to true
    */
@@ -33,7 +32,6 @@ class ShareaholicUtilities {
     ShareaholicUtilities::log_event('AcceptedToS');
   }
 
-
   /**
    * Returns the defaults for shareaholic settings
    *
@@ -41,7 +39,7 @@ class ShareaholicUtilities {
    */
   private static function defaults() {
     return array(
-      'disable_internal_share_counts_api' => 'off',
+      'disable_internal_share_counts_api' => 'on',
       'api_key' => '',
       'verification_key' => '',
     );
@@ -57,7 +55,6 @@ class ShareaholicUtilities {
   public static function get_settings() {
     return variable_get('shareaholic_settings', self::defaults());
   }
-
 
   /**
    * Wrapper for wordpress's get_option: for Drupal
@@ -84,11 +81,13 @@ class ShareaholicUtilities {
     variable_set('shareaholic_settings', $new_settings);
   }
 
-
   /**
    * Deletes the settings option
    */
   public static function destroy_settings() {
+    // Delete cloud site id
+    ShareaholicUtilities::delete_api_key();
+    // Delete local Drupal site id
     variable_del('shareaholic_settings');
   }
 
@@ -178,8 +177,10 @@ class ShareaholicUtilities {
    * @return string
    */
   public static function get_or_create_api_key() {
+
     $api_key = self::get_option('api_key');
-    if ($api_key) {
+    // ensure api key set is atleast 30 characters, if not, retry to set new api key
+    if ($api_key && (strlen($api_key) > 30)) {
       return $api_key;
     }
 
@@ -221,10 +222,12 @@ class ShareaholicUtilities {
 
     $response = drupal_http_request(self::API_URL . '/publisher_tools/anonymous', array(
       'method' => 'POST',
-      'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
-      'data' => http_build_query($post_data)
+      'headers' => array(
+        'Content-Type' => 'application/json'
+      ),
+      'data' => json_encode($post_data)
     ));
-
+    
     if(self::has_bad_response($response, 'FailedToCreateApiKey', true)) {
       return NULL;
     }
@@ -393,6 +396,23 @@ class ShareaholicUtilities {
       self::set_default_location_settings($settings['location_name_ids']);
     }
   }
+  
+  /**
+   * Deletes the api key
+   *
+   */
+   public static function delete_api_key () {
+     $payload = array(
+       'site_id' => self::get_option('api_key'),
+       'verification_key' => self::get_option('verification_key')
+     );
+     
+     $response = drupal_http_request(self::API_URL . '/integrations/plugin/delete', array(
+       'method' => 'POST',
+       'headers' => array('Content-Type' => 'application/json'),
+       'data' => json_encode($payload)
+     ));     
+  }
 
   /**
    * Checks bad response and logs errors if any
@@ -477,7 +497,7 @@ class ShareaholicUtilities {
     } elseif ($env === 'staging') {
       return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
     } else {
-      return '//dsms0mj1bbhn4.cloudfront.net/assets/' . $asset;
+      return '//apps.shareaholic.com/assets/' . $asset;
     }
   }
 
@@ -549,28 +569,6 @@ class ShareaholicUtilities {
   public static function clean_string($word) {
     return trim(trim(strtolower(trim(htmlspecialchars(htmlspecialchars_decode($word), ENT_QUOTES))), ","));
   }
-
-  /**
-   * This is a wrapper for the Recommendations API
-   *
-   */
-  public static function recommendations_status_check() {
-    $api_key = self::get_option('api_key');
-    if (!empty($api_key)) {
-    	$recommendations_url = self::REC_API_URL . "/v4/recommend?url=" . urlencode($GLOBALS['base_url']) . "&internal=6&sponsored=0&api_key=" . $api_key;
-      $response = drupal_http_request($recommendations_url, array('method' => 'GET'));
-      $response = (array) $response;
-      $json = isset($response['data']) ? json_decode($response['data'], true) : array();
-      if(isset($json['internal']) && !empty($json['internal'])) {
-        return 'ready';
-      } else {
-        return 'processing';
-      }
-    } else {
-      return 'unknown';
-    }
-  }
-
 
   /**
    * Give back only the request keys from an array. The first
@@ -790,10 +788,16 @@ class ShareaholicUtilities {
   public static function connectivity_check() {
     $health_check_url = self::API_URL . "/haproxy_health_check";
     $response = ShareaholicHttp::send($health_check_url, array('method' => 'GET'), true);
-    if ($response && isset($response['body']) && $response['body'] == "OK") {
-      return 'SUCCESS';
+    if(is_array($response) && array_key_exists('body', $response)) {
+      $response_code = $response['response']['code'];
+      if ($response_code == "200"){
+        return "SUCCESS";
+      } else {
+        return "FAIL";
+      }
+    } else {
+      return "FAIL";
     }
-    return 'FAIL';
   }
 
   /**
@@ -869,11 +873,11 @@ class ShareaholicUtilities {
       return 'FAIL';
     }
 
-    // Did it return at least 8 services?
-    $has_majority_services = count(array_keys($response['body']['data'])) >= 6 ? true : false;
+    // Did it return at least 6 services?
+    $has_majority_services = count(array_keys($response['body']['data'])) >= 5 ? true : false;
     $has_important_services = true;
-    // Does it have counts for fb, linkedin, pinterest?
-    foreach (array('facebook', 'linkedin', 'pinterest') as $service) {
+    // Does it have counts for fb, pinterest?
+    foreach (array('facebook', 'pinterest') as $service) {
       if (!isset($response['body']['data'][$service]) || !is_numeric($response['body']['data'][$service])) {
         $has_important_services = false;
       }

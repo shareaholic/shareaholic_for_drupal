@@ -34,8 +34,8 @@ function shareaholic_install() {
  *
  */
 function shareaholic_uninstall() {
-  ShareaholicUtilities::destroy_settings();
   ShareaholicUtilities::log_event('Uninstall');
+  ShareaholicUtilities::destroy_settings();
 }
 
 /**

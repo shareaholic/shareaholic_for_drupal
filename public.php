@@ -54,7 +54,7 @@ class ShareaholicPublic {
       _SHR_SETTINGS = $base_settings;
     //]]>
   </script>
-
+  <!-- This site is powered by Shareaholic - https://shareaholic.com -->
   <script type='text/javascript'
     data-cfasync='false'
     src='$js_url'
@@ -84,20 +84,36 @@ DOC;
    *
    */
   public static function insert_content_meta_tags($node = NULL, $view_mode = NULL, $lang_code = NULL) {
-    if($view_mode === 'rss') {
+    if(isset($view_mode) && $view_mode === 'rss') {
       return;
     }
     $site_name = ShareaholicUtilities::site_name();
     $api_key = ShareaholicUtilities::get_option('api_key');
     $module_version = ShareaholicUtilities::get_version();
-    $content_tags = <<<DOC
-
-<!-- Shareaholic Content Tags -->
-<meta name='shareaholic:site_name' content='$site_name' />
-<meta name='shareaholic:language' content='$lang_code' />
-<meta name='shareaholic:site_id' content='$api_key' />
-<meta name='shareaholic:drupal_version' content='$module_version' />
-DOC;
+    
+    $content_tags = "\n<!-- Shareaholic Content Tags -->";
+    
+    if (!empty($site_name)) {
+      $content_tags .= "\n<meta name='shareaholic:site_name' content='$site_name' />";
+    }
+    if (empty($lang_code)) {
+      if (isset($GLOBALS['language']->language)) {
+        $lang_code = $GLOBALS['language']->language;
+      }
+      $content_tags .= "\n<meta name='shareaholic:language' content='$lang_code' />";
+    } else {
+      $content_tags .= "\n<meta name='shareaholic:language' content='$lang_code' />";
+    }
+    if (!empty($api_key)) {
+      $content_tags .= "\n<meta name='shareaholic:site_id' content='$api_key' />";
+    }
+    if (!empty($module_version)) {
+      $content_tags .= "\n<meta name='shareaholic:drupal_version' content='$module_version' />";
+    }
+    if(empty($view_mode) || (isset($view_mode) && ($view_mode === 'teaser' || $view_mode === 'search_result'))) {
+      $content_tags .= "\n<meta name='shareaholic:article_visibility' content='private' />";
+    }
+    
     if(isset($node) && isset($view_mode) && $view_mode === 'full') {
       $url = $GLOBALS['base_root'] . request_uri();
       $published_time = date('c', $node->created);
@@ -200,6 +216,9 @@ DOC;
     if(isset($node->field_image['und']['0']['uri'])) {
       return file_create_url($node->field_image['und']['0']['uri']);
     }
+    if(isset($node->field_simage['und']['0']['uri'])) {
+      return file_create_url($node->field_simage['und']['0']['uri']);
+    }
     if(isset($node->body) && isset($node->body['und']['0']['value'])) {
       return self::post_first_image($node->body['und']['0']['value']);
     }
@@ -212,14 +231,22 @@ DOC;
    * @return mixed either returns `false` or a string of the image src
    */
   public static function post_first_image($body) {
-    preg_match_all('/<img[^>]+src=[\'"]([^\'"]+)[\'"].*>/i', $body, $matches);
+    preg_match_all('/<img.*?src=[\'"](.*?)[\'"].*?>/i', $body, $matches);
     if(isset($matches) && isset($matches[1][0]) ) {
-        $first_img = $matches[1][0];
+      // Exclude base64 images; meta tags require full URLs 
+      if (strpos($matches[1][0], 'data:') === false) {
+        // file_create_url function doesn't convert paths starting with "/" so check for "/" and trim it off if present
+        if (substr($matches[1][0], 0, 1) === "/") {
+          $first_img = substr($matches[1][0], 1);
+        } else {
+          $first_img = $matches[1][0];
+        }
+      } 
     }
     if(empty($first_img)) { // return false if nothing there, makes life easier
       return false;
     }
-    return $first_img;
+    return file_create_url($first_img);
   }
 
   /**
@@ -234,6 +261,7 @@ DOC;
     if($view_mode === 'rss') {
       return;
     }
+    
     if(isset($node->content)) {
       self::draw_canvases($node, $view_mode);
     }
@@ -265,17 +293,19 @@ DOC;
       if (isset($settings[$app]["{$page_type}_above_content"]) &&
           $settings[$app]["{$page_type}_above_content"] == 'on') {
         $id = $settings['location_name_ids'][$app]["{$page_type}_above_content"];
+        $id_name = $page_type.'_above_content';
         $node->content["shareaholic_{$app}_{$page_type}_above_content"] = array(
-          '#markup' => self::canvas($id, $app, $title, $link),
+          '#markup' => self::canvas($id, $app, $id_name, $title, $link),
           '#weight' => ($app === 'share_buttons') ? $sb_above_weight : $rec_above_weight
         );
       }
 
       if (isset($settings[$app]["{$page_type}_below_content"]) &&
-          $settings[$app]["{$page_type}_below_content"] == 'on') {
+          $settings[$app]["{$page_type}_below_content"] == 'on') {   
         $id = $settings['location_name_ids'][$app]["{$page_type}_below_content"];
+        $id_name = $page_type.'_below_content';
         $node->content["shareaholic_{$app}_{$page_type}_below_content"] = array(
-          '#markup' => self::canvas($id, $app, $title, $link),
+          '#markup' => self::canvas($id, $app, $id_name, $title, $link),
           '#weight' => ($app === 'share_buttons') ? $sb_below_weight : $rec_below_weight
         );
       }
@@ -288,23 +318,23 @@ DOC;
    *
    * @param string $id  the location id for configuration
    * @param string $app the type of app
+   * @param string $id_name location id name for configuration
    * @param string $title the title of URL
    * @param string $link url
    * @param string $summary summary text for URL
    */
-  public static function canvas($id, $app, $title = NULL, $link = NULL, $summary = NULL) {
-
+  public static function canvas($id, $app, $id_name = NULL, $title = NULL, $link = NULL, $summary = NULL) {
     $title = trim(htmlspecialchars($title, ENT_QUOTES));
     $link = trim($link);
     $summary = trim(htmlspecialchars(strip_tags($summary), ENT_QUOTES));
 
     $canvas = "<div class='shareaholic-canvas'
       data-app-id='$id'
+      data-app-id-name='$id_name'
       data-app='$app'
       data-title='$title'
       data-link='$link'
       data-summary='$summary'></div>";
-
     return trim(preg_replace('/\s+/', ' ', $canvas));
   }
 
@@ -328,7 +358,6 @@ DOC;
     if(isset($node->shareaholic_options) && $node->shareaholic_options['shareaholic_exclude_from_recommendations']) {
       $visibility = 'private';
     }
-
     // Check if a site visitor can see the content
     try {
       $anonymous_user = user_load(0);
