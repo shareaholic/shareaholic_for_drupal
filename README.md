@@ -49,15 +49,15 @@ Then go to your Drupal site signed in as admin, go to Modules and enable the Sha
 There are a couple of testing frameworks that can be used with Drupal module development but for now we will simply use the built in testing module provided by Drupal core.
 
 You would simply need to enable the module by going to "Modules" and looking for "Testing" module under Drupal core.
-If you get a memory limit error, increase your memory limit in your php.ini file and restart the server (128MB is the preferred setting)
+If you get a memory limit error, increase your memory limit in your php.ini file and restart the server (128MB is the preferred setting).
 
-To run the tests, enable the Shareaholic for Drupal module,  go to Configuration->Development->Testing and run some or all the tests for Shareaholic for Drupal
+To run the tests, enable the Shareaholic for Drupal module,  go to Configuration->Development->Testing and run some or all the tests for Shareaholic for Drupal.
 
 
 ### Deploying to Drupal.org
 
 
-Please refer to the Shareaholic Developer Wiki for deployment instructions
+Please refer to the [Shareaholic Developer Wiki](https://github.com/shareaholic/infrastructure/wiki/Drupal) for deployment instructions.
 
 
 ## Credits
