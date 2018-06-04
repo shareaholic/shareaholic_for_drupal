@@ -49,19 +49,19 @@ class ShareaholicPublic {
     $overrides = ShareaholicPublicJS::get_overrides();
 
     $js_snippet = <<< DOC
-  <script type='text/javascript' data-cfasync='false'>
-    //<![CDATA[
-      _SHR_SETTINGS = $base_settings;
-    //]]>
-  </script>
-  <!-- This site is powered by Shareaholic - https://shareaholic.com -->
-  <script type='text/javascript'
-    data-cfasync='false'
-    src='$js_url'
-    data-shr-siteid='$api_key'
-    async='async' $overrides>
-  </script>
-
+<!-- This site is powered by Shareaholic - https://shareaholic.com -->
+<link rel='preload' href='$js_url' as='script'>
+<script type='text/javascript' data-cfasync='false'>
+  //<![CDATA[
+    _SHR_SETTINGS = $base_settings;
+  //]]>
+</script>
+<script type='text/javascript'
+  data-cfasync='false'
+  src='$js_url'
+  data-shr-siteid='$api_key'
+  async='async' $overrides>
+</script>
 DOC;
     return $js_snippet;
   }
@@ -77,6 +77,31 @@ DOC;
       drupal_add_http_header('X-UA-Compatible', 'IE=edge');
     }
   }
+  
+  /**
+   * Inserts dns-prefetch tags on the page
+   *
+   */
+  
+  public static function insert_dns_snippet() {
+    
+    $dns_snippet = <<< DOC
+<link rel='dns-prefetch' href='//apps.shareaholic.com' />
+<link rel='dns-prefetch' href='//grace.shareaholic.com' />
+<link rel='dns-prefetch' href='//analytics.shareaholic.com' />
+<link rel='dns-prefetch' href='//recs.shareaholic.com' />
+<link rel='dns-prefetch' href='//go.shareaholic.com' />
+<link rel='dns-prefetch' href='//partner.shareaholic.com' />
+DOC;
+
+    $element = array(
+      '#type' => 'markup',
+      '#markup' => $dns_snippet
+    );
+
+    drupal_add_html_head($element, 'shareaholic_dns_snippet');
+  }
+    
   /**
    * Inserts the shareaholic content meta tags on the page
    * On all pages, it will insert the standard content meta tags
