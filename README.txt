@@ -12,6 +12,10 @@ http://support.shareaholic.com
 
 == Changelog ==
 
+= 7.x-3.30 =
+* Performance Enhancement: Settings file is now loaded from a globally distributed CDN (Amazon), which will make Shareaholic faster on your site
+* Performance Enhancement: Added support for DNS-Prefetch and Preload which will make Shareaholic EVEN FASTER!!
+
 = 7.x-3.29 =
 * THIS IS A MAJOR UPDATE! Highly recommended upgrade.
 * Many performance updates!

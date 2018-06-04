@@ -9,7 +9,7 @@ module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http')
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.29';
+  const MODULE_VERSION = '7.x-3.30';
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
   const CM_API_URL = 'http://localhost:3000';
@@ -500,7 +500,6 @@ class ShareaholicUtilities {
       return '//apps.shareaholic.com/assets/' . $asset;
     }
   }
-
 
   /**
    * Returns the appropriate environment based on URL constant
