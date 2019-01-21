@@ -51,16 +51,16 @@ class ShareaholicPublic {
     $js_snippet = <<< DOC
 <!-- This site is powered by Shareaholic - https://shareaholic.com -->
 <link rel='preload' href='$js_url' as='script'>
-<script type='text/javascript' data-cfasync='false'>
+<script data-cfasync='false'>
   //<![CDATA[
     _SHR_SETTINGS = $base_settings;
   //]]>
 </script>
-<script type='text/javascript'
+<script 
   data-cfasync='false'
   src='$js_url'
   data-shr-siteid='$api_key'
-  async='async' $overrides>
+  async $overrides>
 </script>
 DOC;
     return $js_snippet;
