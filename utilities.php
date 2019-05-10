@@ -497,7 +497,7 @@ class ShareaholicUtilities {
     } elseif ($env === 'staging') {
       return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
     } else {
-      return '//apps.shareaholic.com/assets/' . $asset;
+      return '//cdn.shareaholic.net/assets/' . $asset;
     }
   }
 
