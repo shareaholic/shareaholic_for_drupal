@@ -86,8 +86,9 @@ DOC;
   public static function insert_dns_snippet() {
     
     $dns_snippet = <<< DOC
-<link rel='dns-prefetch' href='//apps.shareaholic.com' />
-<link rel='dns-prefetch' href='//grace.shareaholic.com' />
+<link rel='dns-prefetch' href='//k4z6w9b5.stackpathcdn.com' />
+<link rel='dns-prefetch' href='//cdn.shareaholic.net' />
+<link rel='dns-prefetch' href='//www.shareaholic.net' />
 <link rel='dns-prefetch' href='//analytics.shareaholic.com' />
 <link rel='dns-prefetch' href='//recs.shareaholic.com' />
 <link rel='dns-prefetch' href='//go.shareaholic.com' />
