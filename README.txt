@@ -8,9 +8,17 @@ Navigate to administer >> build >> modules. Enable Shareaholic.
 
 == For Help & Support ==
 
-http://support.shareaholic.com
+Visit https://support.shareaholic.com
 
 == Changelog ==
+
+= 7.x-3.31 =
+* Server Side Share Count service upgrades
+* Various Admin section cleanup
+** Fixed footer links
+** Updated Chat widget
+** New Admin Header
+* New: WeChat Share and Follow Buttons! For Social Sharing, on desktop, users scan a QR code to share in the WeChat mobile app. On mobile, users copy the link and tap “Open WeChat” to share. https://www.shareaholic.com/blog/introducing-the-wechat-social-media-buttons/
 
 = 7.x-3.30 =
 * Performance Enhancement: Settings file is now loaded from a globally distributed CDN, which will make Shareaholic load faster on your site and for your visitors

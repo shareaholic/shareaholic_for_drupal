@@ -555,3 +555,30 @@ i.icon {
   height: 16px;
   margin-right: 7px;
 }
+
+/* Header - Start */
+
+#shr-header-container {
+  padding-bottom: 10px !important;
+}
+
+#shr-header {
+  top: auto !important;
+  position: inherit !important;
+  box-shadow: 0 0 0px #c3c3c3 !important;
+}
+
+#shr-header .shr-header-content {
+  max-width: unset !important;
+}
+
+#shr-header .shr-toplevel-link {
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.shr-sites-container {
+  z-index: 2147483647 !important;
+}
+
+/* Header - End */
