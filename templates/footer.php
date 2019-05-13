@@ -1,11 +1,11 @@
 <div style="margin-top:45px;"></div>
 <div class='clear'>
   <small class="muted">
-    <?php echo sprintf(t('%sShareaholic for Drupal v'. ShareaholicUtilities::get_version() .'%s | %sPrivacy Policy%s | %sTerms of Service%s | %sSupport Center%s | %sAPI%s | %sSocial Analytics%s'), '<a href="https://shareaholic.com/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/privacy/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/terms/?src=drupal_admin" target="_new">', '</a>', '<a href="https://support.shareaholic.com/" target="_new">', '</a>', '<a href="https://shareaholic.com/api/?src=drupal_admin" target="_new">', '</a>', '<a href="https://shareaholic.com/publishers/analytics/'. ShareaholicUtilities::get_host() .'/30?src=drupal_admin" target="_new">', '</a>'); ?>
+    <?php echo sprintf(t('%sShareaholic for Drupal v'. ShareaholicUtilities::get_version() .'%s | %sPrivacy Policy%s | %sTerms of Service%s | %sSupport Center%s | %sAPI%s | %sSocial Analytics%s'), '<a href="https://www.shareaholic.com/?src=drupal_admin" target="_new">', '</a>', '<a href="https://www.shareaholic.com/privacy/?src=drupal_admin" target="_new">', '</a>', '<a href="https://www.shareaholic.com/terms/?src=drupal_admin" target="_new">', '</a>', '<a href="https://support.shareaholic.com/" target="_new">', '</a>', '<a href="https://shareaholic.com/api/?src=drupal_admin" target="_new">', '</a>', '<a href="https://www.shareaholic.com/website-tools/content-analytics/?site='. ShareaholicUtilities::get_host() .'&src=drupal_admin" target="_new">', '</a>'); ?>
   </small>
   <br />
   <small class="muted">
-    <?php echo sprintf(t('If you like our work, show some love and %sgive us a good rating%s. Made with much love in Boston, Massachusetts.'), '<a href="http://wordpress.org/support/view/plugin-reviews/shareaholic?rate=5#postform" target="_new">', '</a>'); ?>
+    <?php echo sprintf(t('%sGet Involved%s. Made with much love in Boston, Massachusetts.'), '<a href="https://github.com/shareaholic/shareaholic_for_drupal" target="_new">', '</a>'); ?>
   </small>
   <br />
   <br />
