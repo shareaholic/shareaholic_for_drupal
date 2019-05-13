@@ -12,19 +12,18 @@
   $ = jQuery = sQuery;
 </script>
 
-<script type="text/javascript"
-        data-sorendpoint="<?php echo ShareaholicUtilities::URL ?>"
-        data-sorassetbase="<?php echo rtrim(ShareaholicUtilities::asset_url(''), '/') ?>"
-        src="<?php echo ShareaholicUtilities::asset_url('headerWidget.js') ?>">
+<script data-sorendpoint="<?php echo ShareaholicUtilities::URL ?>"
+        data-sorassetbase="<?php echo rtrim(ShareaholicUtilities::asset_url('assets'), '/') ?>"
+        src="<?php echo ShareaholicUtilities::asset_url('assets/headerWidget.js') ?>">
 </script>
-<link href="<?php echo ShareaholicUtilities::asset_url('header.css'); ?>" media="all" rel="stylesheet" type="text/css">
+<link href="<?php echo ShareaholicUtilities::asset_url('assets/header.css'); ?>" media="all" rel="stylesheet" type="text/css">
 
 
 <!-- Start Header Template -->
 <div class="new-design flat-layout drupal-admin" style="display: none;">
   <header class="header-section js-header">
     <div class="header">
-      <a href= "https://shareaholic.com" class="logo"></a>
+      <a href= "https://www.shareaholic.com" class="logo"></a>
       <nav class="header-nav">
       </nav>
       <ul class="user-nav js-logged-out" style="display:none;">
@@ -48,7 +47,7 @@
         </ul>
         <img class="avatar js-avatar">
         <div class="hiring">
-          <a href="https://shareaholic.com/careers?utm_source=univ_header_drupal_plugin&utm_medium=link&utm_campaign=careers" target="_blank">We're Hiring</a>
+          <a href="https://www.shareaholic.com/careers?utm_source=univ_header_drupal_plugin&utm_medium=link&utm_campaign=careers" target="_blank">We're Hiring</a>
         </div>
       </div>
       <!-- Mobile Start -->
@@ -59,7 +58,7 @@
       <!-- Logged Out-->
       <ul class="js-logged-out" style="display:none;">
          <div class="hiring">
-          <a href="https://shareaholic.com/careers?utm_source=univ_header_drupal_plugin&utm_medium=link&utm_campaign=careers" target="_blank">We're Hiring</a>
+          <a href="https://www.shareaholic.com/careers?utm_source=univ_header_drupal_plugin&utm_medium=link&utm_campaign=careers" target="_blank">We're Hiring</a>
         </div>
         <li><a href="/publishers">For <strong>Publishers</strong></a></li>
         <li><a href="/advertisers">For <strong>Advertisers</strong></a></li>

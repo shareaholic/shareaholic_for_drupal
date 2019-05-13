@@ -44,7 +44,7 @@ class ShareaholicPublic {
    */
   private static function js_snippet() {
     $api_key = ShareaholicUtilities::get_option('api_key');
-    $js_url = ShareaholicUtilities::asset_url('pub/shareaholic.js');
+    $js_url = ShareaholicUtilities::asset_url('assets/pub/shareaholic.js');
     $base_settings = json_encode(ShareaholicPublicJS::get_base_settings());
     $overrides = ShareaholicPublicJS::get_overrides();
 

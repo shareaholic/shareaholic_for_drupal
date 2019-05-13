@@ -493,11 +493,11 @@ class ShareaholicUtilities {
   public static function asset_url($asset) {
     $env = self::get_env();
     if ($env === 'development') {
-      return 'http://spreadaholic.com:8080/assets/' . $asset;
+      return 'http://spreadaholic.com:8080/' . $asset;
     } elseif ($env === 'staging') {
-      return '//d2062rwknz205x.cloudfront.net/assets/' . $asset;
+      return '//d2062rwknz205x.cloudfront.net/' . $asset;
     } else {
-      return '//cdn.shareaholic.net/assets/' . $asset;
+      return '//cdn.shareaholic.net/' . $asset;
     }
   }
 
