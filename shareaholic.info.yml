@@ -1,0 +1,9 @@
+name: 'Shareaholic'
+type: module
+description: "Share Buttons, Follow Buttons, Analytics, Related Posts and more. Powered by <a href='https://www.shareaholic.com/' target='_blank'>Shareaholic</a>."
+package: Other
+configure: shareaholic.admin_settings
+core: 8.x
+dependencies:
+  - drupal:node
+
