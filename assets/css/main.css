@@ -577,4 +577,8 @@ i.icon {
   border-left: none !important;
 }
 
+.shr-sites-container {
+  z-index: 2147483647 !important;
+}
+
 /* Header - End */

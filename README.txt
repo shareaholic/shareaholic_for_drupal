@@ -13,8 +13,11 @@ Visit https://support.shareaholic.com
 == Changelog ==
 
 = 7.x-3.31 =
-* Various Server Side Share Count service upgrades
+* Server Side Share Count service upgrades
 * Various Admin section cleanup
+** Fixed footer links
+** Updated Chat widget
+** New Admin Header
 * New: WeChat Share and Follow Buttons! For Social Sharing, on desktop, users scan a QR code to share in the WeChat mobile app. On mobile, users copy the link and tap “Open WeChat” to share. https://www.shareaholic.com/blog/introducing-the-wechat-social-media-buttons/
 
 = 7.x-3.30 =

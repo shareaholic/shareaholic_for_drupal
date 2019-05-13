@@ -22,26 +22,22 @@
 <!-- Header - end -->
 
 <script>
-  
   // override default jquery with sQuery (from jquery_custom) on shareaholic admin pages only
   $ = jQuery = sQuery;
 
   (function($) {
-
     function formatUniversalHeader() {
       var $header = $('.shr-header-content');
       var $target = $('.region.region-content');
-
-      // move the header to the target and show it to the user
+      
+      // move the header to the target and show it
       $target.before($header);
       $header.show();
     }
-
 
     $(function() {
       formatUniversalHeader();
     });
 
   })(jQuery);
-
 </script>
