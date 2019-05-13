@@ -1,5 +1,5 @@
 name = Share Buttons, Analytics, Related Posts - Shareaholic
-description = Get people sharing your content, keep them on your site longer, grow your fans, monetize, and know who's reading your content. Powered by <a href='https://shareaholic.com/' target='_blank'>Shareaholic</a>.
+description = Get people sharing your content, keep them on your site longer, grow your fans, monetize, and know who's reading your content. Powered by <a href='https://www.shareaholic.com/' target='_blank'>Shareaholic</a>.
 configure = admin/config/shareaholic/settings
 core = 7.x
 project = "shareaholic"

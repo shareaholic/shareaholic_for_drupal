@@ -24,4 +24,4 @@ Thank you to all [the contributors](https://github.com/shareaholic/social-share-
 License
 -------
 
-social-share-counts is Copyright © 2014 Shareaholic Inc. It is free software, and may be redistributed under the terms specified in the [LICENSE](https://github.com/shareaholic/social-share-counts/blob/master/LICENSE) file.
+social-share-counts is Copyright © Shareaholic Inc. It is free software, and may be redistributed under the terms specified in the [LICENSE](https://github.com/shareaholic/social-share-counts/blob/master/LICENSE) file.
