@@ -3,7 +3,7 @@
 desc 'Get module ready for Drupal directory'
 task :makerelease, :path do |task, args|
   sh "rsync -av --exclude='.*' ./ #{args[:path]}"
-  sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/shareaholic.com/' #{args[:path]}/utilities.php"
+  sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/www.shareaholic.com/' #{args[:path]}/utilities.php"
   sh "sed -i.bak '1,/spreadaholic.com:8080/s/spreadaholic.com:8080/web.shareaholic.com/' #{args[:path]}/utilities.php"
   sh "sed -i.bak '1,/localhost:3000/s/localhost:3000/cm-web.shareaholic.com/' #{args[:path]}/utilities.php"
   sh "sed -i.bak '1,/recommendations.stageaholic.com/s/recommendations.stageaholic.com/recommendations.shareaholic.com/' #{args[:path]}/utilities.php"
