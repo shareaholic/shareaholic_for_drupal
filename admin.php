@@ -153,8 +153,8 @@ DOC;
    * This function will run post install tasks
    * when a shareaholic flag is set
    */
-  public static function post_install() {
-    if (variable_get('Installed_Module_Shareaholic', '') == 'shareaholic') {
+  public static function post_install() {    
+    if (\Drupal::state()->get('Installed_Module_Shareaholic', '') == 'shareaholic') {
       // delete this so we do not check again
       variable_del('Installed_Module_Shareaholic');
       // Do share counts check

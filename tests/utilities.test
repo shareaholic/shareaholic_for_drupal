@@ -18,7 +18,7 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
   }
 
   public function testHasAcceptedTermsOfService() {
-    $db_value = variable_get('shareaholic_has_accepted_tos');
+    $db_value = \Drupal::state()->get('shareaholic_has_accepted_tos');
     $this->assertEqual($db_value, ShareaholicUtilities::has_accepted_terms_of_service(), 'Should match what is in the database');
   }
 
@@ -134,9 +134,9 @@ class ShareaholicUtilitiesTestCase extends DrupalWebTestCase {
   public function testDestroySettings() {
     variable_set('shareaholic_settings', 'test');
     ShareaholicUtilities::destroy_settings();
-    $this->assertNull(variable_get('shareaholic_settings'), 'Shareaholic settings should be destroyed');
+    $this->assertNull(\Drupal::state()->get('shareaholic_settings'), 'Shareaholic settings should be destroyed');
   }
-
+  
   public function testGetVersion() {
     $version = ShareaholicUtilities::get_version();
     $this->assertNotNull($version, 'Shareaholic version should not be null');

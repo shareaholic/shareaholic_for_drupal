@@ -9,9 +9,16 @@ module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http')
 module_load_include('php', 'shareaholic', 'lib/social-share-counts/seq_share_count');
 
 class ShareaholicUtilities {
-  const MODULE_VERSION = '7.x-3.31';
+  const MODULE_VERSION = '8.x-1.1';
+  
+  /*
   const URL = 'http://spreadaholic.com:8080';
   const API_URL = 'http://spreadaholic.com:8080';
+  const CM_API_URL = 'http://localhost:3000';
+  */
+  
+  const URL = 'https://www.shareaholic.com';
+  const API_URL = 'https://www.shareaholic.com';
   const CM_API_URL = 'http://localhost:3000';
   
   /**
@@ -21,7 +28,7 @@ class ShareaholicUtilities {
    * @return mixed (true or NULL)
    */
   public static function has_accepted_terms_of_service() {
-    return variable_get('shareaholic_has_accepted_tos');
+    return \Drupal::state()->get('shareaholic_has_accepted_tos');
   }
 
   /**
@@ -46,14 +53,14 @@ class ShareaholicUtilities {
   }
 
   /**
-   * Just a wrapper around variable_get to
+   * Just a wrapper around state()->get() to
    * get the shareaholic settings. If the settings
    * have not been set it will return an array of defaults.
    *
    * @return array
    */
   public static function get_settings() {
-    return variable_get('shareaholic_settings', self::defaults());
+    return \Drupal::state()->get('shareaholic_settings', self::defaults()); 
   }
 
   /**
@@ -114,7 +121,7 @@ class ShareaholicUtilities {
    * @return string
    */
   public static function site_name() {
-    return variable_get('site_name', $GLOBALS['base_url']);
+    return \Drupal::state()->get('site_name', $GLOBALS['base_url']);
   }
 
   /**
@@ -220,8 +227,7 @@ class ShareaholicUtilities {
       )
     );
 
-    $response = drupal_http_request(self::API_URL . '/publisher_tools/anonymous', array(
-      'method' => 'POST',
+    $response = \Drupal::httpClient()->request('POST', self::API_URL . '/publisher_tools/anonymous', array(
       'headers' => array(
         'Content-Type' => 'application/json'
       ),
@@ -385,8 +391,7 @@ class ShareaholicUtilities {
     $settings = self::get_settings();
     $api_key = self::get_option('api_key');
 
-    $response = drupal_http_request(self::API_URL . '/publisher_tools/'  . $api_key .  '/reset/', array(
-      'method' => 'POST',
+    $response = $response = \Drupal::httpClient()->request('POST', self::API_URL . '/publisher_tools/'  . $api_key .  '/reset/', array(
       'headers' => array('Content-Type' => 'application/json'),
       'data' => json_encode($settings)
     ));
@@ -407,8 +412,7 @@ class ShareaholicUtilities {
        'verification_key' => self::get_option('verification_key')
      );
      
-     $response = drupal_http_request(self::API_URL . '/integrations/plugin/delete', array(
-       'method' => 'POST',
+     $response = \Drupal::httpClient()->request('POST', self::API_URL . '/integrations/plugin/delete', array(
        'headers' => array('Content-Type' => 'application/json'),
        'data' => json_encode($payload)
      ));     
@@ -660,7 +664,7 @@ class ShareaholicUtilities {
       return false;
     }
 
-    $response = drupal_http_request(self::API_URL . '/publisher_tools/' . $api_key . '/verified', array('method' => 'GET'));
+    $response = \Drupal::httpClient()->request('GET', self::API_URL . '/publisher_tools/' . $api_key . '/verified');
     if(self::has_bad_response($response, 'FailedApiKeyVerified')) {
       return false;
     }
@@ -690,10 +694,9 @@ class ShareaholicUtilities {
     if(isset($page_link)) {
       $fb_graph_url = "https://graph.facebook.com/?id=". urlencode($page_link) ."&scrape=true";
       $options = array(
-        'method' => 'POST',
         'timeout' => 5,
         );
-      $result = drupal_http_request($fb_graph_url, $options);
+      $result = \Drupal::httpClient()->request('POST', $fb_graph_url, $options);
     }
   }
 
@@ -705,7 +708,11 @@ class ShareaholicUtilities {
    * @param array  $extra_params  any extra data points to be included
    */
   public static function log_event($event_name = 'Default', $extra_params = false) {
-
+    
+    // Get list of Active Modules
+    $moduleHandler = \Drupal::moduleHandler();
+    $modules = $moduleHandler->getModuleList();
+    
     $event_metadata = array(
   	  'plugin_version' => self::get_version(),
   	  'api_key' => self::get_option('api_key'),
@@ -715,15 +722,15 @@ class ShareaholicUtilities {
       'diagnostics' => array (
   		  'php_version' => phpversion(),
   		  'drupal_version' => self::get_drupal_version(),
-  		  'theme' => variable_get('theme_default', $GLOBALS['theme']),
-  		  'active_plugins' => module_list(),
+  		  'theme' => \Drupal::state()->get('theme_default', $GLOBALS['theme']),
+  		  'active_plugins' => $modules,
   	  ),
   	  'features' => array (
   		  'share_buttons' => self::get_option('share_buttons'),
   		  'recommendations' => self::get_option('recommendations'),
   	  )
     );
-
+    
     if ($extra_params) {
   	  $event_metadata = array_merge($event_metadata, $extra_params);
     }
