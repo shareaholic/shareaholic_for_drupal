@@ -1,0 +1,15 @@
+shareaholic.settings:
+  path: '/admin/config/shareaholic/settings'
+  defaults:
+    _controller: '\Drupal\shareaholic\Controller\ShareaholicController::configPage'
+    _title: 'Shareaholic settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+shareaholic.api:
+  path: '/shareaholic/generatekey'
+  defaults:
+    _controller: '\Drupal\shareaholic\Controller\ShareaholicController::generateKey'
+    _title: 'Generate key'
+  requirements:
+    _permission: 'administer site configuration'

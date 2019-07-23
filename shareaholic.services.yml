@@ -1,0 +1,4 @@
+services:
+  shareaholic.notice:
+    class: Drupal\shareaholic\NoticeService
+    arguments: []

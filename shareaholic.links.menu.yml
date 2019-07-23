@@ -1,0 +1,5 @@
+shareaholic.settings:
+  title: 'Shareaholic'
+  parent: 'system.admin_config_search'
+  description: 'Manage shareaholic functionality.'
+  route_name: shareaholic.settings

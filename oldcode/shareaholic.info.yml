@@ -1,0 +1,13 @@
+type: module
+name: "Share Buttons, Analytics, Related Posts - Shareaholic"
+description: "Get people sharing your content, keep them on your site longer, grow your fans, monetize, and know who's reading your content. Powered by <a href='https://www.shareaholic.com/' target='_blank'>Shareaholic</a>."
+
+#configure: shareaholic.settings
+tags:
+  - shareaholic
+
+# Information added by Drupal.org packaging script on 2019-07-22
+version: '8.x-1.0'
+core: '8.x'
+project: 'shareaholic'
+datestamp: 1563753600

@@ -1,0 +1,7 @@
+#shareaholic.settings:
+#  path: '/admin/config/shareaholic/settings'
+#  defaults:
+##    _form: '\Drupal\devel\Form\SettingsForm'
+##    _title: 'Devel settings'
+#  requirements:
+#    _permission: 'administer site configuration'
