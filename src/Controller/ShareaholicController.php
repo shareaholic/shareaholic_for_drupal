@@ -542,10 +542,10 @@ class ShareaholicController extends ControllerBase {
     dpm(json_encode($event_metadata));
 
 //    $event_api_url = self::API_URL . '/api/events';
-//    $event_params = [
-//      'name' => "Drupal:" . $event_name,
-//      'data' => json_encode($event_metadata),
-//    ];
+    $event_params = [
+      'name' => "Drupal:" . $event_name,
+      'data' => json_encode($event_metadata),
+    ];
 //    $options = [
 //      'method' => 'POST',
 //      'headers' => ['Content-Type' => 'application/json'],
@@ -558,7 +558,7 @@ class ShareaholicController extends ControllerBase {
       'headers' => [
         'Content-type' => 'application/vnd.api+json',
       ],
-      'body' => json_encode($event_metadata),
+      'body' => json_encode($event_params),
     ];
 
     $data = [];
