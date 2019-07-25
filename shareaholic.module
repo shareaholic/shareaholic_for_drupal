@@ -7,3 +7,18 @@ function shareaholic_page_attachments(array &$attachments) {
 
 }
 
+/**
+ * Implements hook_theme().
+ */
+function shareaholic_theme() {
+
+  return [
+    'shareaholic_tos_modal' => [
+      'variables' => [
+        'path' => '',
+      ],
+      'template' => 'shareaholic-tos-modal',
+    ],
+  ];
+
+}

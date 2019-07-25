@@ -2,8 +2,8 @@
 
 namespace Drupal\shareaholic\Controller;
 
-use Drupal\Console\Bootstrap\Drupal;
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ShareaholicController extends ControllerBase {
 
@@ -18,11 +18,19 @@ class ShareaholicController extends ControllerBase {
 
   public function configPage() {
 
-    $page = [];
+    $path = drupal_get_path('module', 'shareaholic');
 
-    $page['#markup'] = '';
+    $content = [
+      '#theme' => 'shareaholic_tos_modal',
+      '#path' => '/' . $path . '/assets/img',
+      '#attach' => [
+        'library' => [
+          'shareaholic/main'
+        ],
+      ],
+    ];
 
-    return $page;
+    return $content;
 
   }
 
@@ -256,12 +264,8 @@ class ShareaholicController extends ControllerBase {
 
     self::log_event('AcceptedToS');
 
-
-    $page = [];
-
-    //    $page['#markup']['content'] = '<pre>' . print_r(json_decode($data)) . '</pre>';
-
-    return $page;
+    $url = \Drupal\Core\Url::fromRoute('shareaholic.settings')->setAbsolute()->toString();
+    return new RedirectResponse($url);
 
   }
 
@@ -341,7 +345,13 @@ class ShareaholicController extends ControllerBase {
    */
   public function page_types() {
 
+    $types = [];
+
     $page_types = \Drupal\node\Entity\NodeType::loadMultiple();
+    //
+    //    foreach ($page_types as $page_type) {
+    //      dpm($page_types);
+    //    }
 
     //        $teaser = new stdClass();
     //        $teaser->name = 'Teaser';
@@ -539,18 +549,12 @@ class ShareaholicController extends ControllerBase {
       $event_metadata = array_merge($event_metadata, $extra_params);
     }
 
-    dpm(json_encode($event_metadata));
+    //    dpm(\Drupal::moduleHandler()->getModuleList());
 
-//    $event_api_url = self::API_URL . '/api/events';
     $event_params = [
       'name' => "Drupal:" . $event_name,
       'data' => json_encode($event_metadata),
     ];
-//    $options = [
-//      'method' => 'POST',
-//      'headers' => ['Content-Type' => 'application/json'],
-//      'body' => $event_params,
-//    ];
 
     $client = \Drupal::httpClient();
     $apiUrl = self::API_URL . '/api/events';
@@ -561,22 +565,22 @@ class ShareaholicController extends ControllerBase {
       'body' => json_encode($event_params),
     ];
 
-    $data = [];
-    try {
-      $response = $client->post($apiUrl, $settings);
-      $data = (string) $response->getBody();
+    //    $data = [];
+    //    try {
+    //      $response = $client->post($apiUrl, $settings);
+    //      $data = (string) $response->getBody();
+    //
+    //      if (empty($data)) {
+    //        return FALSE;
+    //      }
+    //
+    //    } catch (RequestException $e) {
+    //
+    //      return FALSE;
+    //
+    //    }
 
-      if (empty($data)) {
-        return FALSE;
-      }
-
-    } catch (RequestException $e) {
-
-      return FALSE;
-
-    }
-
-    dpm($data);
+    //    dpm($data);
     //    ShareaholicHttp::send($event_api_url, $options, TRUE);
   }
 
