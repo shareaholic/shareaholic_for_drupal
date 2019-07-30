@@ -5,7 +5,14 @@ namespace Drupal\shareaholic\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class ShareaholicController extends ControllerBase {
+//require_once('../../lib/social-share-counts/drupal_http.php');
+//require_once('../../lib/social-share-counts/share_count.php');
+module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http');
+
+/**
+ * Class UtilitiesController.
+ */
+class UtilitiesController extends ControllerBase {
 
   const MODULE_VERSION = '8.x-1.0';
 
@@ -15,24 +22,6 @@ class ShareaholicController extends ControllerBase {
 
   const CM_API_URL = 'http://localhost:3000';
 
-
-  public function configPage() {
-
-    $path = drupal_get_path('module', 'shareaholic');
-
-    $content = [
-      '#theme' => 'shareaholic_tos_modal',
-      '#path' => '/' . $path . '/assets/img',
-      '#attach' => [
-        'library' => [
-          'shareaholic/main'
-        ],
-      ],
-    ];
-
-    return $content;
-
-  }
 
   /**
    * Returns whether the user has accepted our terms of service.
@@ -264,7 +253,9 @@ class ShareaholicController extends ControllerBase {
 
     self::log_event('AcceptedToS');
 
-    $url = \Drupal\Core\Url::fromRoute('shareaholic.settings')->setAbsolute()->toString();
+    $url = \Drupal\Core\Url::fromRoute('shareaholic.settings')
+      ->setAbsolute()
+      ->toString();
     return new RedirectResponse($url);
 
   }
@@ -581,7 +572,30 @@ class ShareaholicController extends ControllerBase {
     //    }
 
     //    dpm($data);
-    //    ShareaholicHttp::send($event_api_url, $options, TRUE);
+    ShareaholicHttp::send($apiUrl, $event_params, TRUE);
+  }
+
+  /**
+   * Server Connectivity check
+   *
+   */
+  public function connectivity_check() {
+    $health_check_url = self::API_URL . "/haproxy_health_check";
+
+    $response = ShareaholicHttp::send($health_check_url, ['method' => 'GET'], TRUE);
+
+    if (is_array($response) && array_key_exists('body', $response)) {
+      $response_code = $response['response']['code'];
+      if ($response_code == "200") {
+        return "SUCCESS";
+      }
+      else {
+        return "FAIL";
+      }
+    }
+    else {
+      return "FAIL";
+    }
   }
 
 }

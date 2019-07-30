@@ -1,9 +1,10 @@
 main:
   version: 1.x
   css:
-    assets/css/bootstrap.css: {}
-    assets/css/bootstrap-responsive.css: {}
-    assets/css/main.css: {}
+    module:
+      assets/css/bootstrap.css: {}
+      assets/css/bootstrap-responsive.css: {}
+      assets/css/main.css: {}
 #  js:
 #    assets/js/bootsrap.js: {minified: false}
 #    assets/js/jquery_custom.js: {minified: false}
@@ -14,6 +15,7 @@ main:
 tos-modal:
   version: 1.x
   css:
-    assets/css/reveal.css: {}
+    module:
+      assets/css/reveal.css: {}
 #  js:
 #    assets/js/jquery.reveal.modified.js: {minified: false}

@@ -1,0 +1,9 @@
+shareaholic.admin_config:
+  base_route: shareaholic.settings
+  route_name: shareaholic.settings
+  title: 'Shareaholic main tab'
+
+shareaholic.advanced_settings:
+  title: 'Shareaholic Advanced Settings'
+  route_name: shareaholic.advanced_settings
+  base_route: shareaholic.settings
