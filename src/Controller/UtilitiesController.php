@@ -2,12 +2,11 @@
 
 namespace Drupal\shareaholic\Controller;
 
+use Drupal\Console\Bootstrap\Drupal;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleHandler;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
-//require_once('../../lib/social-share-counts/drupal_http.php');
-//require_once('../../lib/social-share-counts/share_count.php');
-module_load_include('php', 'shareaholic', 'lib/social-share-counts/drupal_http');
+use Drupal\shareaholic\lib\social_share_counts;
 
 /**
  * Class UtilitiesController.
@@ -37,8 +36,10 @@ class UtilitiesController extends ControllerBase {
    * Accepts the terms of service by setting the variable to true
    */
   public function accept_terms_of_service() {
-    variable_set('shareaholic_has_accepted_tos', TRUE);
-    //    ShareaholicUtilities::log_event('AcceptedToS');
+    $settings = \Drupal::configFactory()->getEditable('shareaholic.settings');
+    $settings->set('shareaholic_has_accepted_tos', TRUE);
+
+    self::log_event('AcceptedToS');
   }
 
   /**
@@ -89,14 +90,14 @@ class UtilitiesController extends ControllerBase {
   /**
    * Gets the current version of this module
    */
-  public static function get_version() {
+  public function get_version() {
     return self::MODULE_VERSION;
   }
 
   /**
    * Sets the current version of this module in the database
    */
-  public static function set_version($version) {
+  public function set_version($version) {
     self::update_options(['version' => $version]);
   }
 
@@ -110,7 +111,7 @@ class UtilitiesController extends ControllerBase {
    *
    * @return array
    */
-  public static function associative_array_slice($array) {
+  public function associative_array_slice($array) {
     $keys = array_slice(func_get_args(), 1);
     if (func_num_args() == 2 && is_array($keys[0])) {
       $keys = $keys[0];
@@ -131,7 +132,7 @@ class UtilitiesController extends ControllerBase {
    *
    * @param array $array
    */
-  public static function turn_on_locations($array, $turn_off_array = []) {
+  public function turn_on_locations($array, $turn_off_array = []) {
     if (is_array($array)) {
       foreach ($array as $app => $ids) {
         if (is_array($ids)) {
@@ -440,7 +441,7 @@ class UtilitiesController extends ControllerBase {
    * for share buttons and recommendations
    *
    */
-  public static function set_default_location_settings($location_name_ids) {
+  public function set_default_location_settings($location_name_ids) {
     $turned_on_share_buttons_locations = self::get_default_sb_on_locations();
     $turned_off_share_buttons_locations = self::get_default_sb_off_locations();
 
@@ -490,7 +491,7 @@ class UtilitiesController extends ControllerBase {
    *
    * @return array
    */
-  public static function array_merge_recursive_distinct(array &$array1, array &$array2) {
+  public function array_merge_recursive_distinct(array &$array1, array &$array2) {
     $merged = $array1;
 
     foreach ($array2 as $key => &$value) {
@@ -516,19 +517,21 @@ class UtilitiesController extends ControllerBase {
    * @param string $event_name the name of the event
    * @param array $extra_params any extra data points to be included
    */
-  public function log_event($event_name = 'Default', $extra_params = FALSE) {
+  public function log_event($event_name = 'Default', $extra_params = FALSE, ShareaholicHttp $a) {
+
+    $module_handler = \Drupal::moduleHandler();
 
     $event_metadata = [
       'plugin_version' => self::get_version(),
       'api_key' => self::get_option('api_key'),
       'domain' => self::site_url(),
       'language' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
-      //      'stats' => self::get_stats(),
+      'stats' => self::get_stats(),
       'diagnostics' => [
         'php_version' => phpversion(),
         'drupal_version' => \Drupal::VERSION,
-        //        'theme' => variable_get('theme_default', $GLOBALS['theme']),
-        //        'active_plugins' => module_list(),
+        'theme' => \Drupal::service('theme.manager')->getActiveTheme(),
+        'active_plugins' => $module_handler->getModuleList(),
       ],
       'features' => [
         //        'share_buttons' => self::get_option('share_buttons'),
@@ -540,14 +543,11 @@ class UtilitiesController extends ControllerBase {
       $event_metadata = array_merge($event_metadata, $extra_params);
     }
 
-    //    dpm(\Drupal::moduleHandler()->getModuleList());
-
     $event_params = [
       'name' => "Drupal:" . $event_name,
       'data' => json_encode($event_metadata),
     ];
 
-    $client = \Drupal::httpClient();
     $apiUrl = self::API_URL . '/api/events';
     $settings = [
       'headers' => [
@@ -556,23 +556,28 @@ class UtilitiesController extends ControllerBase {
       'body' => json_encode($event_params),
     ];
 
-    //    $data = [];
-    //    try {
-    //      $response = $client->post($apiUrl, $settings);
-    //      $data = (string) $response->getBody();
-    //
-    //      if (empty($data)) {
-    //        return FALSE;
-    //      }
-    //
-    //    } catch (RequestException $e) {
-    //
-    //      return FALSE;
-    //
-    //    }
+//    ::send($apiUrl, $settings, TRUE);
 
-    //    dpm($data);
-    ShareaholicHttp::send($apiUrl, $event_params, TRUE);
+  }
+
+  /**
+   * Get the stats for this website
+   * Stats include: total number of pages by type, total comments, total users
+   *
+   * @return array an associative array of stats => counts
+   */
+  public static function get_stats() {
+    $stats = [];
+    // Query the database for content types and add to stats
+    $db = \Drupal::database();
+    $result = $db->query("SELECT type, count(*) as count FROM {node} GROUP BY type");
+    foreach ($result as $record) {
+      $stats[$record->type . '_total'] = $record->count;
+    }
+
+    // Get the total comments
+    $stats['comments_total'] = self::total_comments();
+    return $stats;
   }
 
   /**
@@ -582,7 +587,8 @@ class UtilitiesController extends ControllerBase {
   public function connectivity_check() {
     $health_check_url = self::API_URL . "/haproxy_health_check";
 
-    $response = ShareaholicHttp::send($health_check_url, ['method' => 'GET'], TRUE);
+    $response = social_share_counts\ShareaholicDrupalHttp::send($health_check_url, ['method' => 'GET'], TRUE);
+    //    $response = social_share_counts\ShareaholicDrupalHttp::send('');
 
     if (is_array($response) && array_key_exists('body', $response)) {
       $response_code = $response['response']['code'];
@@ -597,5 +603,17 @@ class UtilitiesController extends ControllerBase {
       return "FAIL";
     }
   }
+
+
+  /**
+   * Log the errors in the database if debug flag is set to true
+   *
+   */
+  public function log($message) {
+    if (defined('SHAREAHOLIC_DEBUG') && SHAREAHOLIC_DEBUG) {
+      watchdog('Shareaholic', print_r($message, TRUE));
+    }
+  }
+
 
 }

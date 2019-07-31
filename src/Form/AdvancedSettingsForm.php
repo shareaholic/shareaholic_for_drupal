@@ -32,7 +32,7 @@ class AdvancedSettingsForm extends FormBase {
 
     $config = $this->config(static::SETTINGS);
 
-    $a = UtilitiesController::connectivity_check();
+    $servers_check = UtilitiesController::connectivity_check();
 
 
     $form['advanced'] = [
@@ -62,8 +62,10 @@ class AdvancedSettingsForm extends FormBase {
     $form['server']['shareaholic_servers'] = [
       '#type' => 'textfield',
       '#disabled' => TRUE,
-      '#title' => $this->t('Disable server-side Share Counts API (This feature uses server resources. When &quot;enabled&quot; share counts will appear for additional social networks.)'),
+      '#title' => $this->t('Check connection to Shareaholic Servers'),
       '#weight' => '0',
+      '#default_value' => $servers_check ? $this->t('All Shareaholic servers are reachable') : $this->t('Unable to reach any Shareaholic server'),
+      '#description' => $servers_check ? $this->t('Shareaholic should be working correctly. All Shareaholic servers are accessible.') : $this->t('A network problem or firewall is blocking all connections from your web server to Shareaholic.com.  <strong>Shareaholic cannot work correctly until this is fixed.</strong>  Please contact your web host or firewall administrator and give them <a href="http://blog.shareaholic.com/shareaholic-hosting-faq/" target="_blank">this information about Shareaholic and firewalls</a>. Let us <a href="#" onclick="%s">know</a> too, so we can follow up!'),
     ];
 
     $form['server']['sharecount_servers'] = [

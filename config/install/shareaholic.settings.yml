@@ -3,25 +3,4 @@ api_key:
 verification_key:
 share_counts_connect_chec:
 version:
-
-location_name_ids:
-  share_buttons:
-    article_below_content:
-    page_below_content:
-    article_above_content:
-    page_above_content:
-  recommendations:
-    article_below_content:
-    page_below_content:
-  follow_buttons:
-    Post_Share_Auto_Generated:
-
-share_buttons:
-  article_below_content:
-  page_below_content:
-  article_above_content:
-  page_above_content:
-
-recommendations:
-  article_below_content:
-  page_below_content:
+shareaholic_has_accepted_tos:

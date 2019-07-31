@@ -39,7 +39,6 @@ class SettingsController extends ControllerBase {
     }
 
     return $page_content;
-
   }
 
   /**

@@ -5,7 +5,9 @@
  * @package shareaholic
  */
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
+namespace Drupal\shareaholic\lib\social_share_counts;
+
+use Drupal\shareaholic\Controller\UtilitiesController;
 
 /**
  * The purpose of this class is to provide an interface around any native
@@ -15,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package shareaholic
  */
-class ShareaholicHttp {
+class ShareaholicDrupalHttp {
 
   /**
    * Performs a HTTP request with a url, array of options, and ignore_error
@@ -87,10 +89,18 @@ class ShareaholicHttp {
     }
 
     $client = \Drupal::httpClient();
-    try {
-      $response = $client->post($url, $request);
 
-      if (empty($data)) {
+    try {
+      switch ($request['method']) {
+        case 'GET':
+          $response = $client->get($url, $request);
+          break;
+        case 'POST':
+          $response = $client->post($url, $request);
+          break;
+      }
+
+      if (empty($response)) {
         return FALSE;
       }
 
@@ -98,7 +108,8 @@ class ShareaholicHttp {
 
       if (!$ignore_error) {
         watchdog_exception('shareaholic', $e);
-        //        ShareaholicUtilities::log('ShareaholicHttp Error for ' . $url . ' with error ' . $e);
+        UtilitiesController::log('ShareaholicHttp Error for ' . $url . ' with error ' . $e);
+
       }
 
       return FALSE;
@@ -107,7 +118,7 @@ class ShareaholicHttp {
     $result['headers'] = $response->getHeaders();
     $result['body'] = (string) $response->getBody();
     $result['response'] = [
-      'code' => $data->code,
+      'code' => $response->code,
       'message' => $response->status_message,
     ];
 

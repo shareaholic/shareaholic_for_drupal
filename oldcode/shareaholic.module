@@ -1,8 +1,0 @@
-<?php
-
-/**
- * Implements hook_page_attachments().
- */
-function shareaholic_page_attachments(array &$attachments) {
-
-}
