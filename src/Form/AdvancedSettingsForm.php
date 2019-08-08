@@ -2,14 +2,10 @@
 
 namespace Drupal\shareaholic\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\shareaholic\Api\ShareaholicApi;
-use Drupal\shareaholic\Controller\UtilitiesController;
 use GuzzleHttp\Client;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
