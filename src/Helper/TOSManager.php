@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\shareaholic\Controller;
+namespace Drupal\shareaholic\Helper;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\shareaholic\Logger\EventLogger;

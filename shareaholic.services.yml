@@ -8,5 +8,5 @@ services:
     class: Drupal\shareaholic\Logger\EventLogger
     arguments: ['@module_handler', '@theme.manager', '@database']
   shareaholic.tos_manager:
-    class: Drupal\shareaholic\TOS\TOSManager
+    class: Drupal\shareaholic\Helper\TOSManager
     arguments: ['@config.factory', '@shareaholic.event_logger']
