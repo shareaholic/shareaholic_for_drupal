@@ -1,0 +1,12 @@
+services:
+  shareaholic.api:
+    class: Drupal\shareaholic\Api\ShareaholicApi
+  shareaholic.logger:
+    parent: logger.channel_base
+    arguments: ['shareaholic']
+  shareaholic.event_logger:
+    class: Drupal\shareaholic\Logger\EventLogger
+    arguments: ['@module_handler', '@theme.manager', '@database']
+  shareaholic.tos_manager:
+    class: Drupal\shareaholic\TOS\TOSManager
+    arguments: ['@config.factory', '@shareaholic.event_logger']

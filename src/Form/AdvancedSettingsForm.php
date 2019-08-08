@@ -2,9 +2,15 @@
 
 namespace Drupal\shareaholic\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\shareaholic\Api\ShareaholicApi;
 use Drupal\shareaholic\Controller\UtilitiesController;
+use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class AdvancedSettingsForm.
@@ -17,6 +23,28 @@ class AdvancedSettingsForm extends FormBase {
    * @var string
    */
   const SETTINGS = 'shareaholic.settings';
+
+  /** @var Client */
+  private $httpClient;
+
+  /** @var @var ShareaholicApi */
+  private $shareaholicApi;
+
+  public function __construct(Client $httpClient, ShareaholicApi $shareaholicApi)
+  {
+    $this->httpClient = $httpClient;
+    $this->shareaholicApi = $shareaholicApi;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('http_client'),
+      $container->get('shareaholic.api')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -32,8 +60,7 @@ class AdvancedSettingsForm extends FormBase {
 
     $config = $this->config(static::SETTINGS);
 
-    $servers_check = UtilitiesController::connectivity_check();
-
+    $servers_check = $this->connectivityCheck();
 
     $form['advanced'] = [
       '#type' => 'details',
@@ -129,4 +156,12 @@ class AdvancedSettingsForm extends FormBase {
     }
   }
 
+  /**
+   * Server Connectivity check
+   */
+  private function connectivityCheck() {
+    $health_check_url = $this->shareaholicApi::HEALTH_CHECK_URL;
+    $response = $this->httpClient->get($health_check_url);
+    return $response->getStatusCode() === 200;
+  }
 }

@@ -11,9 +11,9 @@ shareaholic.settings:
   route_name: shareaholic.settings
   weight: 100
 
-shareaholic.advanced:
+shareaholic.settings.advanced:
   title: 'Shareaholic Advanced Settings'
   parent: 'shareaholic.admin_config'
   description: 'Advanced settings for the Shareaholic module'
-  route_name: shareaholic.advanced_settings
+  route_name: shareaholic.settings.advanced
   weight: 200

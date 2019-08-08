@@ -15,20 +15,21 @@ shareaholic.settings:
   requirements:
     _permission: 'access shareaholic configurations'
 
-shareaholic.advanced_settings:
-  path: '/admin/config/shareaholic/advanced-settings'
+shareaholic.settings.advanced:
+  path: '/admin/config/shareaholic/settings/advanced'
   defaults:
 #    _controller: '\Drupal\shareaholic\Controller\SettingsController::advancedConfigPage'
     _form: '\Drupal\shareaholic\Form\AdvancedSettingsForm'
-    link_id: 'shareaholic.advanced_settings'
+    link_id: 'shareaholic.settings.advanced'
     _title: 'Shareaholic Advanced Settings'
   requirements:
     _permission: 'access shareaholic configurations'
 
-shareaholic.api:
-  path: '/admin/config/shareaholic/generatekey'
+shareaholic.settings.generate_key:
+  path: '/admin/config/shareaholic/settings/generatekey'
+  #methods:  ['POST']
   defaults:
-    _controller: '\Drupal\shareaholic\Controller\UtilitiesController::generateKey'
+    _controller: '\Drupal\shareaholic\Controller\SettingsController::generateKey'
     _title: 'Generate key'
   requirements:
     _permission: 'administer site configuration'
