@@ -4,6 +4,7 @@ namespace Drupal\shareaholic\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\shareaholic\Api\ShareaholicApi;
+use Drupal\shareaholic\Helper\TOSManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
