@@ -20,15 +20,11 @@ class AdvancedSettingsForm extends FormBase {
    */
   const SETTINGS = 'shareaholic.settings';
 
-  /** @var Client */
-  private $httpClient;
-
   /** @var @var ShareaholicApi */
   private $shareaholicApi;
 
-  public function __construct(Client $httpClient, ShareaholicApi $shareaholicApi)
+  public function __construct(ShareaholicApi $shareaholicApi)
   {
-    $this->httpClient = $httpClient;
     $this->shareaholicApi = $shareaholicApi;
   }
 
@@ -37,7 +33,6 @@ class AdvancedSettingsForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('http_client'),
       $container->get('shareaholic.api')
     );
   }
