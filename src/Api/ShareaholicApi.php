@@ -2,10 +2,28 @@
 
 namespace Drupal\shareaholic\Api;
 
+use GuzzleHttp\Client;
+
 class ShareaholicApi {
   const API_URL = 'https://www.shareaholic.com';
   const HEALTH_CHECK_URL = self::API_URL . '/haproxy_health_check';
   const KEY_GENERATING_URL = self::API_URL . '/publisher_tools/anonymous';
+
+  /** @var Client */
+  private $httpClient;
+
+  public function __construct(Client $httpClient) {
+    $this->httpClient = $httpClient;
+  }
+
+  /**
+   * @return bool
+   */
+  public function connectivityCheck() {
+    $health_check_url = self::HEALTH_CHECK_URL;
+    $response = $this->httpClient->get($health_check_url);
+    return $response->getStatusCode() === 200;
+  }
 
   /**
    * Converts langcode into numeric id

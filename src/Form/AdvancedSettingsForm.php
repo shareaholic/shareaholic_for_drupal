@@ -56,7 +56,7 @@ class AdvancedSettingsForm extends FormBase {
 
     $config = $this->config(static::SETTINGS);
 
-    $servers_check = $this->connectivityCheck();
+    $servers_check = $this->shareaholicApi->connectivityCheck();
 
     $form['advanced'] = [
       '#type' => 'details',
@@ -143,14 +143,5 @@ class AdvancedSettingsForm extends FormBase {
       \Drupal::messenger()
         ->addMessage($key . ': ' . ($key === 'text_format' ? $value['value'] : $value));
     }
-  }
-
-  /**
-   * Server Connectivity check
-   */
-  private function connectivityCheck() {
-    $health_check_url = $this->shareaholicApi::HEALTH_CHECK_URL;
-    $response = $this->httpClient->get($health_check_url);
-    return $response->getStatusCode() === 200;
   }
 }

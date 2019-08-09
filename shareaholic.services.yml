@@ -1,6 +1,7 @@
 services:
   shareaholic.api:
     class: Drupal\shareaholic\Api\ShareaholicApi
+    arguments: ['@http_client']
   shareaholic.logger:
     parent: logger.channel_base
     arguments: ['shareaholic']
