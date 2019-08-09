@@ -2,10 +2,12 @@
 
 namespace Drupal\shareaholic\Logger;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\shareaholic\Api\ShareaholicApi;
+use Drupal\shareaholic\Form\AdvancedSettingsForm;
 
 class EventLogger {
 
@@ -21,9 +23,13 @@ class EventLogger {
   /** @var ShareaholicApi */
   private $shareaholicApi;
 
-  public function __construct(ModuleHandlerInterface $moduleHandler, ThemeManagerInterface $themeManager, Connection $connection, ShareaholicApi $shareaholicApi)
+  /** @var ConfigFactoryInterface */
+  private $configFactory;
+
+  public function __construct(ModuleHandlerInterface $moduleHandler, ConfigFactoryInterface $configFactory, ThemeManagerInterface $themeManager, Connection $connection, ShareaholicApi $shareaholicApi)
   {
     $this->moduleHandler = $moduleHandler;
+    $this->configFactory = $configFactory;
     $this->themeManager = $themeManager;
     $this->connection = $connection;
     $this->shareaholicApi = $shareaholicApi;
@@ -39,7 +45,7 @@ class EventLogger {
 
     $event_metadata = [
       'plugin_version' => drupal_get_installed_schema_version('shareaholic'),
-      'api_key' => $this->get_option('api_key'),
+      'api_key' => $this->configFactory->get(AdvancedSettingsForm::SETTINGS_ID)->get('api_key'),
       'domain' => \Drupal::request()->getHost(),
       'language' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
       'stats' => $this->getStats(),

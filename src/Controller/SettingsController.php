@@ -3,6 +3,7 @@
 namespace Drupal\shareaholic\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\shareaholic\Api\ShareaholicApi;
 use Drupal\shareaholic\Helper\TOSManager;
 use GuzzleHttp\Client;
@@ -25,12 +26,16 @@ class SettingsController extends ControllerBase {
   /** @var TOSManager */
   private $TOSManager;
 
+  /** @var RendererInterface */
+  private $renderer;
 
-  public function __construct(Client $httpClient, ShareaholicApi $shareaholicApi, TOSManager $TOSManager)
+
+  public function __construct(Client $httpClient, RendererInterface $renderer, ShareaholicApi $shareaholicApi, TOSManager $TOSManager)
   {
     $this->httpClient = $httpClient;
     $this->shareaholicApi = $shareaholicApi;
     $this->TOSManager = $TOSManager;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -39,6 +44,7 @@ class SettingsController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('http_client'),
+      $container->get('renderer'),
       $container->get('shareaholic.api'),
       $container->get('shareaholic.tos_manager')
     );
@@ -64,13 +70,11 @@ class SettingsController extends ControllerBase {
         '#attached' => [
           'library' => [
             'shareaholic/main',
-            //          'shareaholic/tos-modal',
           ],
         ],
       ];
 
-      $page_content['#markup'] .= \Drupal::service('renderer')
-        ->render($tos_content);
+      $page_content['#markup'] .= $this->renderer->render($tos_content);
     }
 
     return $page_content;
