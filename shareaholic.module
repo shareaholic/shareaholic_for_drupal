@@ -224,7 +224,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
         ],
       ];
 
-      $build['#attached']['html_head'][] = [$ogtag, 'shareaholic:og:image'];
+      $build['#attached']['html_head'][] = [$ogtag, 'shareaholic_node:og:image'];
     }
   }
 }
