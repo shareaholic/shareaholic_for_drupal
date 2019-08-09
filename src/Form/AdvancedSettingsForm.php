@@ -2,16 +2,17 @@
 
 namespace Drupal\shareaholic\Form;
 
-use Drupal\Core\Form\FormBase;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\shareaholic\Api\ShareaholicApi;
-use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class AdvancedSettingsForm.
  */
-class AdvancedSettingsForm extends FormBase {
+class AdvancedSettingsForm extends ConfigFormBase {
 
   /**
    * Config settings.
@@ -23,9 +24,14 @@ class AdvancedSettingsForm extends FormBase {
   /** @var @var ShareaholicApi */
   private $shareaholicApi;
 
-  public function __construct(ShareaholicApi $shareaholicApi)
+  /** @var CacheBackendInterface */
+  private $renderCache;
+
+  public function __construct(CacheBackendInterface $renderCache, ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi)
   {
+    parent::__construct($config_factory);
     $this->shareaholicApi = $shareaholicApi;
+    $this->renderCache = $renderCache;
   }
 
   /**
@@ -33,6 +39,8 @@ class AdvancedSettingsForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('cache.render'),
+      $container->get('config.factory'),
       $container->get('shareaholic.api')
     );
   }
@@ -43,6 +51,15 @@ class AdvancedSettingsForm extends FormBase {
   public function getFormId() {
     return 'advanced_settings_form';
   }
+
+  /**
+     * {@inheritdoc}
+     */
+    protected function getEditableConfigNames() {
+      return [
+        static::SETTINGS_ID,
+      ];
+    }
 
   /**
    * {@inheritdoc}
@@ -57,10 +74,12 @@ class AdvancedSettingsForm extends FormBase {
       '#title' => $this->t('Advanced'),
     ];
 
-    $form['advanced']['disable_ogz_tags'] = [
+    $form['advanced']['disable_og_tags'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Disable Open Graph tags (it is recommended NOT to disable open graph tags)'),
+      '#description' => $this->t('Changing this option will result in render cache clearance, to update all node pages.'),
       '#weight' => '0',
+      '#default_value' => $config->get('disable_og_tags')
     ];
 
     $form['server'] = [
@@ -104,13 +123,7 @@ class AdvancedSettingsForm extends FormBase {
       '#value' => $this->t('Reset'),
     ];
 
-
-    $form['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Submit'),
-    ];
-
-    return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
@@ -127,10 +140,21 @@ class AdvancedSettingsForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Display result.
-    foreach ($form_state->getValues() as $key => $value) {
-      \Drupal::messenger()
-        ->addMessage($key . ': ' . ($key === 'text_format' ? $value['value'] : $value));
+
+    $disOGTagsOldValue = $this->config(self::SETTINGS_ID)->get('disable_og_tags');
+    $disOGTagsNewValue = $form_state->getValue('disable_og_tags');
+
+    $this->configFactory()->getEditable(self::SETTINGS_ID)
+          ->set('disable_og_tags', $disOGTagsNewValue)
+          ->save();
+
+    if ($disOGTagsOldValue !== $disOGTagsNewValue) {
+      $this->renderCache->invalidateAll();
+      $this->messenger()->addMessage('Render cache has been cleared');
     }
+
+    // Clear render cache so the changes to the og tags will disappear from all pages.
+    // TODO it should run only if disable_og_tags has changed.
+    parent::submitForm($form, $form_state);
   }
 }
