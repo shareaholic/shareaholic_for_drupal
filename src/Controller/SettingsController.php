@@ -150,7 +150,7 @@ class SettingsController extends ControllerBase {
 
 
       $this->updateOptions([
-        'version' => drupal_get_installed_schema_version('shareaholic'),
+        'version' => system_get_info('module', 'shareaholic')['version'],
         'api_key' => $json_response['api_key'],
         'verification_key' => $verification_key,
         // 'location_name_ids' => $json_response['location_name_ids'],
