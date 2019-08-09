@@ -4,10 +4,8 @@ namespace Drupal\shareaholic\Controller;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\shareaholic\Api\ShareaholicApi;
-use Drupal\shareaholic\Form\AdvancedSettingsForm;
 use Drupal\shareaholic\Helper\TOSManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -63,7 +61,7 @@ class SettingsController extends ControllerBase {
     // add tos window if required
     if (!$api_key) {
       return [
-        '#theme' => 'shareaholic_tos_modal',
+        '#theme' => 'shareaholic_tos',
         '#path' => '/' . $path . '/assets/img',
         '#attached' => [
           'library' => [

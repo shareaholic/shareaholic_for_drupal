@@ -8,7 +8,7 @@
 function shareaholic_theme() {
 
   return [
-    'shareaholic_tos_modal' => [
+    'shareaholic_tos' => [
       'variables' => [
         'path' => '',
       ],
