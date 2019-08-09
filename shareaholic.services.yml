@@ -13,7 +13,7 @@ services:
     arguments: ['@module_handler', '@theme.manager', '@database', '@shareaholic.api', '@shareaholic.config']
   shareaholic.tos_manager:
     class: Drupal\shareaholic\Helper\TOSManager
-    arguments: ['@config.factory', '@shareaholic.event_logger']
+    arguments: ['@shareaholic.editable_config', '@shareaholic.event_logger']
   shareaholic.config:
     class:  \Drupal\Core\Config\ImmutableConfig
     factory: 'config.factory:get'

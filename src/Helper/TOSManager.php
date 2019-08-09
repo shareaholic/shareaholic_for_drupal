@@ -2,7 +2,7 @@
 
 namespace Drupal\shareaholic\Helper;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\Config;
 use Drupal\shareaholic\Logger\EventLogger;
 
 /**
@@ -10,15 +10,15 @@ use Drupal\shareaholic\Logger\EventLogger;
  */
 class TOSManager {
 
-  /** @var ConfigFactoryInterface */
-  private $configFactory;
+  /** @var Config */
+  private $config;
 
   /** @var EventLogger */
   private $eventLogger;
 
-  public function __construct(ConfigFactoryInterface $configFactory, EventLogger $eventLogger)
+  public function __construct(Config $config, EventLogger $eventLogger)
   {
-    $this->configFactory = $configFactory;
+    $this->config = $config;
     $this->eventLogger = $eventLogger;
   }
 
@@ -29,15 +29,14 @@ class TOSManager {
    * @return mixed (true or NULL)
    */
   public function hasAcceptedTermsOfService() {
-    return $this->configFactory->get('shareaholic_has_accepted_tos');
+    return $this->config->get('shareaholic_has_accepted_tos');
   }
 
   /**
    * Accepts the terms of service by setting the variable to true
    */
   public function acceptTermsOfService() {
-    $settings = $this->configFactory->getEditable('shareaholic.settings');
-    $settings->set('shareaholic_has_accepted_tos', TRUE);
+    $this->config->set('shareaholic_has_accepted_tos', TRUE);
 
     $this->eventLogger->log('AcceptedToS');
   }
