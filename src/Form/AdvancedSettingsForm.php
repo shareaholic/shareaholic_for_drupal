@@ -91,13 +91,6 @@ class AdvancedSettingsForm extends FormBase {
       '#description' => $servers_check ? $this->t('Shareaholic should be working correctly. All Shareaholic servers are accessible.') : $this->t('A network problem or firewall is blocking all connections from your web server to Shareaholic.com.  <strong>Shareaholic cannot work correctly until this is fixed.</strong>  Please contact your web host or firewall administrator and give them <a href="http://blog.shareaholic.com/shareaholic-hosting-faq/" target="_blank">this information about Shareaholic and firewalls</a>. Let us <a href="#" onclick="%s">know</a> too, so we can follow up!'),
     ];
 
-    $form['server']['sharecount_servers'] = [
-      '#type' => 'textfield',
-      '#disabled' => TRUE,
-      '#title' => $this->t('The server-side Share Counts API should be working correctly. All servers and services needed by the API are accessible.)'),
-      '#weight' => '0',
-    ];
-
     $form['site_id'] = [
       '#type' => 'details',
       '#open' => TRUE,
