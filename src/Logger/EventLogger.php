@@ -64,7 +64,7 @@ class EventLogger {
       'data' => json_encode($event_metadata),
     ];
 
-    $apiUrl = $this->shareaholicApi::API_URL . '/api/events';
+    $apiUrl = $this->shareaholicApi::EVENTS_URL;
     $settings = [
       'headers' => [
         'Content-type' => 'application/vnd.api+json',

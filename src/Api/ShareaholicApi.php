@@ -8,6 +8,7 @@ class ShareaholicApi {
   const API_URL = 'https://www.shareaholic.com';
   const HEALTH_CHECK_URL = self::API_URL . '/haproxy_health_check';
   const KEY_GENERATING_URL = self::API_URL . '/publisher_tools/anonymous';
+  const EVENTS_URL = self::API_URL . '/api/events';
 
   /** @var Client */
   private $httpClient;
