@@ -63,12 +63,6 @@ class AdvancedSettingsForm extends FormBase {
       '#weight' => '0',
     ];
 
-    $form['advanced']['disable_internal_share_counts_api'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Disable server-side Share Counts API (This feature uses server resources. When &quot;enabled&quot; share counts will appear for additional social networks.)'),
-      '#weight' => '0',
-    ];
-
     $form['server'] = [
       '#type' => 'details',
       '#open' => TRUE,
