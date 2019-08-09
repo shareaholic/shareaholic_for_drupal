@@ -258,9 +258,9 @@ function shareaholic_extract_image_url_from_entity(\Drupal\Core\Entity\ContentEn
   // This may result in an error if this is not a typical image field, but
   // for example a Media one!
   // TODO Also we can have a hanging reference here!
-  if ($entity->hasField('field_image')) {
+  if ($entity->hasField('field_image') && $entity->field_image->entity) {
     $image = file_create_url($entity->field_image->entity->getFileUri());
-  } elseif ($entity->hasField('field_simage')) {
+  } elseif ($entity->hasField('field_simage') && $entity->field_image->entity) {
     $image = file_create_url($entity->field_simage->entity->getFileUri());
   } elseif ($entity->hasField('body')) {
     $body = $entity->get('body')->getString();
