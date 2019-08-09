@@ -1,7 +1,10 @@
+parameters:
+  shareaholic.settings.id: shareaholic.settings
+
 services:
   shareaholic.api:
     class: Drupal\shareaholic\Api\ShareaholicApi
-    arguments: ['@http_client']
+    arguments: ['@http_client', '@shareaholic.config', '@shareaholic.logger']
   shareaholic.logger:
     parent: logger.channel_base
     arguments: ['shareaholic']
@@ -11,3 +14,11 @@ services:
   shareaholic.tos_manager:
     class: Drupal\shareaholic\Helper\TOSManager
     arguments: ['@config.factory', '@shareaholic.event_logger']
+  shareaholic.config:
+    class:  \Drupal\Core\Config\ImmutableConfig
+    factory: 'config.factory:get'
+    arguments: ['%shareaholic.settings.id%']
+  shareaholic.editable_config:
+    class:  \Drupal\Core\Config\Config
+    factory: 'config.factory:getEditable'
+    arguments: ['%shareaholic.settings.id%']

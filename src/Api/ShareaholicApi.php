@@ -2,19 +2,58 @@
 
 namespace Drupal\shareaholic\Api;
 
+use Drupal\Core\Config\ImmutableConfig;
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
+use Psr\Log\LoggerInterface;
 
 class ShareaholicApi {
-  const API_URL = 'https://www.shareaholic.com';
+  const SERVICE_URL = 'https://www.shareaholic.com';
+  const API_URL = 'https://web.shareaholic.com';
   const HEALTH_CHECK_URL = self::API_URL . '/haproxy_health_check';
   const KEY_GENERATING_URL = self::API_URL . '/publisher_tools/anonymous';
   const EVENTS_URL = self::API_URL . '/api/events';
+  const SESSIONS_URL = self::API_URL . '/api/v3/sessions';
 
   /** @var Client */
   private $httpClient;
 
-  public function __construct(Client $httpClient) {
+  /** @var ImmutableConfig */
+  private $config;
+
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(Client $httpClient, ImmutableConfig $config, LoggerInterface $logger) {
     $this->httpClient = $httpClient;
+    $this->config = $config;
+    $this->logger = $logger;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getPublisherToken() {
+    $response = $this->httpClient->post(self::SESSIONS_URL, [
+      RequestOptions::JSON => [
+        'site_id' => $this->config->get('api_key'),
+        'verification_key' => $this->config->get('verification_key'),
+      ],
+    ]);
+
+    $statusCode = $response->getStatusCode();
+
+    if (preg_match('/20*/', $statusCode)) {
+      $body = json_decode($response->getBody()->getContents(), TRUE);
+      if (!empty($body['publisher_token'])) {
+        return $body['publisher_token'];
+      }
+      $this->logger->critical("Publisher token couldn't be received. Wrong content of server's response.");
+    } else {
+      $this->logger->critical("Publisher token couldn't be received. Request status code: $statusCode");
+    }
+
+    return NULL;
   }
 
   /**

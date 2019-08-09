@@ -3,6 +3,7 @@
 namespace Drupal\shareaholic\Form;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -27,11 +28,15 @@ class AdvancedSettingsForm extends ConfigFormBase {
   /** @var CacheBackendInterface */
   private $renderCache;
 
-  public function __construct(CacheBackendInterface $renderCache, ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi)
+  /** @var Config */
+  private $shareaholicConfig;
+
+  public function __construct(CacheBackendInterface $renderCache, ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi, Config $config)
   {
     parent::__construct($config_factory);
     $this->shareaholicApi = $shareaholicApi;
     $this->renderCache = $renderCache;
+    $this->shareaholicConfig = $config;
   }
 
   /**
@@ -41,7 +46,8 @@ class AdvancedSettingsForm extends ConfigFormBase {
     return new static(
       $container->get('cache.render'),
       $container->get('config.factory'),
-      $container->get('shareaholic.api')
+      $container->get('shareaholic.api'),
+      $container->get('shareaholic.editable_config')
     );
   }
 
@@ -66,8 +72,6 @@ class AdvancedSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $config = $this->config(static::SETTINGS_ID);
-
     $form['advanced'] = [
       '#type' => 'details',
       '#open' => TRUE,
@@ -79,7 +83,7 @@ class AdvancedSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Disable Open Graph tags (it is recommended NOT to disable open graph tags)'),
       '#description' => $this->t('Changing this option will result in render cache clearance, to update all node pages.'),
       '#weight' => '0',
-      '#default_value' => $config->get('disable_og_tags')
+      '#default_value' => $this->shareaholicConfig->get('disable_og_tags')
     ];
 
     $form['server'] = [
@@ -109,7 +113,7 @@ class AdvancedSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#disabled' => TRUE,
       '#weight' => '0',
-      '#default_value' => $config->get('api_key'),
+      '#default_value' => $this->shareaholicConfig->get('api_key'),
     ];
 
     $form['reset'] = [
@@ -141,10 +145,10 @@ class AdvancedSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    $disOGTagsOldValue = $this->config(self::SETTINGS_ID)->get('disable_og_tags');
+    $disOGTagsOldValue = $this->shareaholicConfig->get('disable_og_tags');
     $disOGTagsNewValue = $form_state->getValue('disable_og_tags');
 
-    $this->configFactory()->getEditable(self::SETTINGS_ID)
+    $this->shareaholicConfig
           ->set('disable_og_tags', $disOGTagsNewValue)
           ->save();
 

@@ -2,9 +2,12 @@
 
 namespace Drupal\shareaholic\Controller;
 
+use Drupal\Core\Config\Config;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\shareaholic\Api\ShareaholicApi;
+use Drupal\shareaholic\Form\AdvancedSettingsForm;
 use Drupal\shareaholic\Helper\TOSManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -26,16 +29,15 @@ class SettingsController extends ControllerBase {
   /** @var TOSManager */
   private $TOSManager;
 
-  /** @var RendererInterface */
-  private $renderer;
+  /** @var Config */
+  private $shareaholicConfig;
 
-
-  public function __construct(Client $httpClient, RendererInterface $renderer, ShareaholicApi $shareaholicApi, TOSManager $TOSManager)
+  public function __construct(Client $httpClient, ShareaholicApi $shareaholicApi, TOSManager $TOSManager, Config $config)
   {
     $this->httpClient = $httpClient;
     $this->shareaholicApi = $shareaholicApi;
     $this->TOSManager = $TOSManager;
-    $this->renderer = $renderer;
+    $this->shareaholicConfig = $config;
   }
 
   /**
@@ -44,9 +46,9 @@ class SettingsController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('http_client'),
-      $container->get('renderer'),
       $container->get('shareaholic.api'),
-      $container->get('shareaholic.tos_manager')
+      $container->get('shareaholic.tos_manager'),
+      $container->get('shareaholic.editable_config')
     );
   }
 
@@ -56,15 +58,11 @@ class SettingsController extends ControllerBase {
   public function configPage() {
 
     $path = drupal_get_path('module', 'shareaholic');
-
-    $page_content['#markup'] = '<h1>TBD</h1>';
-
-    $settings = \Drupal::config('shareaholic.settings');
-    $api_key = $settings->get('api_key');
+    $api_key = $this->shareaholicConfig->get('api_key');
 
     // add tos window if required
     if (!$api_key) {
-      $tos_content = [
+      return [
         '#theme' => 'shareaholic_tos_modal',
         '#path' => '/' . $path . '/assets/img',
         '#attached' => [
@@ -73,11 +71,17 @@ class SettingsController extends ControllerBase {
           ],
         ],
       ];
-
-      $page_content['#markup'] .= $this->renderer->render($tos_content);
     }
 
-    return $page_content;
+    return [
+      '#theme' => 'shareaholic_settings',
+      '#apiKey' => $this->shareaholicConfig->get('api_key'),
+      '#verificationKey' => $this->shareaholicApi->getPublisherToken(),
+      '#apiHost' => $this->shareaholicApi::API_URL,
+      '#serviceHost' => $this->shareaholicApi::SERVICE_URL,
+      '#assetHost' => Settings::get('shareaholic_assets_host', 'https://cdn.shareaholic.net/'),
+      '#language' => $this->languageManager()->getCurrentLanguage()->getId(),
+    ];
   }
 
   /**
@@ -107,7 +111,7 @@ class SettingsController extends ControllerBase {
     $post_data = [
       'configuration_publisher' => [
         'verification_key' => $verification_key,
-        'site_name' => $this->config('name'),
+        'site_name' => $this->config('system.site')->get('name'),
         'domain' => \Drupal::request()->getHost(),
         'platform_id' => '2',
         'language_id' => $this->shareaholicApi->getLanguageId($this->languageManager()->getCurrentLanguage()->getId()),
@@ -264,10 +268,8 @@ class SettingsController extends ControllerBase {
    * @return bool
    */
   private function updateOptions($array) {
-
-    $settings = $this->configFactory->getEditable('shareaholic.settings');
     foreach ($array as $key => $setting) {
-      $settings->set($key, $setting)->save();
+      $this->shareaholicConfig->set($key, $setting)->save();
     }
   }
 }

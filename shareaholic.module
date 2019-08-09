@@ -12,7 +12,16 @@ function shareaholic_theme() {
       'variables' => [
         'path' => '',
       ],
-      'template' => 'shareaholic-tos-modal',
+    ],
+    'shareaholic_settings' => [
+      'variables' => [
+        'apiKey' => '',
+        'verificationKey' => '',
+        'apiHost' => '',
+        'serviceHost' => '',
+        'assetHost' => '',
+        'language' => '',
+      ],
     ],
   ];
 
@@ -37,9 +46,7 @@ function shareaholic_preprocess_page(&$variables) {
     if (!$api_key) {
       \Drupal::messenger()->addMessage($render_message, 'warning');
     }
-
   }
-
 }
 
 /**
@@ -101,7 +108,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
 
   // TODO There is no guarantee that these fields are text fields!
   // TODO There is also no guarantee these values won't be empty even if fields
-  // exists.
+  // exist.
   $username = NULL;
   if($author->hasField('field_fullname')) {
     $username = $author->get('field_fullname')->getString();
