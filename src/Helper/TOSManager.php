@@ -29,7 +29,7 @@ class TOSManager {
    * @return mixed (true or NULL)
    */
   public function hasAcceptedTermsOfService() {
-    $this->configFactory->get('shareaholic_has_accepted_tos');
+    return $this->configFactory->get('shareaholic_has_accepted_tos');
   }
 
   /**
