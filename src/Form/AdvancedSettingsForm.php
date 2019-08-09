@@ -56,8 +56,6 @@ class AdvancedSettingsForm extends FormBase {
 
     $config = $this->config(static::SETTINGS);
 
-    $servers_check = $this->shareaholicApi->connectivityCheck();
-
     $form['advanced'] = [
       '#type' => 'details',
       '#open' => TRUE,
@@ -81,6 +79,8 @@ class AdvancedSettingsForm extends FormBase {
       '#open' => TRUE,
       '#title' => $this->t('Server Connectivity'),
     ];
+
+    $servers_check = $this->shareaholicApi->connectivityCheck();
 
     $form['server']['shareaholic_servers'] = [
       '#type' => 'textfield',
