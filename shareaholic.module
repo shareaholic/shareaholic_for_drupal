@@ -54,7 +54,7 @@ function shareaholic_preprocess_page(&$variables) {
  */
 function shareaholic_page_attachments(array &$attachments) {
 
-  $config = \Drupal::config(\Drupal\shareaholic\Form\AdvancedSettingsForm::SETTINGS_ID);
+  $config = \Drupal::service('shareaholic.config');
 
   $siteName = \Drupal::config('system.site')->get('name');
   $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'site_name', $siteName);
@@ -79,7 +79,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
     return;
   }
 
-  $config = \Drupal::config(\Drupal\shareaholic\Form\AdvancedSettingsForm::SETTINGS_ID);
+  $config = \Drupal::service('shareaholic.config');
 
   /*
    * URL

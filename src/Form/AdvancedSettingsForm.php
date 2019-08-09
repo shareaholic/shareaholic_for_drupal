@@ -15,13 +15,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class AdvancedSettingsForm extends ConfigFormBase {
 
-  /**
-   * Config settings.
-   *
-   * @var string
-   */
-  const SETTINGS_ID = 'shareaholic.settings';
-
   /** @var @var ShareaholicApi */
   private $shareaholicApi;
 
@@ -62,9 +55,7 @@ class AdvancedSettingsForm extends ConfigFormBase {
      * {@inheritdoc}
      */
     protected function getEditableConfigNames() {
-      return [
-        static::SETTINGS_ID,
-      ];
+      return [];
     }
 
   /**
