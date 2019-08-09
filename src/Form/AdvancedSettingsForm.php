@@ -18,7 +18,7 @@ class AdvancedSettingsForm extends FormBase {
    *
    * @var string
    */
-  const SETTINGS = 'shareaholic.settings';
+  const SETTINGS_ID = 'shareaholic.settings';
 
   /** @var @var ShareaholicApi */
   private $shareaholicApi;
@@ -49,7 +49,7 @@ class AdvancedSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $config = $this->config(static::SETTINGS);
+    $config = $this->config(static::SETTINGS_ID);
 
     $form['advanced'] = [
       '#type' => 'details',
