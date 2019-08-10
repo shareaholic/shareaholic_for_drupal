@@ -148,8 +148,6 @@ class AdvancedSettingsForm extends ConfigFormBase {
       $this->messenger()->addMessage('Render cache has been cleared');
     }
 
-    // Clear render cache so the changes to the og tags will disappear from all pages.
-    // TODO it should run only if disable_og_tags has changed.
     parent::submitForm($form, $form_state);
   }
 }
