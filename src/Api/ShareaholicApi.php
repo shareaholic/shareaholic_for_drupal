@@ -125,7 +125,7 @@ class ShareaholicApi {
   /**
    * Converts langcode into numeric id
    *
-   * @return string
+   * @return int|NULL
    */
   private function getLanguageId($langcode) {
     $language_id_map = [
