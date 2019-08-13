@@ -360,8 +360,13 @@ function shareaholic_extract_image_url_from_entity(\Drupal\Core\Entity\ContentEn
   return $image;
 }
 
-
-function shareaholic_get_chat_for_head() {
+/**
+ * Helper function.
+ *
+ * @return array
+ *   Returns an array ready to be added to head section of the page.
+ */
+function shareaholic_get_chat_for_head(): array {
   return [
      [
        '#tag' => 'script',
@@ -372,4 +377,50 @@ function shareaholic_get_chat_for_head() {
      ],
      "shareaholic_chat",
    ];
+}
+
+
+/**
+ * Implements hook_entity_insert().
+ */
+function shareaholic_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
+  $api = Drupal::service('shareaholic.api');
+  $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
+  $api->singlePageRefresh($url);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function shareaholic_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
+  $api = Drupal::service('shareaholic.api');
+  $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
+  $api->singlePageRefresh($url);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function shareaholic_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
+  $api = Drupal::service('shareaholic.api');
+  $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
+  $api->singlePageRefresh($url);
 }
