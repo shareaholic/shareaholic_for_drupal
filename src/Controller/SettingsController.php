@@ -80,7 +80,11 @@ class SettingsController extends ControllerBase {
     $publisherToken =  $this->shareaholicApi->getPublisherToken();
     if (!$publisherToken) {
       $this->messenger()->addMessage("Publisher token couldn't be received. See log.", MessengerInterface::TYPE_ERROR);
-      return [];
+      return [
+        '#attached' => [
+          'html_head' => [shareaholic_get_chat_for_head()],
+        ],
+      ];
     }
 
     return [
