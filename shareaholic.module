@@ -15,7 +15,7 @@ function shareaholic_theme() {
     'shareaholic_settings' => [
       'variables' => [
         'apiKey' => '',
-        'verificationKey' => '',
+        'jwtToken' => '',
         'apiHost' => '',
         'serviceHost' => '',
         'assetHost' => '',

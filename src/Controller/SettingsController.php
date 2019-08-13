@@ -77,8 +77,8 @@ class SettingsController extends ControllerBase {
       $this->messenger()->addMessage($this->t("Remember to enable Shareaholic for your nodes on the Content Settings page!"));
     }
 
-    $publisherToken =  $this->shareaholicApi->getPublisherToken();
-    if (!$publisherToken) {
+    $jwtToken =  $this->shareaholicApi->getJwtToken();
+    if (!$jwtToken) {
       $this->messenger()->addMessage("Publisher token couldn't be received. See log.", MessengerInterface::TYPE_ERROR);
       return [
         '#attached' => [
@@ -90,7 +90,7 @@ class SettingsController extends ControllerBase {
     return [
       '#theme' => 'shareaholic_settings',
       '#apiKey' => $this->shareaholicConfig->get('api_key'),
-      '#verificationKey' => $publisherToken,
+      '#jwtToken' => $jwtToken,
       '#apiHost' => $this->shareaholicApi::API_URL,
       '#serviceHost' => $this->shareaholicApi::SERVICE_URL,
       '#assetHost' => Settings::get('shareaholic_assets_host', 'https://cdn.shareaholic.net/'),

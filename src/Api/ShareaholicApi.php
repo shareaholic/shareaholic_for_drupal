@@ -83,13 +83,20 @@ class ShareaholicApi {
   /**
    * @return string|null
    */
-  public function getPublisherToken() {
-    $response = $this->httpClient->post(self::SESSIONS_URL, [
-      RequestOptions::JSON => [
-        'site_id' => $this->config->get('api_key'),
-        'verification_key' => $this->config->get('verification_key'),
-      ],
-    ]);
+  public function getJwtToken() {
+
+    try {
+      $response = $this->httpClient->post(self::SESSIONS_URL, [
+        RequestOptions::JSON => [
+          'site_id' => $this->config->get('api_key'),
+          'verification_key' => $this->config->get('verification_key'),
+        ],
+      ]);
+    } catch (\Exception $exception) {
+      $this->logger->critical("Publisher token couldn't be received. Couldn't connect to the server.");
+      return NULL;
+    }
+
 
     $statusCode = $response->getStatusCode();
 
