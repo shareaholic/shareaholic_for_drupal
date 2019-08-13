@@ -294,7 +294,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
   /*
    * OpenGraph
    */
-  if (!$config->get('disable_og_tags') &&
+  if ($config->get('enable_og_tags') &&
       (!$shareaholicEntityManager->isShareaholicEnabled($nodeType) ||
       empty($entity->get('shareaholic')->getValue()) ||
       (int) $entity->get('shareaholic')->getValue()[0]['exclude_og_tags'] === 0)

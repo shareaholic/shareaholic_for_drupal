@@ -6,7 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class ContentSettingsForm.
  */
-class ContentSettingsForm extends ConfigFormBase {
+class ContentSettingsForm extends FormBase {
 
 
   /** @var CacheBackendInterface */
@@ -34,7 +34,6 @@ class ContentSettingsForm extends ConfigFormBase {
 
   public function __construct(CacheBackendInterface $renderCache, ConfigFactoryInterface $config_factory, Config $config, ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager)
   {
-    parent::__construct($config_factory);
     $this->renderCache = $renderCache;
     $this->shareaholicConfig = $config;
     $this->nodeTypeStorage = $nodeTypeStorage;
@@ -141,7 +140,7 @@ class ContentSettingsForm extends ConfigFormBase {
 
     $form['#attached']['html_head'] = [shareaholic_get_chat_for_head()];
 
-    return parent::buildForm($form, $form_state);
+    return $form;
   }
 
   /**

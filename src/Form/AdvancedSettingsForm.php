@@ -64,12 +64,12 @@ class AdvancedSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Advanced'),
     ];
 
-    $form['advanced']['disable_og_tags'] = [
+    $form['advanced']['enable_og_tags'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Disable Open Graph tags (it is recommended NOT to disable open graph tags)'),
+      '#title' => $this->t('Enable Open Graph tags (it is recommended for Open Graphs tags to be enabled)'),
       '#description' => $this->t('To see the effect of the change on node pages, cache will have to be cleared.'),
       '#weight' => '0',
-      '#default_value' => $this->shareaholicConfig->get('disable_og_tags')
+      '#default_value' => $this->shareaholicConfig->get('enable_og_tags')
     ];
 
     $form['server'] = [
@@ -122,10 +122,10 @@ class AdvancedSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $disOGTagsNewValue = $form_state->getValue('disable_og_tags');
+    $disOGTagsNewValue = $form_state->getValue('enable_og_tags');
 
     $this->shareaholicConfig
-          ->set('disable_og_tags', $disOGTagsNewValue)
+          ->set('enable_og_tags', $disOGTagsNewValue)
           ->save();
 
     parent::submitForm($form, $form_state);
