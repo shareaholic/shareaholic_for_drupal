@@ -139,6 +139,8 @@ class ContentSettingsForm extends ConfigFormBase {
       }
     }
 
+    $form['#attached']['html_head'] = [shareaholic_get_chat_for_head()];
+
     return parent::buildForm($form, $form_state);
   }
 

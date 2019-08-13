@@ -68,6 +68,7 @@ class SettingsController extends ControllerBase {
           'library' => [
             'shareaholic/main',
           ],
+          'html_head' => [shareaholic_get_chat_for_head()],
         ],
       ];
     }
@@ -90,6 +91,9 @@ class SettingsController extends ControllerBase {
       '#serviceHost' => $this->shareaholicApi::SERVICE_URL,
       '#assetHost' => Settings::get('shareaholic_assets_host', 'https://cdn.shareaholic.net/'),
       '#language' => $this->languageManager()->getCurrentLanguage()->getId(),
+      '#attached' => [
+        'html_head' => [shareaholic_get_chat_for_head()],
+      ],
     ];
   }
 

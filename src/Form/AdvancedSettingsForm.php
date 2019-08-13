@@ -113,17 +113,9 @@ class AdvancedSettingsForm extends ConfigFormBase {
       '#value' => $this->t('Reset'),
     ];
 
-    return parent::buildForm($form, $form_state);
-  }
+    $form['#attached']['html_head'] = [shareaholic_get_chat_for_head()];
 
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    foreach ($form_state->getValues() as $key => $value) {
-      // @TODO: Validate fields.
-    }
-    parent::validateForm($form, $form_state);
+    return parent::buildForm($form, $form_state);
   }
 
   /**

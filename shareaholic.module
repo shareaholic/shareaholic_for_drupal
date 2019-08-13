@@ -359,3 +359,16 @@ function shareaholic_extract_image_url_from_entity(\Drupal\Core\Entity\ContentEn
 
   return $image;
 }
+
+
+function shareaholic_get_chat_for_head() {
+  return [
+     [
+       '#tag' => 'script',
+       '#attributes' => [
+         'src' => "https://dsms0mj1bbhn4.cloudfront.net/assets/pub/shareaholic-chat.js",
+       ],
+     ],
+     "shareaholic_chat",
+   ];
+}
