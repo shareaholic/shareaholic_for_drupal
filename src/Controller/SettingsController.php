@@ -4,6 +4,8 @@ namespace Drupal\shareaholic\Controller;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\shareaholic\Api\ShareaholicApi;
@@ -74,10 +76,16 @@ class SettingsController extends ControllerBase {
       $this->messenger()->addMessage($this->t("Remember to enable Shareaholic for your nodes on the Content Settings page!"));
     }
 
+    $publisherToken =  $this->shareaholicApi->getPublisherToken();
+    if (!$publisherToken) {
+      $this->messenger()->addMessage("Publisher token couldn't be received. See log.", MessengerInterface::TYPE_ERROR);
+      return [];
+    }
+
     return [
       '#theme' => 'shareaholic_settings',
       '#apiKey' => $this->shareaholicConfig->get('api_key'),
-      '#verificationKey' => $this->shareaholicApi->getPublisherToken(),
+      '#verificationKey' => $publisherToken,
       '#apiHost' => $this->shareaholicApi::API_URL,
       '#serviceHost' => $this->shareaholicApi::SERVICE_URL,
       '#assetHost' => Settings::get('shareaholic_assets_host', 'https://cdn.shareaholic.net/'),
