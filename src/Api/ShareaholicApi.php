@@ -111,7 +111,12 @@ class ShareaholicApi {
    */
   public function connectivityCheck() {
     $health_check_url = self::HEALTH_CHECK_URL;
-    $response = $this->httpClient->get($health_check_url);
+    try {
+      $response = $this->httpClient->get($health_check_url);
+    } catch (\Exception $e) {
+      return FALSE;
+    }
+
     return $response->getStatusCode() === 200;
   }
 
