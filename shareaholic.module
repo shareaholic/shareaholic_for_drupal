@@ -22,6 +22,14 @@ function shareaholic_theme() {
         'language' => '',
       ],
     ],
+    'shareaholic_script' => [
+      'variables' => [
+        'jsUrl' => '',
+        'baseSettings' => '',
+        'apiKey' => '',
+        'overrides' => '',
+      ],
+    ],
     'shareaholic_widget' => [
       'variables' => [
         'id' => '',
@@ -61,7 +69,13 @@ function shareaholic_preprocess_page(&$variables) {
  */
 function shareaholic_page_attachments(array &$attachments) {
 
+  /** @var \Drupal\Core\Config\ImmutableConfig $config */
   $config = \Drupal::service('shareaholic.config');
+  $apiKey = $config->get('api_key');
+
+  if (!$apiKey || \Drupal::service('router.admin_context')->isAdminRoute()) {
+    return;
+  }
 
   $siteName = \Drupal::config('system.site')->get('name');
   $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'site_name', $siteName);
@@ -74,6 +88,18 @@ function shareaholic_page_attachments(array &$attachments) {
 
   $moduleVersion = system_get_info('module', 'shareaholic')['version'];
   $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'drupal_version', $moduleVersion);
+
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#type' => 'theme',
+      '#theme' => 'shareaholic_script',
+      '#apiKey' => $config->get('api_key'),
+      '#jsUrl' => Drupal\Core\Site\Settings::get('shareaholic_assets_host', 'https://cdn.shareaholic.net/') . 'assets/pub/shareaholic.js',
+      '#baseSettings' => '',
+      '#overrides' => Drupal\Core\Site\Settings::get('shareaholic_script_overrides', ''),
+    ],
+    'shareaholic_shareaholic',
+  ];
 }
 
 /**
@@ -89,7 +115,8 @@ function shareaholic_entity_extra_field_info() {
   foreach ($nodeTypes as $nodeType) {
     $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
     foreach ($locationTypes as $locationType) {
-      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+
+      $locations = $shareaholicEntityManager->extractLocations($locationType, $nodeType);
       foreach ($locations as $location) {
         $extra['node'][$nodeType->id()]['display']["shareaholic_widget_${locationType}_$location"] = [
           'label' => t("Shareaholic widget of type '@widgetType'. ID: '@location'", ['@location' => $location, '@widgetType' => $locationType]),
@@ -135,8 +162,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
         }
       }
 
-      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
-
+      $locations = $shareaholicEntityManager->extractLocations($locationType, $nodeType);
       foreach ($locations as $location) {
         if ($display->getComponent("shareaholic_widget_${locationType}_$location")) {
 
@@ -145,7 +171,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
             '#id' => $location,
             '#locationType' => $locationType,
             '#title' => $entity->getTitle(),
-            '#url' => $entity->toUrl(),
+            '#url' => Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString(),
             '#summary' => '',
           ];
         }

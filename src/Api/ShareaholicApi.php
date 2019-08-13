@@ -41,9 +41,27 @@ class ShareaholicApi {
    * @param $siteName
    * @param $langcode
    *
+   * @param string[] $shareButtonsLocations
+   * @param string[] $recommendationsLocations
+   *
    * @return string|null
    */
-  public function generateApiKey($verificationKey, $siteName, $langcode) {
+  public function generateApiKey($verificationKey, $siteName, $langcode, $shareButtonsLocations = [], $recommendationsLocations = []) {
+
+    /*
+     * Transform arrays into ones expected by the API.
+     */
+
+    $shareButtonsLocationsAttributes = [];
+    foreach ($shareButtonsLocations as $shareButtonsLocation) {
+      $shareButtonsLocationsAttributes[] = ['name' => $shareButtonsLocation, 'enabled' => TRUE];
+    }
+
+    $recommendationsLocationsAttributes = [];
+    foreach ($recommendationsLocations as $recommendationsLocation) {
+      $recommendationsLocationsAttributes[] = ['name' => $recommendationsLocation, 'enabled' => TRUE];
+    }
+
     try {
       $response = $this->post(static::KEY_GENERATING_URL, [
         'configuration_publisher' => [
@@ -53,11 +71,11 @@ class ShareaholicApi {
           'platform_id' => '2',
           'language_id' => $this->getLanguageId($langcode),
           'shortener' => 'shrlc',
-          'recommendations_attributes' => [
-            'locations_attributes' => [],
-          ],
           'share_buttons_attributes' => [
-            'locations_attributes' => [],
+            'locations_attributes' => $shareButtonsLocationsAttributes,
+          ],
+          'recommendations_attributes' => [
+            'locations_attributes' => $recommendationsLocationsAttributes,
           ],
         ],
       ]);

@@ -68,8 +68,8 @@ class ShareaholicEntityManager {
     ]);
     $entityFormDisplay->save();
 
-    $nodeType->setThirdPartySetting('shareaholic', 'locations_share_buttons', ['default']);
-    $nodeType->setThirdPartySetting('shareaholic', 'locations_recommendations', ['default']);
+    $nodeType->setThirdPartySetting('shareaholic', 'locations_share_buttons', [$this->createLocationName($nodeType->id(), 'default')]);
+    $nodeType->setThirdPartySetting('shareaholic', 'locations_recommendations', [$this->createLocationName($nodeType->id(), 'default')]);
     $nodeType->save();
   }
 
@@ -122,5 +122,40 @@ class ShareaholicEntityManager {
     }
 
     return $result;
+  }
+
+  /**
+   * Extract locations from the node type.
+   *
+   * @param string $locationType
+   * @param \Drupal\node\NodeTypeInterface $nodeType
+   * @return array
+   */
+  public function extractLocations($locationType, NodeTypeInterface $nodeType): array {
+    return $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+  }
+
+  /**
+   * @param string $locationName
+   * @param string $locationType
+   * @param \Drupal\node\NodeTypeInterface $nodeType
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function addLocation($locationName, $locationType, NodeTypeInterface $nodeType) {
+    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+    $locations[] = $this->createLocationName($nodeType->id(), $locationName);
+
+    $nodeType->setThirdPartySetting('shareaholic', "locations_$locationType", $locations);
+    $nodeType->save();
+  }
+
+  /**
+   * @param $nodeTypeId
+   * @param $name
+   *
+   * @return string
+   */
+  private function createLocationName($nodeTypeId, $name) {
+    return "{$nodeTypeId}_${name}";
   }
 }

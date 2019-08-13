@@ -8,6 +8,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\shareaholic\Api\ShareaholicApi;
+use Drupal\shareaholic\Form\ContentSettingsForm;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Drupal\shareaholic\Helper\TOSManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -105,7 +106,20 @@ class SettingsController extends ControllerBase {
    */
   public function generateKey() {
     $verification_key = md5(mt_rand());
-    $apiKey = $this->shareaholicApi->generateApiKey($verification_key, $this->config('system.site')->get('name'), $this->languageManager()->getCurrentLanguage()->getId());
+
+    $siteName = $this->config('system.site')->get('name');
+    $langcode = $this->languageManager()->getCurrentLanguage()->getId();
+
+    $shareButtonsLocations = [];
+    $recommendationsLocations = [];
+
+    $nodeTypes = $this->shareaholicEntityManager->getShareaholicEnabledNodeTypes();
+    foreach ($nodeTypes as $nodeType) {
+      $shareButtonsLocations = array_merge($shareButtonsLocations, $this->shareaholicEntityManager->extractLocations('share_buttons', $nodeType));
+      $recommendationsLocations = array_merge($recommendationsLocations, $this->shareaholicEntityManager->extractLocations('recommendations', $nodeType));
+    }
+
+    $apiKey = $this->shareaholicApi->generateApiKey($verification_key, $siteName, $langcode, $shareButtonsLocations, $recommendationsLocations);
 
     if ($apiKey) {
       $this->updateOptions([

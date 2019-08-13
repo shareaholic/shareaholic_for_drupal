@@ -83,9 +83,12 @@ class ShareaholicAddLocationForm extends FormBase {
     ];
 
     $form['location'] = [
-      '#type' => 'textfield',
+      '#type' => 'machine_name',
       '#title' => $this->t("Location's name"),
       '#required' => TRUE,
+      '#machine_name' => [
+        'exists' => static function(){return FALSE;},
+      ],
     ];
 
     $form['nodeType'] = [
@@ -150,11 +153,8 @@ class ShareaholicAddLocationForm extends FormBase {
     $locationType = $form_state->getValue('locationType');
     $locationId = $form_state->getValue('location');
 
-    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
-    $locations[] = $locationId;
+    $this->shareaholicEntityManager->addLocation($locationId, $locationType, $nodeType);
 
-    $nodeType->setThirdPartySetting('shareaholic', "locations_$locationType", $locations);
-    $nodeType->save();
     $this->messenger()->addMessage($this->t("Location type '@locationType' of id '@locationId' has been added to the node type '@nodeType'!", ['@locationType' => $locationType, '@nodeType' => $nodeType->id(), '@locationId' => $locationId]));
     $form_state->setRedirect('shareaholic.settings.content');
   }
