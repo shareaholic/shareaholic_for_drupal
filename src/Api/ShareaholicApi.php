@@ -4,6 +4,7 @@ namespace Drupal\shareaholic\Api;
 
 use Drupal\Core\Config\ImmutableConfig;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
 
@@ -28,6 +29,53 @@ class ShareaholicApi {
     $this->httpClient = $httpClient;
     $this->config = $config;
     $this->logger = $logger;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function generateApiKey($verificationKey, $siteName, $langcode) {
+
+    $post_data = [
+      'configuration_publisher' => [
+        'verification_key' => $verificationKey,
+        'site_name' => $siteName,
+        'domain' => \Drupal::request()->getHost(),
+        'platform_id' => '2',
+        'language_id' => $this->getLanguageId($langcode),
+        'shortener' => 'shrlc',
+        'recommendations_attributes' => [
+          'locations_attributes' => [],
+        ],
+        'share_buttons_attributes' => [
+          'locations_attributes' => [],
+        ],
+      ],
+    ];
+
+    $client = $this->httpClient;
+    $apiUrl = static::KEY_GENERATING_URL;
+    $settings = [
+      'headers' => [
+        'Content-type' => 'application/vnd.api+json',
+      ],
+      'body' => json_encode($post_data),
+    ];
+
+    try {
+      $response = $client->post($apiUrl, $settings);
+      $data = (string) $response->getBody();
+
+      if (empty($data)) {
+        return NULL;
+      }
+
+    } catch (RequestException $e) {
+      return NULL;
+    }
+
+    $json_response = json_decode($data, TRUE);
+    return $json_response['api_key'];
   }
 
   /**
@@ -70,7 +118,7 @@ class ShareaholicApi {
    *
    * @return string
    */
-  public function getLanguageId($langcode) {
+  private function getLanguageId($langcode) {
     $language_id_map = [
       "ar" => 1, // Arabic
       "bg" => 2, // Bulgarian

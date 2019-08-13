@@ -5,10 +5,10 @@ namespace Drupal\shareaholic\Controller;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 use Drupal\shareaholic\Api\ShareaholicApi;
+use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Drupal\shareaholic\Helper\TOSManager;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -16,10 +16,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * Class SettingsController.
  */
 class SettingsController extends ControllerBase {
-
-
-  /** @var Client */
-  private $httpClient;
 
   /** @var ShareaholicApi */
   private $shareaholicApi;
@@ -30,12 +26,15 @@ class SettingsController extends ControllerBase {
   /** @var Config */
   private $shareaholicConfig;
 
-  public function __construct(Client $httpClient, ShareaholicApi $shareaholicApi, TOSManager $TOSManager, Config $config)
+  /** @var ShareaholicEntityManager */
+  private $shareaholicEntityManager;
+
+  public function __construct(ShareaholicApi $shareaholicApi, TOSManager $TOSManager, Config $config, ShareaholicEntityManager $shareaholicEntityManager)
   {
-    $this->httpClient = $httpClient;
     $this->shareaholicApi = $shareaholicApi;
     $this->TOSManager = $TOSManager;
     $this->shareaholicConfig = $config;
+    $this->shareaholicEntityManager = $shareaholicEntityManager;
   }
 
   /**
@@ -43,10 +42,10 @@ class SettingsController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('http_client'),
       $container->get('shareaholic.api'),
       $container->get('shareaholic.tos_manager'),
-      $container->get('shareaholic.editable_config')
+      $container->get('shareaholic.editable_config'),
+      $container->get('shareaholic.entity_manager')
     );
   }
 
@@ -71,6 +70,10 @@ class SettingsController extends ControllerBase {
       ];
     }
 
+    if (empty($this->shareaholicEntityManager->getShareaholicEnabledNodeTypes())) {
+      $this->messenger()->addMessage($this->t("Remember to enable Shareaholic for your nodes on the Content Settings page!"));
+    }
+
     return [
       '#theme' => 'shareaholic_settings',
       '#apiKey' => $this->shareaholicConfig->get('api_key'),
@@ -83,178 +86,29 @@ class SettingsController extends ControllerBase {
   }
 
   /**
-   * Advanced Config Page.
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function advancedConfigPage() {
-
-    $page = [];
-    $page['#markup'] = 'advanced settings';
-
-    return $page;
-  }
-
   public function generateKey() {
-
     $verification_key = md5(mt_rand());
-    //$pageTypes = $this->pageTypes();
-
-    $turned_on_recommendations_locations = $this->get_default_rec_on_locations();
-    $turned_off_recommendations_locations = $this->get_default_rec_off_locations();
-    $turned_on_share_buttons_locations = $this->get_default_sb_on_locations();
-    $turned_off_share_buttons_locations = $this->get_default_sb_off_locations();
-
-    $share_buttons_attributes = array_merge($turned_on_share_buttons_locations, $turned_off_share_buttons_locations);
-    $recommendations_attributes = array_merge($turned_on_recommendations_locations, $turned_off_recommendations_locations);
-
-    $post_data = [
-      'configuration_publisher' => [
-        'verification_key' => $verification_key,
-        'site_name' => $this->config('system.site')->get('name'),
-        'domain' => \Drupal::request()->getHost(),
-        'platform_id' => '2',
-        'language_id' => $this->shareaholicApi->getLanguageId($this->languageManager()->getCurrentLanguage()->getId()),
-        'shortener' => 'shrlc',
-        'recommendations_attributes' => [
-          'locations_attributes' => $recommendations_attributes,
-        ],
-        'share_buttons_attributes' => [
-          'locations_attributes' => $share_buttons_attributes,
-        ],
-      ],
-    ];
+    $apiKey = $this->shareaholicApi->generateApiKey($verification_key, $this->config('system.site')->get('name'), $this->languageManager()->getCurrentLanguage()->getId());
 
 
-    $client = $this->httpClient;
-    $apiUrl = ShareaholicApi::KEY_GENERATING_URL;
-    $settings = [
-      'headers' => [
-        'Content-type' => 'application/vnd.api+json',
-      ],
-      'body' => json_encode($post_data),
-    ];
-
-    $data = [];
-    try {
-      $response = $client->post($apiUrl, $settings);
-      $data = (string) $response->getBody();
-
-      if (empty($data)) {
-        // TODO we should handle that gracefully.
-        return FALSE;
-      }
-
-    } catch (RequestException $e) {
-
-      // TODO we should handle that gracefully.
-      return FALSE;
-
-    }
-
-    if (!empty($data)) {
-
-      $json_response = json_decode($data, TRUE);
-
+    if ($apiKey) {
 
       $this->updateOptions([
         'version' => system_get_info('module', 'shareaholic')['version'],
-        'api_key' => $json_response['api_key'],
+        'api_key' => $apiKey,
         'verification_key' => $verification_key,
-        // 'location_name_ids' => $json_response['location_name_ids'],
       ]);
-    }
-
-    if (isset($json_response['location_name_ids']) && is_array($json_response['location_name_ids']) && isset($json_response['location_name_ids']['recommendations']) && isset($json_response['location_name_ids']['share_buttons'])) {
-      //      self::set_default_location_settings($json_response['location_name_ids']);
-      //      ShareaholicContentManager::single_domain_worker();
-    }
-    else {
-      //      ShareaholicUtilities::log_event('FailedToCreateApiKey', array('reason' => 'no location name ids the response was: ' . $response['data']));
     }
 
     $this->TOSManager->acceptTermsOfService();
 
-    $url = \Drupal\Core\Url::fromRoute('shareaholic.settings')
+    $url = Url::fromRoute('shareaholic.settings')
       ->setAbsolute()
       ->toString();
 
     return new RedirectResponse($url);
-  }
-
-  /**
-   * Get recommendations locations that should be turned on by default
-   *
-   * @return {Array}
-   */
-  public function get_default_rec_on_locations() {
-    $page_types = node_type_get_names();
-    $turned_on_recommendations_locations = [];
-
-    foreach ($page_types as $key => $page_type_name) {
-
-      if ($page_type_name === 'article' || $page_type_name === 'page') {
-        $turned_on_recommendations_locations[] = [
-          'name' => $page_type_name . '_below_content',
-        ];
-      }
-    }
-
-    return $turned_on_recommendations_locations;
-  }
-
-  /**
-   * Get recommendations locations that should be turned off by default
-   *
-   * @return {Array}
-   */
-  public function get_default_rec_off_locations() {
-    $page_types = node_type_get_names();
-    $turned_off_recommendations_locations = [];
-
-    foreach ($page_types as $key => $page_type_name) {
-      if ($page_type_name !== 'article' && $page_type_name !== 'page') {
-        $turned_off_recommendations_locations[] = [
-          'name' => $page_type_name . '_below_content',
-        ];
-      }
-    }
-
-    return $turned_off_recommendations_locations;
-  }
-
-  /**
-   * Get share buttons locations that should be turned on by default
-   *
-   * @return array
-   */
-  public function get_default_sb_on_locations() {
-    $page_types = node_type_get_names();
-    $turned_on_share_buttons_locations = [];
-
-    foreach ($page_types as $key => $page_type_name) {
-      $turned_on_share_buttons_locations[] = [
-        'name' => $page_type_name . '_below_content',
-      ];
-    }
-
-    return $turned_on_share_buttons_locations;
-  }
-
-  /**
-   * Get share buttons locations that should be turned off by default
-   *
-   * @return array
-   */
-  public function get_default_sb_off_locations() {
-    $page_types = node_type_get_names();
-    $turned_off_share_buttons_locations = [];
-
-    foreach ($page_types as $key => $page_type_name) {
-      $turned_off_share_buttons_locations[] = [
-        'name' => $page_type_name . '_above_content',
-      ];
-    }
-
-    return $turned_off_share_buttons_locations;
   }
 
   /**

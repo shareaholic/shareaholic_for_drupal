@@ -89,7 +89,7 @@ function shareaholic_entity_extra_field_info() {
   foreach ($nodeTypes as $nodeType) {
     $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
     foreach ($locationTypes as $locationType) {
-      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType");
+      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
       foreach ($locations as $location) {
         $extra['node'][$nodeType->id()]['display']["shareaholic_widget_${locationType}_$location"] = [
           'label' => t("Shareaholic widget of type '@widgetType'. ID: '@location'", ['@location' => $location, '@widgetType' => $locationType]),
@@ -135,7 +135,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
         }
       }
 
-      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType");
+      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
 
       foreach ($locations as $location) {
         if ($display->getComponent("shareaholic_widget_${locationType}_$location")) {
@@ -272,7 +272,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
   if (!$entity->access('view', $anonymousUser)) {
     $articleVisibility = 'private';
   }
-//dump($articleVisibility);
+
   if (!empty($articleVisibility)) {
     $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'article_visibility', $articleVisibility);
   }
