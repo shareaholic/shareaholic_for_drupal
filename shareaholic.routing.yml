@@ -22,6 +22,14 @@ shareaholic.settings.content:
   requirements:
     _permission: 'administer shareaholic'
 
+shareaholic.settings.reset:
+  path: '/admin/config/shareaholic/settings/reset'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ResetForm'
+    _title: 'Shareaholic Reset Settings'
+  requirements:
+    _permission: 'administer shareaholic'
+
 shareaholic.settings.content.shareaholic_enable:
   path: '/admin/config/shareaholic/settings/content/shareaholic_enable/node/{nodeType}'
   defaults:

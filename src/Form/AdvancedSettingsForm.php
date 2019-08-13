@@ -7,6 +7,7 @@ use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\shareaholic\Api\ShareaholicApi;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -109,8 +110,12 @@ class AdvancedSettingsForm extends ConfigFormBase {
     ];
 
     $form['reset']['reset_button'] = [
-      '#type' => 'button',
-      '#value' => $this->t('Reset'),
+      '#type' => 'link',
+      '#title' => $this->t('Reset'),
+      '#attributes' => [
+        'class' => ['button', 'button--secondary'],
+      ],
+      '#url' => Url::fromRoute('shareaholic.settings.reset'),
     ];
 
     $form['#attached']['html_head'] = [shareaholic_get_chat_for_head()];

@@ -3,12 +3,9 @@
 namespace Drupal\shareaholic\Form;
 
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
-use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\NodeTypeInterface;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,13 +44,6 @@ class ShareaholicAddLocationForm extends FormBase {
   public function getFormId() {
     return 'shareaholic_add_location_form';
   }
-
-  /**
-     * {@inheritdoc}
-     */
-    protected function getEditableConfigNames() {
-      return [];
-    }
 
   /**
    * {@inheritdoc}

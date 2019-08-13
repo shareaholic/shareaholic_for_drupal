@@ -6,7 +6,6 @@ use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\node\NodeTypeInterface;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,13 +44,6 @@ class ShareaholicDisableContentSettingsForm extends FormBase {
   public function getFormId() {
     return 'shareaholic_disable_content_settings_form';
   }
-
-  /**
-     * {@inheritdoc}
-     */
-    protected function getEditableConfigNames() {
-      return [];
-    }
 
   /**
    * {@inheritdoc}
@@ -109,18 +101,7 @@ class ShareaholicDisableContentSettingsForm extends FormBase {
       return;
     }
 
-    $field = FieldConfig::loadByName('node', $nodeType->id(), 'shareaholic');
-
-    if (empty($field)) {
-      return;
-    }
-    $field->delete();
-
-    field_purge_batch(10);
-
-    $nodeType->unsetThirdPartySetting('shareaholic', 'locations_share_buttons');
-    $nodeType->unsetThirdPartySetting('shareaholic', 'locations_recommendations');
-    $nodeType->save();
+    $this->shareaholicEntityManager->disableShareaholic($nodeType);
 
     $this->messenger()->addMessage($this->t("Content type '@type' is now Shareaholic disabled.", ['@type' => $nodeType->id()]));
     $form_state->setRedirect('shareaholic.settings.content');

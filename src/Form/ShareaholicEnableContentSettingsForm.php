@@ -49,13 +49,6 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
   }
 
   /**
-     * {@inheritdoc}
-     */
-    protected function getEditableConfigNames() {
-      return [];
-    }
-
-  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $nodeType = NULL) {
@@ -117,45 +110,7 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
       return;
     }
 
-    $fieldStorage = FieldStorageConfig::loadByName('node', 'shareaholic');
-
-    if (!$fieldStorage) {
-      $fieldStorage = FieldStorageConfig::create([
-        'entity_type' => 'node',
-        'field_name' => 'shareaholic',
-        'type' => 'shareaholic_content_settings',
-        'locked' => TRUE,
-      ]);
-      $fieldStorage->save();
-    }
-
-
-    $field = FieldConfig::create([
-      'field_storage' => $fieldStorage,
-      'bundle' => $nodeType->id(),
-      'label' => 'Shareaholic Content Settings',
-      'field_name' => 'shareaholic',
-      'entity_type' => 'node',
-    ]);
-    $field->save();
-
-    $entityFormDisplay = EntityFormDisplay::load('node.' . $nodeType->id() . '.default');
-    if (!$entityFormDisplay) {
-      $entityFormDisplay = EntityFormDisplay::create([
-        'targetEntityType' => 'node',
-        'bundle' => $nodeType->id(),
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
-    $entityFormDisplay->setComponent('shareaholic', [
-      'type' => 'shareaholic_widget_type',
-    ]);
-    $entityFormDisplay->save();
-
-    $nodeType->setThirdPartySetting('shareaholic', 'locations_share_buttons', ['default']);
-    $nodeType->setThirdPartySetting('shareaholic', 'locations_recommendations', ['default']);
-    $nodeType->save();
+    $this->shareaholicEntityManager->enableShareaholic($nodeType);
 
     $this->messenger()->addMessage($this->t("Content type '@type' is now Shareaholic enabled!", ['@type' => $nodeType->id()]));
     $form_state->setRedirect('shareaholic.settings.content');
