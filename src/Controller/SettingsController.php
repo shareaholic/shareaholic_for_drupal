@@ -5,7 +5,6 @@ namespace Drupal\shareaholic\Controller;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\shareaholic\Api\ShareaholicApi;
@@ -108,17 +107,16 @@ class SettingsController extends ControllerBase {
     $verification_key = md5(mt_rand());
     $apiKey = $this->shareaholicApi->generateApiKey($verification_key, $this->config('system.site')->get('name'), $this->languageManager()->getCurrentLanguage()->getId());
 
-
     if ($apiKey) {
-
       $this->updateOptions([
-        'version' => system_get_info('module', 'shareaholic')['version'],
         'api_key' => $apiKey,
         'verification_key' => $verification_key,
       ]);
-    }
 
-    $this->TOSManager->acceptTermsOfService();
+      $this->TOSManager->acceptTermsOfService();
+    } else {
+      $this->messenger()->addMessage("Couldn't generate API key. See log.", MessengerInterface::TYPE_ERROR);
+    }
 
     $url = Url::fromRoute('shareaholic.settings')
       ->setAbsolute()

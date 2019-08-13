@@ -7,6 +7,7 @@ use Drupal\Core\Config\ImmutableConfig;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\RequestOptions;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 class ShareaholicApi {
@@ -33,46 +34,42 @@ class ShareaholicApi {
   }
 
   /**
+   * @param $verificationKey
+   * @param $siteName
+   * @param $langcode
+   *
    * @return string|null
    */
   public function generateApiKey($verificationKey, $siteName, $langcode) {
-
-    $post_data = [
-      'configuration_publisher' => [
-        'verification_key' => $verificationKey,
-        'site_name' => $siteName,
-        'domain' => \Drupal::request()->getHost(),
-        'platform_id' => '2',
-        'language_id' => $this->getLanguageId($langcode),
-        'shortener' => 'shrlc',
-        'recommendations_attributes' => [
-          'locations_attributes' => [],
-        ],
-        'share_buttons_attributes' => [
-          'locations_attributes' => [],
-        ],
-      ],
-    ];
-
-    $client = $this->httpClient;
-    $apiUrl = static::KEY_GENERATING_URL;
-    $settings = [
-      'headers' => [
-        'Content-Type' => 'application/vnd.api+json',
-        'User-Agent' => $this->getUserAgent(),
-      ],
-      'body' => json_encode($post_data),
-    ];
-
     try {
-      $response = $client->post($apiUrl, $settings);
+      $response = $this->post(static::KEY_GENERATING_URL, [
+        'configuration_publisher' => [
+          'verification_key' => $verificationKey,
+          'site_name' => $siteName,
+          'domain' => \Drupal::request()->getHost(),
+          'platform_id' => '2',
+          'language_id' => $this->getLanguageId($langcode),
+          'shortener' => 'shrlc',
+          'recommendations_attributes' => [
+            'locations_attributes' => [],
+          ],
+          'share_buttons_attributes' => [
+            'locations_attributes' => [],
+          ],
+        ],
+      ]);
       $data = (string) $response->getBody();
 
       if (empty($data)) {
+        $this->logger->critical("Couldn't generate an API key. Response had no body.");
         return NULL;
       }
 
     } catch (RequestException $e) {
+      $errorCode = $e->getCode();
+      $errorMessage = $e->getMessage();
+
+      $this->logger->critical("Error code: $errorCode, message: $errorMessage");
       return NULL;
     }
 
@@ -86,17 +83,14 @@ class ShareaholicApi {
   public function getJwtToken() {
 
     try {
-      $response = $this->httpClient->post(self::SESSIONS_URL, [
-        RequestOptions::JSON => [
-          'site_id' => $this->config->get('api_key'),
-          'verification_key' => $this->config->get('verification_key'),
-        ],
+      $response = $this->post(self::SESSIONS_URL, [
+        'site_id' => $this->config->get('api_key'),
+        'verification_key' => $this->config->get('verification_key'),
       ]);
     } catch (\Exception $exception) {
       $this->logger->critical("Publisher token couldn't be received. Couldn't connect to the server.");
       return NULL;
     }
-
 
     $statusCode = $response->getStatusCode();
 
@@ -119,7 +113,7 @@ class ShareaholicApi {
   public function connectivityCheck() {
     $health_check_url = self::HEALTH_CHECK_URL;
     try {
-      $response = $this->httpClient->get($health_check_url);
+      $response = $this->get($health_check_url);
     } catch (\Exception $e) {
       return FALSE;
     }
@@ -132,6 +126,41 @@ class ShareaholicApi {
    */
   private function getUserAgent(): string {
     return 'Drupal/' . Drupal::VERSION . ' ('. 'PHP/' . PHP_VERSION . '; ' . 'SHR_DRUPAL/' . system_get_info('module', 'shareaholic')['version'] . '; +' . \Drupal::request()->getSchemeAndHttpHost() . ')';
+  }
+
+  /**
+   * Wrapper around the http client, allowing us to add User-Agent to all outgoing requests.
+   *
+   * @param $url
+   * @return \Psr\Http\Message\ResponseInterface
+   */
+  private function get($url): ResponseInterface {
+    return $this->httpClient->get($url, [
+      'headers' => $this->getDefaultHeaders(),
+    ]);
+  }
+
+  /**
+   * Wrapper around the http client, allowing us to add User-Agent to all outgoing requests.
+   *
+   * @param $url
+   * @param $payload
+   * @return \Psr\Http\Message\ResponseInterface
+   */
+  private function post($url, $payload): ResponseInterface {
+    return $this->httpClient->post($url, [
+      RequestOptions::JSON => $payload,
+      'headers' => $this->getDefaultHeaders(),
+    ]);
+  }
+
+  /**
+   * @return array
+   */
+  private function getDefaultHeaders(): array {
+    return [
+      'User-Agent' => $this->getUserAgent(),
+    ];
   }
 
   /**
