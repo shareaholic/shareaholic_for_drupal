@@ -31,17 +31,17 @@ class ShareaholicWidgetType extends WidgetBase {
 
       'hide_recommendations' => [
         '#type' => 'checkbox',
-        '#title' => $this->t('Hide Shareaholic recommendation widgets on this content.'),
+        '#title' => $this->t("Hide Shareaholic Related Content widgets on this content's page."),
         '#default_value' => $items[$delta]->hide_recommendations ?? FALSE,
       ],
       'hide_share_buttons' => [
         '#type' => 'checkbox',
-        '#title' => $this->t('Hide Shareaholic share buttons on this content.'),
+        '#title' => $this->t("Hide Shareaholic Share Buttons on this content's page."),
         '#default_value' => $items[$delta]->hide_share_buttons ?? FALSE,
       ],
       'exclude_from_recommendations' => [
         '#type' => 'checkbox',
-        '#title' => $this->t('Exclude this content from recommendations.'),
+        '#title' => $this->t("Exclude this content from Related Content."),
         '#default_value' => $items[$delta]->exclude_from_recommendations ?? FALSE,
       ],
       'exclude_og_tags' => [
