@@ -51,7 +51,7 @@ class ResetForm extends FormBase {
 
     $form['message'] = [
       '#type' => 'markup',
-      '#markup' => Markup::create($this->t("Are you sure you want to reset your Shareaholic settings? That will make you lose all your configuration.")),
+      '#markup' => Markup::create($this->t("Are you sure you want to reset your Shareaholic settings? That will make you lose all your configuration and will clear all cache.")),
     ];
 
     $form['actions']['#type'] = 'actions';
@@ -82,7 +82,10 @@ class ResetForm extends FormBase {
 
     $this->shareaholicConfig->save();
 
-    $this->messenger()->addMessage($this->t("Reset has been successful."));
+    // TODO Make cache clearing more targeted.
+    drupal_flush_all_caches();
+
+    $this->messenger()->addMessage($this->t("Reset has been successful. Cache clear has been succesfull."));
     $form_state->setRedirect('shareaholic.settings.advanced');
   }
 }
