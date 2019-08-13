@@ -5,7 +5,7 @@ shareaholic.admin_config:
   description: 'Manage shareaholic functionality.'
 
 shareaholic.settings:
-  title: 'Shareaholic App Manager'
+  title: 'Shareaholic Settings'
   parent: 'shareaholic.admin_config'
   description: 'Manage various Social Tools like Share Buttons and Related Posts'
   route_name: shareaholic.settings
@@ -13,7 +13,14 @@ shareaholic.settings:
 
 shareaholic.settings.advanced:
   title: 'Shareaholic Advanced Settings'
-  parent: 'shareaholic.admin_config'
+  parent: 'shareaholic.settings'
   description: 'Advanced settings for the Shareaholic module'
   route_name: shareaholic.settings.advanced
   weight: 200
+
+shareaholic.settings.content:
+  title: 'Shareaholic Content Settings'
+  parent: 'shareaholic.settings'
+  description: 'Content settings for the Shareaholic module'
+  route_name: shareaholic.settings.content
+  weight: 300

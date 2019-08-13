@@ -1,0 +1,16 @@
+field.value.shareaholic_content_settings:
+  type: mapping
+  label: 'Shareaholic Content Settings Values'
+  mapping:
+    hide_recommendations:
+      type: boolean
+      label: 'Hide recommendations'
+    hide_share_buttons:
+      type: boolean
+      label: 'Hide share buttons'
+    exclude_from_recommendations:
+      type: boolean
+      label: 'Exclude from recommendations'
+    exclude_og_tags:
+      type: boolean
+      label: 'Exclude OpenGraph tags'

@@ -18,17 +18,13 @@ class AdvancedSettingsForm extends ConfigFormBase {
   /** @var @var ShareaholicApi */
   private $shareaholicApi;
 
-  /** @var CacheBackendInterface */
-  private $renderCache;
-
   /** @var Config */
   private $shareaholicConfig;
 
-  public function __construct(CacheBackendInterface $renderCache, ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi, Config $config)
+  public function __construct(ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi, Config $config)
   {
     parent::__construct($config_factory);
     $this->shareaholicApi = $shareaholicApi;
-    $this->renderCache = $renderCache;
     $this->shareaholicConfig = $config;
   }
 
@@ -37,7 +33,6 @@ class AdvancedSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('cache.render'),
       $container->get('config.factory'),
       $container->get('shareaholic.api'),
       $container->get('shareaholic.editable_config')
@@ -48,7 +43,7 @@ class AdvancedSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'advanced_settings_form';
+    return 'shareaholic_advanced_settings_form';
   }
 
   /**
@@ -72,7 +67,7 @@ class AdvancedSettingsForm extends ConfigFormBase {
     $form['advanced']['disable_og_tags'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Disable Open Graph tags (it is recommended NOT to disable open graph tags)'),
-      '#description' => $this->t('Changing this option will result in render cache clearance, to update all node pages.'),
+      '#description' => $this->t('To see the effect of the change on node pages, cache will have to be cleared.'),
       '#weight' => '0',
       '#default_value' => $this->shareaholicConfig->get('disable_og_tags')
     ];
@@ -135,18 +130,11 @@ class AdvancedSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    $disOGTagsOldValue = $this->shareaholicConfig->get('disable_og_tags');
     $disOGTagsNewValue = $form_state->getValue('disable_og_tags');
 
     $this->shareaholicConfig
           ->set('disable_og_tags', $disOGTagsNewValue)
           ->save();
-
-    if ($disOGTagsOldValue !== $disOGTagsNewValue) {
-      $this->renderCache->invalidateAll();
-      $this->messenger()->addMessage('Render cache has been cleared');
-    }
 
     parent::submitForm($form, $form_state);
   }

@@ -1,7 +1,4 @@
-disable_internal_share_counts_api:
 api_key:
 verification_key:
-share_counts_connect_chec:
-version:
-shareaholic_has_accepted_tos:
+has_accepted_tos: false
 disable_og_tags: false

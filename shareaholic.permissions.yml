@@ -1,5 +1,4 @@
-# In my_module.permissions.yml file.
-access shareaholic configurations:
-  title: 'Shareaholic permissions'
-  description: 'Enables the user to administer the Shareaholic settings.'
+administer shareaholic:
+  title: 'Administer Shareaholic'
+  description: 'Allows user to administer the Shareaholic settings.'
   restrict access: TRUE

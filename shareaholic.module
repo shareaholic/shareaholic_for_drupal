@@ -6,7 +6,6 @@
  * Implements hook_theme().
  */
 function shareaholic_theme() {
-
   return [
     'shareaholic_tos' => [
       'variables' => [
@@ -23,8 +22,16 @@ function shareaholic_theme() {
         'language' => '',
       ],
     ],
+    'shareaholic_widget' => [
+      'variables' => [
+        'id' => '',
+        'locationType' => '',
+        'title' => '',
+        'url' => '',
+        'summary' => '',
+      ],
+    ],
   ];
-
 }
 
 /**
@@ -67,7 +74,34 @@ function shareaholic_page_attachments(array &$attachments) {
 
   $moduleVersion = system_get_info('module', 'shareaholic')['version'];
   $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'drupal_version', $moduleVersion);
+}
 
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function shareaholic_entity_extra_field_info() {
+  $extra = [];
+
+  /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
+  $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
+
+  $nodeTypes = $shareaholicEntityManager->getShareaholicEnabledNodeTypes();
+  foreach ($nodeTypes as $nodeType) {
+    $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
+    foreach ($locationTypes as $locationType) {
+      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType");
+      foreach ($locations as $location) {
+        $extra['node'][$nodeType->id()]['display']["shareaholic_widget_${locationType}_$location"] = [
+          'label' => t("Shareaholic widget of type '@widgetType'. ID: '@location'", ['@location' => $location, '@widgetType' => $locationType]),
+          'description' => t('Widgets by Shareaholic'),
+          'weight' => 5,
+          'visible' => FALSE,
+        ];
+      }
+    }
+  }
+
+  return $extra;
 }
 
 /**
@@ -75,7 +109,52 @@ function shareaholic_page_attachments(array &$attachments) {
  */
 function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
 
-  if ($view_mode !== 'full' || !$entity instanceof \Drupal\node\NodeInterface) {
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  $nodeTypeId = $entity->getType();
+  $nodeType = \Drupal\node\Entity\NodeType::load($nodeTypeId);
+
+  /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
+  $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
+
+  if ($shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
+    $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
+
+    foreach ($locationTypes as $locationType) {
+
+      $contentSettings = $entity->get('shareaholic')->getValue();
+      if (!empty($contentSettings)) {
+        if ($locationType === 'recommendations' && $contentSettings[0]['hide_recommendations']) {
+          continue;
+        }
+
+        if ($locationType === 'share_buttons' && $contentSettings[0]['hide_share_buttons']) {
+          continue;
+        }
+      }
+
+      $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType");
+
+      foreach ($locations as $location) {
+        if ($display->getComponent("shareaholic_widget_${locationType}_$location")) {
+
+          $build["shareaholic_widget_${locationType}_$location"] = [
+            '#theme' => 'shareaholic_widget',
+            '#id' => $location,
+            '#locationType' => $locationType,
+            '#title' => $entity->getTitle(),
+            '#url' => $entity->toUrl(),
+            '#summary' => '',
+          ];
+        }
+      }
+    }
+  }
+
+
+  if ($view_mode !== 'full') {
     return;
   }
 
@@ -182,19 +261,18 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
     $articleVisibility = 'draft';
   }
 
-  /*
-   *  TODO: Some dependency on shareaholic options. Not sure if relevant in D8 yet.
-   *
-   *  if(isset($node->shareaholic_options) && $node->shareaholic_options['shareaholic_exclude_from_recommendations']) {
-   *    $visibility = 'private';
-   *  }
-   */
+  if ($shareaholicEntityManager->isShareaholicEnabled($nodeType) &&
+      !empty($entity->get('shareaholic')->getValue()) &&
+      (int) $entity->get('shareaholic')->getValue()[0]['exclude_from_recommendations'] === 1
+  ) {
+    $articleVisibility = 'private';
+  }
 
   $anonymousUser = Drupal\user\Entity\User::getAnonymousUser();
   if (!$entity->access('view', $anonymousUser)) {
     $articleVisibility = 'private';
   }
-
+//dump($articleVisibility);
   if (!empty($articleVisibility)) {
     $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'article_visibility', $articleVisibility);
   }
@@ -216,10 +294,11 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
   /*
    * OpenGraph
    */
-  $disableOGTags =  $config->get('disable_og_tags');
-
-  // TODO Account also for a per-node configuration that doesn't exist yet.
-  if (!$disableOGTags) {
+  if (!$config->get('disable_og_tags') &&
+      (!$shareaholicEntityManager->isShareaholicEnabled($nodeType) ||
+      empty($entity->get('shareaholic')->getValue()) ||
+      (int) $entity->get('shareaholic')->getValue()[0]['exclude_og_tags'] === 0)
+  ) {
     $image = shareaholic_extract_image_url_from_entity($entity);
 
     if (!empty($image)) {

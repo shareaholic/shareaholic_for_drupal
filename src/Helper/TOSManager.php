@@ -11,14 +11,14 @@ use Drupal\shareaholic\Logger\EventLogger;
 class TOSManager {
 
   /** @var Config */
-  private $config;
+  private $shareaholicConfig;
 
   /** @var EventLogger */
   private $eventLogger;
 
-  public function __construct(Config $config, EventLogger $eventLogger)
+  public function __construct(Config $shareaholicConfig, EventLogger $eventLogger)
   {
-    $this->config = $config;
+    $this->shareaholicConfig = $shareaholicConfig;
     $this->eventLogger = $eventLogger;
   }
 
@@ -29,14 +29,14 @@ class TOSManager {
    * @return mixed (true or NULL)
    */
   public function hasAcceptedTermsOfService() {
-    return $this->config->get('shareaholic_has_accepted_tos');
+    return $this->shareaholicConfig->get('has_accepted_tos');
   }
 
   /**
    * Accepts the terms of service by setting the variable to true
    */
   public function acceptTermsOfService() {
-    $this->config->set('shareaholic_has_accepted_tos', TRUE);
+    $this->shareaholicConfig->set('has_accepted_tos', TRUE);
 
     $this->eventLogger->log('AcceptedToS');
   }
