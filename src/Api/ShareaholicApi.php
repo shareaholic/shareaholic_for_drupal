@@ -2,6 +2,7 @@
 
 namespace Drupal\shareaholic\Api;
 
+use Drupal;
 use Drupal\Core\Config\ImmutableConfig;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -57,7 +58,8 @@ class ShareaholicApi {
     $apiUrl = static::KEY_GENERATING_URL;
     $settings = [
       'headers' => [
-        'Content-type' => 'application/vnd.api+json',
+        'Content-Type' => 'application/vnd.api+json',
+        'User-Agent' => $this->getUserAgent(),
       ],
       'body' => json_encode($post_data),
     ];
@@ -111,6 +113,13 @@ class ShareaholicApi {
     $health_check_url = self::HEALTH_CHECK_URL;
     $response = $this->httpClient->get($health_check_url);
     return $response->getStatusCode() === 200;
+  }
+
+  /**
+   * @return string
+   */
+  private function getUserAgent(): string {
+    return 'Drupal/' . Drupal::VERSION . ' ('. 'PHP/' . PHP_VERSION . '; ' . 'SHR_DRUPAL/' . system_get_info('module', 'shareaholic')['version'] . '; +' . \Drupal::request()->getSchemeAndHttpHost() . ')';
   }
 
   /**
