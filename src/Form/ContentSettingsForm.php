@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeTypeInterface;
@@ -109,31 +110,41 @@ class ContentSettingsForm extends FormBase {
 
       $formTypes[$nodeType->id()]['enable_shareaholic'] = [];
 
+      $contentSettingsDescription = [
+        '#type' => 'markup',
+        '#markup' => Markup::create('<p>' . $this->t("This setting allows you to enable/disable settings per-node. After enabling it, Shareaholic settings will appear in your node's edit/create form. You can use the module without this enabled, if you don't need per-node settings, or you can enable it later." . '</p>')),
+      ];
+
+      $contentSettings = [
+        '#type' => 'link',
+        '#attributes' => [
+          'class' => ['button', 'button--secondary'],
+        ],
+      ];
+
       if ($this->shareaholicEntityManager->areContentSettingsEnabled($nodeType)) {
-        $enableContentSettings = [
-          '#type' => 'link',
-          '#title' => $this->t('Disable Shareaholic Per-Content Settings'),
-          '#attributes' => [
-            'class' => ['button', 'button--secondary'],
-          ],
-          '#url' => Url::fromRoute('shareaholic.settings.content.shareaholic_disable', ['nodeType' => $nodeType->id()]),
-        ];
+        $contentSettings['#title'] = $this->t('Disable Shareaholic Per-Content Settings');
+        $contentSettings['#url'] = Url::fromRoute('shareaholic.settings.content.shareaholic_disable', ['nodeType' => $nodeType->id()]);
       } else {
-        $enableContentSettings = [
-          '#type' => 'link',
-          '#title' => $this->t('Enable Shareaholic Per-Content Settings'),
-          '#attributes' => [
-            'class' => ['button', 'button--secondary'],
-          ],
-          '#url' => Url::fromRoute('shareaholic.settings.content.shareaholic_enable', ['nodeType' => $nodeType->id()]),
-        ];
+        $contentSettings['#title'] = $this->t('Enable Shareaholic Per-Content Settings');
+        $contentSettings['#url'] = Url::fromRoute('shareaholic.settings.content.shareaholic_enable', ['nodeType' => $nodeType->id()]);
       }
+
+      $displayEditLink = Link::createFromRoute($this->t('Handy link'), 'entity.entity_view_display.node.default', ['node_type' => $nodeType->id()])->toString();
+
+      $locationsDescription = [
+        '#type' => 'markup',
+        '#markup' => Markup::create('<br/><br/><p>' . $this->t("Here you can add more widgets if you need them. Don't forget to make them visible on your content type configuration page! @display_config_link" . '</p>', ['@display_config_link' => $displayEditLink])),
+      ];
 
       $formTypes[$nodeType->id()] = [
         '#type' => 'details',
         '#title' => $nodeType->label(),
         '#open' => TRUE,
-        'enable_content_settings' => $enableContentSettings,
+        'content_settings_description' => $contentSettingsDescription,
+        'enable_content_settings' => $contentSettings,
+        //'edit_page' => '',
+        'locations_description' => $locationsDescription,
         'share_buttons' => [
           '#type' => 'details',
           '#title' => $this->t('Share buttons'),
