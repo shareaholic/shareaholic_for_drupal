@@ -26,7 +26,7 @@
     </div>
 
     <div class="pvl">
-      <a class="btn_main" href="{{ path('shareaholic.settings.generate_key') }}">{{ "Get Started"|t }}</a>
+      <a class="btn_main" href="{{ path('shareaholic.settings.generate_key', {}, {'query': {'destination': destination}}) }}">{{ "Get Started"|t }}</a>
       <p>
         <small>
           {% set tosUrl = "https://shareaholic.com/terms/?src=drupal_admin" %}

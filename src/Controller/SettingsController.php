@@ -64,6 +64,7 @@ class SettingsController extends ControllerBase {
       return [
         '#theme' => 'shareaholic_tos',
         '#path' => '/' . $path . '/assets/img',
+        '#destination' => Url::fromRoute('shareaholic.settings')->toString(),
         '#attached' => [
           'library' => [
             'shareaholic/main',
@@ -97,6 +98,9 @@ class SettingsController extends ControllerBase {
       '#language' => $this->languageManager()->getCurrentLanguage()->getId(),
       '#attached' => [
         'html_head' => [shareaholic_get_chat_for_head()],
+        'library' => [
+          'shareaholic/main',
+        ],
       ],
     ];
   }
@@ -132,11 +136,15 @@ class SettingsController extends ControllerBase {
       $this->messenger()->addMessage("Couldn't generate API key. See log.", MessengerInterface::TYPE_ERROR);
     }
 
-    $url = Url::fromRoute('shareaholic.settings')
-      ->setAbsolute()
-      ->toString();
+    $destination = \Drupal::request()->get('destination');
 
-    return new RedirectResponse($url);
+    if (!$destination) {
+      $destination = Url::fromRoute('shareaholic.settings')
+        ->setAbsolute()
+        ->toString();
+    }
+
+    return new RedirectResponse($destination);
   }
 
   /**

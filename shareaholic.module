@@ -10,6 +10,7 @@ function shareaholic_theme() {
     'shareaholic_tos' => [
       'variables' => [
         'path' => '',
+        'destination' => NULL,
       ],
     ],
     'shareaholic_settings' => [

@@ -77,6 +77,24 @@ class ContentSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
+    $path = drupal_get_path('module', 'shareaholic');
+    $api_key = $this->shareaholicConfig->get('api_key');
+
+    // add tos window if required
+    if (!$api_key) {
+      return [
+        '#theme' => 'shareaholic_tos',
+        '#path' => '/' . $path . '/assets/img',
+        '#destination' => Url::fromRoute('shareaholic.settings.content')->toString(),
+        '#attached' => [
+          'library' => [
+            'shareaholic/main',
+          ],
+          'html_head' => [shareaholic_get_chat_for_head()],
+        ],
+      ];
+    }
+
     $nodeTypes = $this->nodeTypeStorage->loadMultiple();
 
     $this->messenger()->addMessage($this->t('After setting up your locations, clear cache for changes to be applied to the node types.'));
