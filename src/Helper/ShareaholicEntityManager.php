@@ -11,6 +11,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\NodeTypeInterface;
+use Drupal\shareaholic\Api\ShareaholicApi;
 use Drupal\shareaholic\Plugin\Field\FieldType\ShareaholicFieldType;
 
 /**
@@ -141,6 +142,23 @@ class ShareaholicEntityManager {
     return $locations;
   }
 
+
+  /**
+   * @param $locationType
+   *
+   * @return array
+   */
+  public function getAllLocations($locationType): array {
+    $nodeTypes = $this->nodeTypeStorage->loadMultiple();
+
+    $locations = [];
+    foreach ($nodeTypes as $nodeType) {
+      $locations = array_merge($locations, $this->extractLocations($locationType, $nodeType));
+    }
+
+    return $locations;
+  }
+
   /**
    * @param $location
    * @param $locationType
@@ -190,16 +208,19 @@ class ShareaholicEntityManager {
    *
    * @return array
    */
-  public function getContentSettings(NodeInterface $node) {
+  public function getContentSettings(NodeInterface $node): array {
 
     $nodeType = $this->nodeTypeStorage->load($node->getType());
     if (!$this->areContentSettingsEnabled($nodeType)) {
       return ShareaholicFieldType::getDefaultContentSettings();
     }
 
-    return !empty($node->get('shareaholic')->getValue()) ? $node->get('shareaholic')->getValue() : ShareaholicFieldType::getDefaultContentSettings();
+    return !empty($node->get('shareaholic')->getValue()) ? $node->get('shareaholic')->getValue()[0] : ShareaholicFieldType::getDefaultContentSettings();
   }
 
+  /**
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
   public function removeAllLocations() {
     $nodeTypes = $this->nodeTypeStorage->loadMultiple();
     /** @var \Drupal\node\NodeTypeInterface $nodeType */

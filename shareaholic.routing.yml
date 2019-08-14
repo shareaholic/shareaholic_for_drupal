@@ -54,6 +54,14 @@ shareaholic.settings.content.add_location:
   requirements:
     _permission: 'administer shareaholic'
 
+shareaholic.settings.content.sync:
+  path: '/admin/config/shareaholic/settings/content/sync'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\SyncForm'
+    _title: 'Shareaholic Synchronization'
+  requirements:
+    _permission: 'administer shareaholic'
+
 shareaholic.settings.content.remove_location:
   path: '/admin/config/shareaholic/settings/content/remove_location/{nodeType}/{locationType}/{location}'
   defaults:

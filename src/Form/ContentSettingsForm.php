@@ -9,10 +9,12 @@ use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeTypeInterface;
 use Drupal\shareaholic\Api\EventLogger;
+use Drupal\shareaholic\Api\ShareaholicApi;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,13 +39,17 @@ class ContentSettingsForm extends FormBase {
   /** @var EventLogger */
   private $eventLogger;
 
-  public function __construct(CacheBackendInterface $renderCache, Config $config, ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger)
+  /**@var ShareaholicApi*/
+  private $shareaholicApi;
+
+  public function __construct(CacheBackendInterface $renderCache, Config $config, ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger, ShareaholicApi $shareaholicApi)
   {
     $this->renderCache = $renderCache;
     $this->shareaholicConfig = $config;
     $this->nodeTypeStorage = $nodeTypeStorage;
     $this->shareaholicEntityManager = $shareaholicEntityManager;
     $this->eventLogger = $eventLogger;
+    $this->shareaholicApi = $shareaholicApi;
   }
 
   /**
@@ -55,7 +61,8 @@ class ContentSettingsForm extends FormBase {
       $container->get('shareaholic.editable_config'),
       $container->get('entity_type.manager')->getStorage('node_type'),
       $container->get('shareaholic.entity_manager'),
-      $container->get('shareaholic.api.event_logger')
+      $container->get('shareaholic.api.event_logger'),
+      $container->get('shareaholic.api')
     );
   }
 
@@ -96,7 +103,39 @@ class ContentSettingsForm extends FormBase {
       ];
     }
 
-    $nodeTypes = $this->nodeTypeStorage->loadMultiple();
+    $shareButtonsLocations = $this->shareaholicEntityManager->getAllLocations('share_buttons');
+    $recommendationsLocations = $this->shareaholicEntityManager->getAllLocations('recommendations');
+
+    $syncStatus = $this->shareaholicApi->syncStatus($shareButtonsLocations, $recommendationsLocations);
+
+    $syncStatusMessage = $this->t('Error');
+    if ($syncStatus === TRUE) {
+      $syncStatusMessage = $this->t('Synced');
+    }
+
+    if ($syncStatus === FALSE) {
+      $syncStatusMessage = $this->t('Out of sync');
+      $this->messenger()->addMessage($this->t('You are out of sync with Shareaholic! It means that some of your locations may not appear, and be not configurable. Try to sync manually.'), MessengerInterface::TYPE_ERROR);
+    }
+
+    $form['sync'] = [
+      '#type' => 'details',
+      '#open' => TRUE,
+      '#title' => $this->t('Synchronization settings'),
+      'status' => [
+        '#type' => 'markup',
+        '#markup' => Markup::create($this->t('Synchronization status:') . " <strong>$syncStatusMessage</strong>"),
+      ],
+      'sync' => [
+        '#title' => $this->t('Synchronize'),
+        '#type' => 'link',
+        '#attributes' => [
+          'class' => ['button', 'button--secondary'],
+        ],
+        '#url' => Url::fromRoute('shareaholic.settings.content.sync')
+      ],
+    ];
+
 
     $form['types'] = [
       '#type' => 'details',
@@ -104,6 +143,7 @@ class ContentSettingsForm extends FormBase {
       '#title' => $this->t('Content types'),
     ];
 
+    $nodeTypes = $this->nodeTypeStorage->loadMultiple();
     /** @var NodeTypeInterface $nodeType */
     foreach ($nodeTypes as $nodeType) {
       $formTypes = &$form['types'];

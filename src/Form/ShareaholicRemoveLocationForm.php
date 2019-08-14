@@ -6,11 +6,13 @@ use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\NodeTypeInterface;
 use Drupal\shareaholic\Api\EventLogger;
+use Drupal\shareaholic\Api\ShareaholicApi;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,11 +30,15 @@ class ShareaholicRemoveLocationForm extends FormBase {
   /** @var EventLogger */
   private $eventLogger;
 
-  public function __construct(ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger)
+  /** @var ShareaholicApi */
+  private $shareaholicApi;
+
+  public function __construct(ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger, ShareaholicApi $shareaholicApi)
   {
     $this->nodeTypeStorage = $nodeTypeStorage;
     $this->shareaholicEntityManager = $shareaholicEntityManager;
     $this->eventLogger = $eventLogger;
+    $this->shareaholicApi = $shareaholicApi;
   }
 
   /**
@@ -43,7 +49,8 @@ class ShareaholicRemoveLocationForm extends FormBase {
     return new static(
       $container->get('entity_type.manager')->getStorage('node_type'),
       $container->get('shareaholic.entity_manager'),
-      $container->get('shareaholic.api.event_logger')
+      $container->get('shareaholic.api.event_logger'),
+      $container->get('shareaholic.api')
     );
   }
 
@@ -153,9 +160,20 @@ class ShareaholicRemoveLocationForm extends FormBase {
 
     $location = $form_state->getValue('location');
     $this->shareaholicEntityManager->removeLocation($location, $locationType, $nodeType);
+
     $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
 
     $this->messenger()->addMessage($this->t("Location '@locationId' type '@locationType' has been added to the node type '@nodeType'!", ['@locationType' => $locationType, '@nodeType' => $nodeType->id(), '@locationId' => $location]));
+
+    $shareButtonsLocations = $this->shareaholicEntityManager->getAllLocations('share_buttons');
+    $recommendations = $this->shareaholicEntityManager->getAllLocations('recommendations');
+    $sync = $this->shareaholicApi->sync($shareButtonsLocations, $recommendations);
+    if (!$sync) {
+      $this->messenger()->addMessage($this->t("Synchronization with Shareaholic failed! See logs."), MessengerInterface::TYPE_ERROR);
+    } else {
+      $this->messenger()->addMessage($this->t("Synchronization with Shareaholic has been successful."));
+    }
+
     $form_state->setRedirect('shareaholic.settings.content');
   }
 

@@ -130,6 +130,7 @@ class SettingsController extends ControllerBase {
       $this->TOSManager->acceptTermsOfService();
     } else {
       $this->messenger()->addMessage("Couldn't generate API key. See log.", MessengerInterface::TYPE_ERROR);
+
     }
 
     $destination = \Drupal::request()->get('destination');

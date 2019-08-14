@@ -17,22 +17,39 @@ class ShareaholicApi {
   private $httpClient;
 
   /** @var ImmutableConfig */
-  private $config;
+  private $shareaholicConfig;
 
   /** @var LoggerInterface */
   private $logger;
+
   /** @var ShareaholicCMApi */
   private $shareaholicCMApi;
 
   /** @var EventLogger */
   private $eventLogger;
 
-  public function __construct(HttpClient $httpClient, ImmutableConfig $config, LoggerInterface $logger, ShareaholicCMApi $shareaholicCMApi, EventLogger $eventLogger) {
+  public function __construct(HttpClient $httpClient, ImmutableConfig $shareaholicConfig, LoggerInterface $logger, ShareaholicCMApi $shareaholicCMApi, EventLogger $eventLogger) {
     $this->httpClient = $httpClient;
-    $this->config = $config;
+    $this->shareaholicConfig = $shareaholicConfig;
     $this->logger = $logger;
     $this->shareaholicCMApi = $shareaholicCMApi;
     $this->eventLogger = $eventLogger;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSyncURL(): string {
+    $apiKey = $this->shareaholicConfig->get('api_key');
+    return self::API_URL . "/publisher_tools/$apiKey/sync";
+  }
+
+  /**
+   * @return string
+   */
+  public function getSyncStatusURL(): string {
+    $apiKey = $this->shareaholicConfig->get('api_key');
+    return self::API_URL . "/publisher_tools/$apiKey/sync/status";
   }
 
   /**
@@ -51,15 +68,9 @@ class ShareaholicApi {
      * Transform arrays into ones expected by the API.
      */
 
-    $shareButtonsLocationsAttributes = [];
-    foreach ($shareButtonsLocations as $shareButtonsLocation) {
-      $shareButtonsLocationsAttributes[] = ['name' => $shareButtonsLocation, 'enabled' => TRUE];
-    }
+    $shareButtonsLocationsAttributes = $this->prepareLocationsArray($shareButtonsLocations);
+    $recommendationsLocationsAttributes = $this->prepareLocationsArray($recommendationsLocations);
 
-    $recommendationsLocationsAttributes = [];
-    foreach ($recommendationsLocations as $recommendationsLocation) {
-      $recommendationsLocationsAttributes[] = ['name' => $recommendationsLocation, 'enabled' => TRUE];
-    }
     $error = NULL;
 
     try {
@@ -110,8 +121,8 @@ class ShareaholicApi {
 
     try {
       $response = $this->httpClient->post(self::SESSIONS_URL, [
-        'site_id' => $this->config->get('api_key'),
-        'verification_key' => $this->config->get('verification_key'),
+        'site_id' => $this->shareaholicConfig->get('api_key'),
+        'verification_key' => $this->shareaholicConfig->get('verification_key'),
       ]);
     } catch (\Exception $exception) {
       $this->logger->critical("Publisher token couldn't be received. Couldn't connect to the server.");
@@ -127,7 +138,78 @@ class ShareaholicApi {
       }
       $this->logger->critical("Publisher token couldn't be received. Wrong content of server's response.");
     } else {
-      $this->logger->critical("Publisher token couldn't be received. Request status code: $statusCode");
+      $this->logger->critical("Publisher token couldn't be received. HTTP status code: $statusCode");
+    }
+
+    return NULL;
+  }
+
+  /**
+   * @param string[] $shareButtonsLocations
+   * @param string[] $recommendationsLocations
+   *
+   * @return bool
+   */
+  public function sync($shareButtonsLocations, $recommendationsLocations): bool {
+
+    try {
+      $response = $this->httpClient->post($this->getSyncURL(), [
+        'verification_key' => $this->shareaholicConfig->get('verification_key'),
+        'app_locations' => [
+          'share_buttons' => $this->prepareLocationsHash($shareButtonsLocations),
+          'recommendations' => $this->prepareLocationsHash($recommendationsLocations),
+        ],
+      ]);
+
+      $body = json_decode($response->getBody()->getContents(), TRUE);
+      $statusCode = $response->getStatusCode();
+
+      if ($statusCode === 200 && $body['status'] === 'success') {
+        return TRUE;
+      }
+
+      $this->logger->critical("Sync status check failed. HTTP status code: $statusCode.");
+    } catch(\Exception $exception) {
+      $code = $exception->getCode();
+      $message = $exception->getMessage();
+      $this->logger->critical("Sync status check failed. Couldn't connect to the server. Code: $code. Message: $message");
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * @param $shareButtonsLocations
+   * @param $recommendationsLocations
+   *
+   * @return bool|null
+   */
+  public function syncStatus($shareButtonsLocations, $recommendationsLocations) {
+    try {
+      $response = $this->httpClient->post($this->getSyncStatusURL(), [
+        'verification_key' => $this->shareaholicConfig->get('verification_key'),
+        'app_locations' => [
+          'share_buttons' => $this->prepareLocationsHash($shareButtonsLocations),
+          'recommendations' => $this->prepareLocationsHash($recommendationsLocations),
+        ],
+      ]);
+
+
+      $body = json_decode($response->getBody()->getContents(), TRUE);
+      $statusCode = $response->getStatusCode();
+
+      if ($statusCode === 200 && $body['status'] === 'success') {
+        return TRUE;
+      }
+
+      $this->logger->critical("Sync status check failed. HTTP status code: $statusCode.");
+    } catch(\Exception $exception) {
+      $code = $exception->getCode();
+      if ($code === 409) {
+        return FALSE;
+      }
+      $message = $exception->getMessage();
+      $this->logger->critical("Sync status check failed. Couldn't connect to the server. Code: $code. Message: $message");
     }
 
     return NULL;
@@ -145,6 +227,24 @@ class ShareaholicApi {
     }
 
     return $response->getStatusCode() === 200;
+  }
+
+  private function prepareLocationsArray($locations) {
+    $result = [];
+    foreach ($locations as $location) {
+      $result[] = ['name' => $location, 'enabled' => TRUE];
+    }
+
+    return $result;
+  }
+
+  private function prepareLocationsHash($locations) {
+    $result = [];
+    foreach ($locations as $location) {
+      $result[$location] = ['enabled' => TRUE];
+    }
+
+    return $result;
   }
 
   /**

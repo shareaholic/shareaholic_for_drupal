@@ -78,19 +78,17 @@ class EventLogger {
     /*
      * Put locations from all node types into locationType specific arrays.
      */
-    $nodeTypes = $this->shareaholicEntityManager->getContentTypesWithContentSettings();
-    $recomendationsLocations = [];
-    $shareButtonsLocations = [];
-    foreach ($nodeTypes as $nodeType) {
-      $locationsArray = $this->shareaholicEntityManager->extractLocations('share_buttons', $nodeType);
-      foreach ($locationsArray as $location) {
-        $shareButtonsLocations[$location] = 'on';
-      }
 
-      $locationsArray = $this->shareaholicEntityManager->extractLocations('recommendations', $nodeType);
-      foreach ($locationsArray as $location) {
-        $recomendationsLocations[$location] = 'on';
-      }
+    $shareButtonsLocations = [];
+    $locationsArray = $this->shareaholicEntityManager->getAllLocations('share_buttons');
+    foreach ($locationsArray as $location) {
+      $shareButtonsLocations[$location] = 'on';
+    }
+
+    $recomendationsLocations = [];
+    $locationsArray = $this->shareaholicEntityManager->getAllLocations('recommendations');
+    foreach ($locationsArray as $location) {
+      $recomendationsLocations[$location] = 'on';
     }
 
     $event_metadata = [
