@@ -70,10 +70,6 @@ class ShareaholicEntityManager {
       'type' => 'shareaholic_widget_type',
     ]);
     $entityFormDisplay->save();
-
-    $nodeType->setThirdPartySetting('shareaholic', 'locations_share_buttons', [$this->createLocationName($nodeType->id(), 'default')]);
-    $nodeType->setThirdPartySetting('shareaholic', 'locations_recommendations', [$this->createLocationName($nodeType->id(), 'default')]);
-    $nodeType->save();
   }
 
   /**
