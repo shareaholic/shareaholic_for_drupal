@@ -171,7 +171,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
             '#id' => $location,
             '#locationType' => $locationType,
             '#title' => $entity->getTitle(),
-            '#url' => Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString(),
+            '#url' => Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()], ['absolute' => TRUE])->toString(),
             '#summary' => '',
           ];
         }
