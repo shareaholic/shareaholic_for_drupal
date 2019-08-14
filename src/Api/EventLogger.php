@@ -111,13 +111,11 @@ class EventLogger {
       ],
     ];
 
-    if ($extra_params) {
-      $event_metadata = array_merge($event_metadata, $extra_params);
-    }
+    $event_metadata = array_merge($event_metadata, $extra_params);
 
     $event_params = [
       'name' => "Drupal:" . $event_name,
-      'data' => $event_metadata,
+      'data' => json_encode($event_metadata),
     ];
 
     try {

@@ -460,10 +460,6 @@ function shareaholic_cron() {
   $currentVersion = system_get_info('module', 'shareaholic')['version'];
   $registeredVersion = $config->get('module_version') ?? $currentVersion;
 
-
-  $eventLogger = \Drupal::service('shareaholic.api.event_logger');
-  $eventLogger->logUpgrade($eventLogger::EVENT_UPGRADE, $registeredVersion);
-
   if ($currentVersion !== $registeredVersion) {
     /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
     $eventLogger = \Drupal::service('shareaholic.api.event_logger');
