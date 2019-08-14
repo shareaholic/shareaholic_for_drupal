@@ -9,7 +9,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
+use Drupal\node\NodeInterface;
 use Drupal\node\NodeTypeInterface;
+use Drupal\shareaholic\Plugin\Field\FieldType\ShareaholicFieldType;
 
 /**
  * Class ShareaholicEntityManager
@@ -32,7 +34,7 @@ class ShareaholicEntityManager {
    * @param \Drupal\node\NodeTypeInterface $nodeType
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function enableShareaholic(NodeTypeInterface $nodeType) {
+  public function enableContentSettings(NodeTypeInterface $nodeType) {
     $fieldStorage = FieldStorageConfig::loadByName('node', 'shareaholic');
 
     if (!$fieldStorage) {
@@ -77,7 +79,7 @@ class ShareaholicEntityManager {
    * @param \Drupal\node\NodeTypeInterface $nodeType
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function disableShareaholic(NodeTypeInterface $nodeType) {
+  public function disableContentSettings(NodeTypeInterface $nodeType) {
     $field = FieldConfig::loadByName('node', $nodeType->id(), 'shareaholic');
 
     if (empty($field)) {
@@ -86,17 +88,13 @@ class ShareaholicEntityManager {
     $field->delete();
 
     field_purge_batch(10);
-
-    $nodeType->unsetThirdPartySetting('shareaholic', 'locations_share_buttons');
-    $nodeType->unsetThirdPartySetting('shareaholic', 'locations_recommendations');
-    $nodeType->save();
   }
 
   /**
    * @param NodeTypeInterface $nodeType
    * @return bool
    */
-  public function isShareaholicEnabled(NodeTypeInterface $nodeType): bool {
+  public function areContentSettingsEnabled(NodeTypeInterface $nodeType): bool {
     $fieldDefinitions = $this->entityFieldManager->getFieldDefinitions('node', $nodeType->id());
 
     $shareaholicFields = array_filter($fieldDefinitions, static function($fieldDefinition) {
@@ -113,12 +111,12 @@ class ShareaholicEntityManager {
   /**
    * @return NodeTypeInterface[]
    */
-  public function getShareaholicEnabledNodeTypes(): array {
+  public function getContentTypesWithContentSettings(): array {
     $nodeTypes = $this->nodeTypeStorage->loadMultiple();
 
     $result = [];
     foreach ($nodeTypes as $nodeType) {
-      if ($this->isShareaholicEnabled($nodeType)) $result[] = $nodeType;
+      if ($this->areContentSettingsEnabled($nodeType)) $result[] = $nodeType;
     }
 
     return $result;
@@ -132,7 +130,28 @@ class ShareaholicEntityManager {
    * @return array
    */
   public function extractLocations($locationType, NodeTypeInterface $nodeType): array {
-    return $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+
+    // There should aways be the default location.
+    $defaultLocation = self::createLocationName($nodeType->id(), 'default');
+    if (!in_array($defaultLocation, $locations, TRUE)) {
+      array_unshift($locations , $defaultLocation);
+    }
+
+    return $locations;
+  }
+
+  /**
+   * @param $location
+   * @param $locationType
+   * @param \Drupal\node\NodeTypeInterface $nodeType
+   *
+   * @return bool
+   */
+  public function hasLocation($location, $locationType, NodeTypeInterface $nodeType): bool {
+    $locations = $this->extractLocations($locationType, $nodeType);
+
+    return in_array($location, $locations, TRUE);
   }
 
   /**
@@ -149,6 +168,12 @@ class ShareaholicEntityManager {
     $nodeType->save();
   }
 
+  /**
+   * @param $locationName
+   * @param $locationType
+   * @param \Drupal\node\NodeTypeInterface $nodeType
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
   public function removeLocation($locationName, $locationType, NodeTypeInterface $nodeType) {
     $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
 
@@ -161,12 +186,37 @@ class ShareaholicEntityManager {
   }
 
   /**
+   * @param \Drupal\node\NodeInterface $node
+   *
+   * @return array
+   */
+  public function getContentSettings(NodeInterface $node) {
+
+    $nodeType = $this->nodeTypeStorage->load($node->getType());
+    if (!$this->areContentSettingsEnabled($nodeType)) {
+      return ShareaholicFieldType::getDefaultContentSettings();
+    }
+
+    return !empty($node->get('shareaholic')->getValue()) ? $node->get('shareaholic')->getValue() : ShareaholicFieldType::getDefaultContentSettings();
+  }
+
+  public function removeAllLocations() {
+    $nodeTypes = $this->nodeTypeStorage->loadMultiple();
+    /** @var \Drupal\node\NodeTypeInterface $nodeType */
+    foreach ($nodeTypes as $nodeType) {
+      $nodeType->unsetThirdPartySetting('shareaholic', 'locations_share_buttons');
+      $nodeType->unsetThirdPartySetting('shareaholic', 'locations_recommendations');
+      $nodeType->save();
+    }
+  }
+
+  /**
    * @param $nodeTypeId
    * @param $name
    *
    * @return string
    */
-  private function createLocationName($nodeTypeId, $name) {
+  public static function createLocationName($nodeTypeId, $name) {
     return "{$nodeTypeId}_${name}";
   }
 }

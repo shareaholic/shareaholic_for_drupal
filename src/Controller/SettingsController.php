@@ -74,10 +74,6 @@ class SettingsController extends ControllerBase {
       ];
     }
 
-    if (empty($this->shareaholicEntityManager->getShareaholicEnabledNodeTypes())) {
-      $this->messenger()->addMessage($this->t("Remember to enable Shareaholic for your nodes on the Content Settings page!"));
-    }
-
     $jwtToken =  $this->shareaholicApi->getJwtToken();
     if (!$jwtToken) {
       $this->messenger()->addMessage("Publisher token couldn't be received. See log.", MessengerInterface::TYPE_ERROR);
@@ -117,7 +113,7 @@ class SettingsController extends ControllerBase {
     $shareButtonsLocations = [];
     $recommendationsLocations = [];
 
-    $nodeTypes = $this->shareaholicEntityManager->getShareaholicEnabledNodeTypes();
+    $nodeTypes = $this->shareaholicEntityManager->getContentTypesWithContentSettings();
     foreach ($nodeTypes as $nodeType) {
       $shareButtonsLocations = array_merge($shareButtonsLocations, $this->shareaholicEntityManager->extractLocations('share_buttons', $nodeType));
       $recommendationsLocations = array_merge($recommendationsLocations, $this->shareaholicEntityManager->extractLocations('recommendations', $nodeType));

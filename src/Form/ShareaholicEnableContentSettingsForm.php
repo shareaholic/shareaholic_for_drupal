@@ -70,17 +70,17 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
       return $form;
     }
 
-    if ($this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
+    if ($this->shareaholicEntityManager->areContentSettingsEnabled($nodeType)) {
       $form['message'] = [
         '#type' => 'markup',
-        '#markup' => Markup::create($this->t('This node type is already Shareaholic enabled.')),
+        '#markup' => Markup::create($this->t('This node type has enabled Shareaholic Content Settings already.')),
       ];
       return $form;
     }
 
     $form['message'] = [
       '#type' => 'markup',
-      '#markup' => Markup::create($this->t("Are you sure you want to enable Shareaholic on the '@bundle' node type?", ['@bundle' => $nodeType->id()])),
+      '#markup' => Markup::create($this->t("Are you sure you want to enable Shareaholic Content Settings on the '@bundle' node type?", ['@bundle' => $nodeType->id()])),
     ];
 
     $form['type'] = [
@@ -106,7 +106,7 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
     /** @var NodeTypeInterface $nodeType */
     $nodeType = $this->nodeTypeStorage->load($form_state->getValue('type'));
 
-    if (!$nodeType || $this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
+    if (!$nodeType || $this->shareaholicEntityManager->areContentSettingsEnabled($nodeType)) {
       return;
     }
 
@@ -116,7 +116,7 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
       return;
     }
 
-    $this->shareaholicEntityManager->enableShareaholic($nodeType);
+    $this->shareaholicEntityManager->enableContentSettings($nodeType);
     $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
 
     $this->messenger()->addMessage($this->t("Content type '@type' is now Shareaholic enabled!", ['@type' => $nodeType->id()]));

@@ -75,14 +75,6 @@ class ShareaholicAddLocationForm extends FormBase {
       return $form;
     }
 
-    if (!$this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-      $form['message'] = [
-        '#type' => 'markup',
-        '#markup' => Markup::create($this->t('This node type is not Shareaholic enabled.')),
-      ];
-      return $form;
-    }
-
     $form['message'] = [
       '#type' => 'markup',
       '#markup' => Markup::create($this->t("Are you sure you want to add a new location of the type '@locationType' to the content type '@nodeType'?", ['@locationType' => $locationType, '@nodeType' => $nodeType->id()])),
@@ -90,11 +82,12 @@ class ShareaholicAddLocationForm extends FormBase {
 
     $form['location'] = [
       '#type' => 'machine_name',
-      '#title' => $this->t("Location's name"),
+      '#title' => $this->t("Location's name. It will be prefixed with: '@nodeType_'", ['@nodeType' => $nodeType->id()]),
       '#required' => TRUE,
       '#machine_name' => [
-        'exists' => static function(){return FALSE;},
+        'exists' => [$this, 'locationExists'],
       ],
+      '#label' => 'fgfg',
     ];
 
     $form['nodeType'] = [
@@ -117,19 +110,11 @@ class ShareaholicAddLocationForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-
-    $form_state->setValue('location', strtolower($form_state->getValue('location')));
-
-    $values = $form_state->getValues();
-
-    /** @var NodeTypeInterface $nodeType */
-    $nodeType = $this->nodeTypeStorage->load($form_state->getValue('nodeType'));
-
-    if (!$nodeType || !$this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-      $form_state->setErrorByName('nodeType', $this->t("Node type doesn't exist or is not Shareaholic enabled!"));
-    }
 
     $locationType = $form_state->getValue('locationType');
 
@@ -139,12 +124,6 @@ class ShareaholicAddLocationForm extends FormBase {
 
     if (!empty($form_state->getErrors())) {
       return;
-    }
-
-
-    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
-    if (in_array($values['location'], $locations, TRUE)) {
-      $form_state->setErrorByName('location', $this->t('Locations have to be unique!'));
     }
   }
 
@@ -164,5 +143,22 @@ class ShareaholicAddLocationForm extends FormBase {
 
     $this->messenger()->addMessage($this->t("Location type '@locationType' of id '@locationId' has been added to the node type '@nodeType'!", ['@locationType' => $locationType, '@nodeType' => $nodeType->id(), '@locationId' => $locationId]));
     $form_state->setRedirect('shareaholic.settings.content');
+  }
+
+  /**
+   * Callback ensuring that location will be unique.
+   *
+   * @param $value
+   * @param $element
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return bool
+   */
+  public function locationExists($value, $element, FormStateInterface $form_state): bool {
+    /** @var NodeTypeInterface $nodeType */
+    $nodeType = $this->nodeTypeStorage->load($form_state->getValue('nodeType'));
+    $locationType = $form_state->getValue('locationType');
+
+    return $this->shareaholicEntityManager->hasLocation(ShareaholicEntityManager::createLocationName($nodeType->id(), $value), $locationType, $nodeType);
   }
 }

@@ -69,11 +69,13 @@ class ResetForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    $nodeTypes = $this->shareaholicEntityManager->getShareaholicEnabledNodeTypes();
+    $nodeTypes = $this->shareaholicEntityManager->getContentTypesWithContentSettings();
 
     foreach ($nodeTypes as $nodeType) {
-      $this->shareaholicEntityManager->disableShareaholic($nodeType);
+      $this->shareaholicEntityManager->disableContentSettings($nodeType);
     }
+
+    $this->shareaholicEntityManager->removeAllLocations();
 
     // TODO: Use shareaholic.settings.yml .
     $this->shareaholicConfig->set('api_key', NULL)
@@ -85,7 +87,7 @@ class ResetForm extends FormBase {
     // TODO Make cache clearing more targeted.
     drupal_flush_all_caches();
 
-    $this->messenger()->addMessage($this->t("Reset has been successful. Cache clear has been succesfull."));
+    $this->messenger()->addMessage($this->t("Reset has been successful. Cache clear has been succesful."));
     $form_state->setRedirect('shareaholic.settings.advanced');
   }
 }

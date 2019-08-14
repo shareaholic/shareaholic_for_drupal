@@ -85,14 +85,6 @@ class ShareaholicRemoveLocationForm extends FormBase {
       return $form;
     }
 
-    if (!$this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-      $form['message'] = [
-        '#type' => 'markup',
-        '#markup' => Markup::create($this->t('This node type is not Shareaholic enabled.')),
-      ];
-      return $form;
-    }
-
     $form['message'] = [
       '#type' => 'markup',
       '#markup' => Markup::create($this->t("Are you sure you want to remove location '@locationId' of the type '@locationType' from the content type '@nodeType'?", ['@locationType' => $locationType, '@nodeType' => $nodeType->id(), '@locationId' => $location])),
@@ -126,17 +118,10 @@ class ShareaholicRemoveLocationForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    $form_state->setValue('location', strtolower($form_state->getValue('location')));
-
-    $values = $form_state->getValues();
+    $location = $form_state->getValue('location');
 
     /** @var NodeTypeInterface $nodeType */
     $nodeType = $this->nodeTypeStorage->load($form_state->getValue('nodeType'));
-
-    if (!$nodeType || !$this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-      $form_state->setErrorByName('nodeType', $this->t("Node type doesn't exist or is not Shareaholic enabled!"));
-    }
-
     $locationType = $form_state->getValue('locationType');
 
     if (!in_array($locationType, $this->getLocationTypes(), TRUE)) {
@@ -147,13 +132,11 @@ class ShareaholicRemoveLocationForm extends FormBase {
       return;
     }
 
-    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
-
-    if (!in_array($values['location'], $locations, TRUE)) {
+    if (!$this->shareaholicEntityManager->hasLocation($location, $locationType, $nodeType)) {
       $form_state->setErrorByName('location', $this->t('There is no such location!'));
     }
 
-    if ($values['location'] === 'default') {
+    if ($location === 'default') {
       $form_state->setErrorByName('location', $this->t('Default location is not removable!'));
     }
   }
@@ -165,10 +148,6 @@ class ShareaholicRemoveLocationForm extends FormBase {
 
     /** @var NodeTypeInterface $nodeType */
     $nodeType = $this->nodeTypeStorage->load($form_state->getValue('nodeType'));
-
-    if (!$nodeType || !$this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-      return;
-    }
 
     $locationType = $form_state->getValue('locationType');
 

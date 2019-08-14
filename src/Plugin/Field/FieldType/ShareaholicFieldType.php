@@ -94,4 +94,15 @@ class ShareaholicFieldType extends FieldItemBase {
       'exclude_og_tags',
     ];
   }
+
+  public static function getDefaultContentSettings() {
+    $result = [];
+    $settings = self::getListOfSettings();
+
+    foreach ($settings as $setting) {
+      $result[$setting] = '0';
+    }
+
+    return $result;
+  }
 }

@@ -13,7 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @FieldFormatter(
  *   id = "shareaholic_formatter_type",
- *   label = @Translation("Dummy Shareaholic Formatter"),
+ *   label = @Translation("Hidden"),
  *   field_types = {
  *     "shareaholic_content_settings"
  *   }

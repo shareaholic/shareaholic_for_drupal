@@ -18,6 +18,10 @@ function shareaholic_install() {
  * Implements hook_uninstall().
  */
 function shareaholic_uninstall() {
+  /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
+  $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
+  $shareaholicEntityManager->removeAllLocations();
+
   /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
   $eventLogger = \Drupal::service('shareaholic.api.event_logger');
   $eventLogger->log($eventLogger::EVENT_UNINSTALL);

@@ -97,8 +97,6 @@ class ContentSettingsForm extends FormBase {
 
     $nodeTypes = $this->nodeTypeStorage->loadMultiple();
 
-    $this->messenger()->addMessage($this->t('After setting up your locations, clear cache for changes to be applied to the node types.'));
-
     $form['types'] = [
       '#type' => 'details',
       '#open' => TRUE,
@@ -127,23 +125,13 @@ class ContentSettingsForm extends FormBase {
         ],
       ];
 
-      try {
-        $isShareaholicEnabled = $this->shareaholicEntityManager->isShareaholicEnabled($nodeType);
-      } catch (\LogicException $exception) {
-        $enableShareaholic = [
-          '#type' => 'markup',
-          '#markup' => Markup::create($this->t('Error. Too many shareaholic fields attached to the content type.')),
-        ];
-        continue;
-      }
-
       $formTypes[$nodeType->id()]['enable_shareaholic'] = [];
       $enableShareaholic = &$formTypes[$nodeType->id()]['enable_shareaholic'];
 
-      if ($isShareaholicEnabled) {
+      if ($this->shareaholicEntityManager->areContentSettingsEnabled($nodeType)) {
         $enableShareaholic = [
           '#type' => 'link',
-          '#title' => $this->t('Disable Shareaholic'),
+          '#title' => $this->t('Disable Shareaholic Per-Content Settings'),
           '#attributes' => [
             'class' => ['button', 'button--secondary'],
           ],
@@ -152,7 +140,7 @@ class ContentSettingsForm extends FormBase {
       } else {
         $enableShareaholic = [
           '#type' => 'link',
-          '#title' => $this->t('Enable Shareaholic'),
+          '#title' => $this->t('Enable Shareaholic Per-Content Settings'),
           '#attributes' => [
             'class' => ['button', 'button--secondary'],
           ],
@@ -186,7 +174,8 @@ class ContentSettingsForm extends FormBase {
    * @return array
    */
   private function renderLocationsSettings(NodeTypeInterface $nodeType, $locationType): array {
-    $locationList = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+
+    $locationList = $this->shareaholicEntityManager->extractLocations($locationType, $nodeType);
     $result = [];
     foreach ($locationList as $key => $locationId) {
 
@@ -223,16 +212,14 @@ class ContentSettingsForm extends FormBase {
       ];
     }
 
-    if ($this->shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-      $result[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Add location'),
-        '#attributes' => [
-          'class' => ['button', 'button--secondary'],
-        ],
-        '#url' => Url::fromRoute('shareaholic.settings.content.add_location', ['nodeType' => $nodeType->id(), 'locationType' => $locationType]),
-      ];
-    }
+    $result[] = [
+      '#type' => 'link',
+      '#title' => $this->t('Add location'),
+      '#attributes' => [
+        'class' => ['button', 'button--secondary'],
+      ],
+      '#url' => Url::fromRoute('shareaholic.settings.content.add_location', ['nodeType' => $nodeType->id(), 'locationType' => $locationType]),
+    ];
 
     return $result;
   }

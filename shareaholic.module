@@ -112,7 +112,9 @@ function shareaholic_entity_extra_field_info() {
   /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
   $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
 
-  $nodeTypes = $shareaholicEntityManager->getShareaholicEnabledNodeTypes();
+  /** @var \Drupal\Core\Entity\EntityStorageInterface $nodeTypeStorage */
+  $nodeTypeStorage = Drupal::service('entity_type.manager')->getStorage('node_type');
+  $nodeTypes = $nodeTypeStorage->loadMultiple();
   foreach ($nodeTypes as $nodeType) {
     $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
     foreach ($locationTypes as $locationType) {
@@ -146,40 +148,34 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
 
   /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
   $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
+  $contentSettings = $shareaholicEntityManager->getContentSettings($entity);
 
-  if ($shareaholicEntityManager->isShareaholicEnabled($nodeType)) {
-    $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
+  $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
 
-    foreach ($locationTypes as $locationType) {
+  foreach ($locationTypes as $locationType) {
+    if ($locationType === 'recommendations' && (int) $contentSettings['hide_recommendations'] === 1) {
+      continue;
+    }
 
-      $contentSettings = $entity->get('shareaholic')->getValue();
-      if (!empty($contentSettings)) {
-        if ($locationType === 'recommendations' && $contentSettings[0]['hide_recommendations']) {
-          continue;
-        }
+    if ($locationType === 'share_buttons' && (int) $contentSettings['hide_share_buttons'] === 1) {
+      continue;
+    }
 
-        if ($locationType === 'share_buttons' && $contentSettings[0]['hide_share_buttons']) {
-          continue;
-        }
-      }
+    $locations = $shareaholicEntityManager->extractLocations($locationType, $nodeType);
+    foreach ($locations as $location) {
+      if ($display->getComponent("shareaholic_widget_${locationType}_$location")) {
 
-      $locations = $shareaholicEntityManager->extractLocations($locationType, $nodeType);
-      foreach ($locations as $location) {
-        if ($display->getComponent("shareaholic_widget_${locationType}_$location")) {
-
-          $build["shareaholic_widget_${locationType}_$location"] = [
-            '#theme' => 'shareaholic_widget',
-            '#id' => $location,
-            '#locationType' => $locationType,
-            '#title' => $entity->getTitle(),
-            '#url' => Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()], ['absolute' => TRUE])->toString(),
-            '#summary' => '',
-          ];
-        }
+        $build["shareaholic_widget_${locationType}_$location"] = [
+          '#theme' => 'shareaholic_widget',
+          '#id' => $location,
+          '#locationType' => $locationType,
+          '#title' => $entity->getTitle(),
+          '#url' => Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()], ['absolute' => TRUE])->toString(),
+          '#summary' => '',
+        ];
       }
     }
   }
-
 
   if ($view_mode !== 'full') {
     return;
@@ -288,10 +284,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
     $articleVisibility = 'draft';
   }
 
-  if ($shareaholicEntityManager->isShareaholicEnabled($nodeType) &&
-      !empty($entity->get('shareaholic')->getValue()) &&
-      (int) $entity->get('shareaholic')->getValue()[0]['exclude_from_recommendations'] === 1
-  ) {
+  if ((int) $contentSettings['exclude_from_recommendations'] === 1) {
     $articleVisibility = 'private';
   }
 
@@ -321,11 +314,7 @@ function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterf
   /*
    * OpenGraph
    */
-  if ($config->get('enable_og_tags') &&
-      (!$shareaholicEntityManager->isShareaholicEnabled($nodeType) ||
-      empty($entity->get('shareaholic')->getValue()) ||
-      (int) $entity->get('shareaholic')->getValue()[0]['exclude_og_tags'] === 0)
-  ) {
+  if ((int) $contentSettings['exclude_og_tags'] === 0 && $config->get('enable_og_tags')) {
     $image = shareaholic_extract_image_url_from_entity($entity);
 
     if (!empty($image)) {
