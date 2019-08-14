@@ -107,10 +107,33 @@ class ContentSettingsForm extends FormBase {
     foreach ($nodeTypes as $nodeType) {
       $formTypes = &$form['types'];
 
+      $formTypes[$nodeType->id()]['enable_shareaholic'] = [];
+
+      if ($this->shareaholicEntityManager->areContentSettingsEnabled($nodeType)) {
+        $enableContentSettings = [
+          '#type' => 'link',
+          '#title' => $this->t('Disable Shareaholic Per-Content Settings'),
+          '#attributes' => [
+            'class' => ['button', 'button--secondary'],
+          ],
+          '#url' => Url::fromRoute('shareaholic.settings.content.shareaholic_disable', ['nodeType' => $nodeType->id()]),
+        ];
+      } else {
+        $enableContentSettings = [
+          '#type' => 'link',
+          '#title' => $this->t('Enable Shareaholic Per-Content Settings'),
+          '#attributes' => [
+            'class' => ['button', 'button--secondary'],
+          ],
+          '#url' => Url::fromRoute('shareaholic.settings.content.shareaholic_enable', ['nodeType' => $nodeType->id()]),
+        ];
+      }
+
       $formTypes[$nodeType->id()] = [
         '#type' => 'details',
         '#title' => $nodeType->label(),
         '#open' => TRUE,
+        'enable_content_settings' => $enableContentSettings,
         'share_buttons' => [
           '#type' => 'details',
           '#title' => $this->t('Share buttons'),
@@ -124,29 +147,6 @@ class ContentSettingsForm extends FormBase {
           'items' => $this->renderLocationsSettings($nodeType, 'recommendations'),
         ],
       ];
-
-      $formTypes[$nodeType->id()]['enable_shareaholic'] = [];
-      $enableShareaholic = &$formTypes[$nodeType->id()]['enable_shareaholic'];
-
-      if ($this->shareaholicEntityManager->areContentSettingsEnabled($nodeType)) {
-        $enableShareaholic = [
-          '#type' => 'link',
-          '#title' => $this->t('Disable Shareaholic Per-Content Settings'),
-          '#attributes' => [
-            'class' => ['button', 'button--secondary'],
-          ],
-          '#url' => Url::fromRoute('shareaholic.settings.content.shareaholic_disable', ['nodeType' => $nodeType->id()]),
-        ];
-      } else {
-        $enableShareaholic = [
-          '#type' => 'link',
-          '#title' => $this->t('Enable Shareaholic Per-Content Settings'),
-          '#attributes' => [
-            'class' => ['button', 'button--secondary'],
-          ],
-          '#url' => Url::fromRoute('shareaholic.settings.content.shareaholic_enable', ['nodeType' => $nodeType->id()]),
-        ];
-      }
     }
 
     $form['#attached']['html_head'] = [shareaholic_get_chat_for_head()];
