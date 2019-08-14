@@ -3,7 +3,7 @@
 namespace Drupal\shareaholic\Helper;
 
 use Drupal\Core\Config\Config;
-use Drupal\shareaholic\Logger\EventLogger;
+use Drupal\shareaholic\Api\EventLogger;
 
 /**
  * Class TOSManager
@@ -38,6 +38,6 @@ class TOSManager {
   public function acceptTermsOfService() {
     $this->shareaholicConfig->set('has_accepted_tos', TRUE);
 
-    $this->eventLogger->log('AcceptedToS');
+    $this->eventLogger->log($this->eventLogger::EVENT_ACCEPTED_TOS);
   }
 }

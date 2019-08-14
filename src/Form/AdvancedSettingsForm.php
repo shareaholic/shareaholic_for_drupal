@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\shareaholic\Api\EventLogger;
 use Drupal\shareaholic\Api\ShareaholicApi;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -22,11 +23,15 @@ class AdvancedSettingsForm extends ConfigFormBase {
   /** @var Config */
   private $shareaholicConfig;
 
-  public function __construct(ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi, Config $config)
+  /** @var \Drupal\shareaholic\Api\EventLogger */
+  private $eventLogger;
+
+  public function __construct(ConfigFactoryInterface $config_factory, ShareaholicApi $shareaholicApi, Config $config, EventLogger $eventLogger)
   {
     parent::__construct($config_factory);
     $this->shareaholicApi = $shareaholicApi;
     $this->shareaholicConfig = $config;
+    $this->eventLogger = $eventLogger;
   }
 
   /**
@@ -36,7 +41,8 @@ class AdvancedSettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('shareaholic.api'),
-      $container->get('shareaholic.editable_config')
+      $container->get('shareaholic.editable_config'),
+      $container->get('shareaholic.api.event_logger')
     );
   }
 
@@ -129,9 +135,8 @@ class AdvancedSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $disOGTagsNewValue = $form_state->getValue('enable_og_tags');
 
-    $this->shareaholicConfig
-          ->set('enable_og_tags', $disOGTagsNewValue)
-          ->save();
+    $this->shareaholicConfig->set('enable_og_tags', $disOGTagsNewValue)->save();
+    $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
 
     parent::submitForm($form, $form_state);
   }

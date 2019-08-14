@@ -415,10 +415,10 @@ function shareaholic_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
     return;
   }
 
-  /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
-  $api = Drupal::service('shareaholic.api');
+  /** @var \Drupal\shareaholic\Api\ShareaholicCMApi $cmApi */
+  $cmApi = Drupal::service('shareaholic.api.cm');
   $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
-  $api->singlePageRefresh($url);
+  $cmApi->singlePageRefresh($url);
 }
 
 /**
@@ -430,10 +430,10 @@ function shareaholic_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
     return;
   }
 
-  /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
-  $api = Drupal::service('shareaholic.api');
+  /** @var \Drupal\shareaholic\Api\ShareaholicCMApi $cmApi */
+  $cmApi = Drupal::service('shareaholic.api.cm');
   $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
-  $api->singlePageRefresh($url);
+  $cmApi->singlePageRefresh($url);
 }
 
 /**
@@ -445,8 +445,29 @@ function shareaholic_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
     return;
   }
 
-  /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
-  $api = Drupal::service('shareaholic.api');
+  /** @var \Drupal\shareaholic\Api\ShareaholicCMApi $cmApi */
+  $cmApi = Drupal::service('shareaholic.api');
   $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
-  $api->singlePageRefresh($url);
+  $cmApi->singlePageRefresh($url);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shareaholic_cron() {
+  /** @var \Drupal\Core\Config\Config $config */
+  $config = \Drupal::service('shareaholic.editable_config');
+  $currentVersion = system_get_info('module', 'shareaholic')['version'];
+  $registeredVersion = $config->get('module_version') ?? $currentVersion;
+
+
+  $eventLogger = \Drupal::service('shareaholic.api.event_logger');
+  $eventLogger->logUpgrade($eventLogger::EVENT_UPGRADE, $registeredVersion);
+
+  if ($currentVersion !== $registeredVersion) {
+    /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
+    $eventLogger = \Drupal::service('shareaholic.api.event_logger');
+    $eventLogger->logUpgrade($eventLogger::EVENT_UPGRADE, $registeredVersion);
+    $config->set('module_version', $currentVersion)->save();
+  }
 }

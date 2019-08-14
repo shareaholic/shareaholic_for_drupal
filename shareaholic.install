@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function shareaholic_install() {
+  /** @var \Drupal\Core\Config\Config $config */
+  $config = \Drupal::service('shareaholic.editable_config');
+  $currentVersion = system_get_info('module', 'shareaholic');
+  $config->set('module_version', $currentVersion)->save();
+
+  /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
+  $eventLogger = \Drupal::service('shareaholic.api.event_logger');
+  $eventLogger->log($eventLogger::EVENT_INSTALL_FRESH);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function shareaholic_uninstall() {
+  /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
+  $eventLogger = \Drupal::service('shareaholic.api.event_logger');
+  $eventLogger->log($eventLogger::EVENT_UNINSTALL);
+}

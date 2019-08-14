@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeTypeInterface;
+use Drupal\shareaholic\Api\EventLogger;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -32,12 +33,16 @@ class ContentSettingsForm extends FormBase {
   /** @var ShareaholicEntityManager */
   private $shareaholicEntityManager;
 
-  public function __construct(CacheBackendInterface $renderCache, ConfigFactoryInterface $config_factory, Config $config, ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager)
+  /** @var EventLogger */
+  private $eventLogger;
+
+  public function __construct(CacheBackendInterface $renderCache, Config $config, ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger)
   {
     $this->renderCache = $renderCache;
     $this->shareaholicConfig = $config;
     $this->nodeTypeStorage = $nodeTypeStorage;
     $this->shareaholicEntityManager = $shareaholicEntityManager;
+    $this->eventLogger = $eventLogger;
   }
 
   /**
@@ -46,10 +51,10 @@ class ContentSettingsForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('cache.render'),
-      $container->get('config.factory'),
       $container->get('shareaholic.editable_config'),
       $container->get('entity_type.manager')->getStorage('node_type'),
-      $container->get('shareaholic.entity_manager')
+      $container->get('shareaholic.entity_manager'),
+      $container->get('shareaholic.api.event_logger')
     );
   }
 
@@ -160,6 +165,7 @@ class ContentSettingsForm extends FormBase {
       $this->messenger()->addMessage('Render cache has been cleared');
     }
 
+    $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
     parent::submitForm($form, $form_state);
   }
 
