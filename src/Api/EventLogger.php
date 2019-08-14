@@ -117,7 +117,7 @@ class EventLogger {
 
     $event_params = [
       'name' => "Drupal:" . $event_name,
-      'data' => json_encode($event_metadata),
+      'data' => $event_metadata,
     ];
 
     try {

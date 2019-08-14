@@ -152,20 +152,6 @@ class ContentSettingsForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    $disOGTagsOldValue = $this->shareaholicConfig->get('disable_og_tags');
-    $disOGTagsNewValue = $form_state->getValue('disable_og_tags');
-
-    $this->shareaholicConfig
-          ->set('disable_og_tags', $disOGTagsNewValue)
-          ->save();
-
-    if ($disOGTagsOldValue !== $disOGTagsNewValue) {
-      $this->renderCache->invalidateAll();
-      $this->messenger()->addMessage('Render cache has been cleared');
-    }
-
-    $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
     parent::submitForm($form, $form_state);
   }
 

@@ -10,6 +10,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\NodeTypeInterface;
+use Drupal\shareaholic\Api\EventLogger;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -24,10 +25,14 @@ class ShareaholicRemoveLocationForm extends FormBase {
   /** @var ShareaholicEntityManager */
   private $shareaholicEntityManager;
 
-  public function __construct(ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager)
+  /** @var EventLogger */
+  private $eventLogger;
+
+  public function __construct(ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger)
   {
     $this->nodeTypeStorage = $nodeTypeStorage;
     $this->shareaholicEntityManager = $shareaholicEntityManager;
+    $this->eventLogger = $eventLogger;
   }
 
   /**
@@ -37,7 +42,8 @@ class ShareaholicRemoveLocationForm extends FormBase {
 
     return new static(
       $container->get('entity_type.manager')->getStorage('node_type'),
-      $container->get('shareaholic.entity_manager')
+      $container->get('shareaholic.entity_manager'),
+      $container->get('shareaholic.api.event_logger')
     );
   }
 
@@ -166,15 +172,10 @@ class ShareaholicRemoveLocationForm extends FormBase {
 
     $locationType = $form_state->getValue('locationType');
 
-    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
     $location = $form_state->getValue('location');
+    $this->shareaholicEntityManager->removeLocation($location, $locationType, $nodeType);
+    $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
 
-    if (($key = array_search($location, $locations, TRUE)) !== FALSE) {
-        unset($locations[$key]);
-    }
-
-    $nodeType->setThirdPartySetting('shareaholic', "locations_$locationType", $locations);
-    $nodeType->save();
     $this->messenger()->addMessage($this->t("Location '@locationId' type '@locationType' has been added to the node type '@nodeType'!", ['@locationType' => $locationType, '@nodeType' => $nodeType->id(), '@locationId' => $location]));
     $form_state->setRedirect('shareaholic.settings.content');
   }

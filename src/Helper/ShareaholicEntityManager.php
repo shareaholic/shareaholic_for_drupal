@@ -149,6 +149,17 @@ class ShareaholicEntityManager {
     $nodeType->save();
   }
 
+  public function removeLocation($locationName, $locationType, NodeTypeInterface $nodeType) {
+    $locations = $nodeType->getThirdPartySetting('shareaholic', "locations_$locationType", []);
+
+    if (($key = array_search($locationName, $locations, TRUE)) !== FALSE) {
+        unset($locations[$key]);
+    }
+
+    $nodeType->setThirdPartySetting('shareaholic', "locations_$locationType", $locations);
+    $nodeType->save();
+  }
+
   /**
    * @param $nodeTypeId
    * @param $name

@@ -10,6 +10,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\NodeTypeInterface;
+use Drupal\shareaholic\Api\EventLogger;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -24,10 +25,14 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
   /** @var ShareaholicEntityManager */
   private $shareaholicEntityManager;
 
-  public function __construct(ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager)
+  /** @var EventLogger */
+  private $eventLogger;
+
+  public function __construct(ConfigEntityStorageInterface $nodeTypeStorage, ShareaholicEntityManager $shareaholicEntityManager, EventLogger $eventLogger)
   {
     $this->nodeTypeStorage = $nodeTypeStorage;
     $this->shareaholicEntityManager = $shareaholicEntityManager;
+    $this->eventLogger = $eventLogger;
   }
 
   /**
@@ -37,7 +42,8 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
 
     return new static(
       $container->get('entity_type.manager')->getStorage('node_type'),
-      $container->get('shareaholic.entity_manager')
+      $container->get('shareaholic.entity_manager'),
+      $container->get('shareaholic.api.event_logger')
     );
   }
 
@@ -111,6 +117,7 @@ class ShareaholicEnableContentSettingsForm extends FormBase {
     }
 
     $this->shareaholicEntityManager->enableShareaholic($nodeType);
+    $this->eventLogger->log($this->eventLogger::EVENT_UPDATED_SETTINGS);
 
     $this->messenger()->addMessage($this->t("Content type '@type' is now Shareaholic enabled!", ['@type' => $nodeType->id()]));
     $form_state->setRedirect('shareaholic.settings.content');
