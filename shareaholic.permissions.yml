@@ -1,0 +1,4 @@
+administer shareaholic:
+  title: 'Administer Shareaholic'
+  description: 'Allows user to administer the Shareaholic settings.'
+  restrict access: TRUE

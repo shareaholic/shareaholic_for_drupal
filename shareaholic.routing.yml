@@ -1,0 +1,89 @@
+shareaholic.admin_config:
+  path: '/admin/config/shareaholic'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Shareaholic'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings:
+  path: '/admin/config/shareaholic/settings'
+  defaults:
+    _controller: '\Drupal\shareaholic\Controller\SettingsController::configPage'
+    _title: 'Shareaholic Settings'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.content:
+  path: '/admin/config/shareaholic/settings/content'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ContentSettingsForm'
+    _title: 'Shareaholic Content Settings'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.reset:
+  path: '/admin/config/shareaholic/settings/reset'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ResetForm'
+    _title: 'Shareaholic Reset Settings'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.content.shareaholic_enable:
+  path: '/admin/config/shareaholic/settings/content/shareaholic_enable/node/{nodeType}'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ShareaholicEnableContentSettingsForm'
+    _title: 'Shareaholic Enable Content'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.content.shareaholic_disable:
+  path: '/admin/config/shareaholic/settings/content/shareaholic_disable/node/{nodeType}'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ShareaholicDisableContentSettingsForm'
+    _title: 'Shareaholic Disable Content'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.content.add_location:
+  path: '/admin/config/shareaholic/settings/content/add_location/{nodeType}/{locationType}'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ShareaholicAddLocationForm'
+    _title: 'Shareaholic add location'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.content.sync:
+  path: '/admin/config/shareaholic/settings/content/sync'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\SyncForm'
+    _title: 'Shareaholic Synchronization'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.content.remove_location:
+  path: '/admin/config/shareaholic/settings/content/remove_location/{nodeType}/{locationType}/{location}'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\ShareaholicRemoveLocationForm'
+    _title: 'Shareaholic remove location'
+  requirements:
+    _permission: 'administer shareaholic'
+
+
+shareaholic.settings.advanced:
+  path: '/admin/config/shareaholic/settings/advanced'
+  defaults:
+    _form: '\Drupal\shareaholic\Form\AdvancedSettingsForm'
+    _title: 'Shareaholic Advanced Settings'
+  requirements:
+    _permission: 'administer shareaholic'
+
+shareaholic.settings.generate_key:
+  path: '/admin/config/shareaholic/settings/generatekey'
+  #methods:  ['POST']
+  defaults:
+    _controller: '\Drupal\shareaholic\Controller\SettingsController::generateKey'
+    _title: 'Generate key'
+  requirements:
+    _permission: 'administer shareaholic'

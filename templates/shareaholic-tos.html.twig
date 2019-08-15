@@ -1,0 +1,39 @@
+<div class='blocking-modal' id='terms_of_service_modal'>
+  <h4>{{ "Thanks for Installing!"|t }}</h4>
+
+  <div class="content pal">
+
+    <p>{% trans %}<strong>Shareaholic</strong> gives you the essential tools you need to grow your website.{% endtrans %}</p>
+
+    <div class="line pvl">
+
+      <div class="unit size1of3">
+        <img src="{{ path }}/sharebuttons@2x.png" alt="{{ "Share Buttons"|t }}" width="200" height="200"/>
+        <p>{% trans %}<strong>Share buttons</strong> enables your readers to spread your content.{% endtrans %}</p>
+      </div>
+
+      <div class="unit size1of3">
+        <img src="{{ path }}/related_content@2x.png" alt="{{ "Related Content"|t }}" width="200" height="200"/>
+
+        <p>{% trans %}<strong>Related content</strong> keeps people on your site and turns visitors into readers.{% endtrans %}</p>
+      </div>
+
+      <div class="unit size1of3">
+        <img src="{{ path }}/analytics@2x.png" alt="{{ "Analytics"|t }}" width="200" height="200"/>
+        <p>{% trans %}<strong>Analytics</strong> gives you all the insights you need to grow your site.{% endtrans %}</p>
+      </div>
+
+    </div>
+
+    <div class="pvl">
+      <a class="btn_main" href="{{ path('shareaholic.settings.generate_key', {}, {'query': {'destination': destination}}) }}">{{ "Get Started"|t }}</a>
+      <p>
+        <small>
+          {% set tosUrl = "https://shareaholic.com/terms/?src=drupal_admin" %}
+          {% set privacyPolicyUrl = "https://shareaholic.com/privacy/?src=drupal_admin" %}
+          {% trans %}By clicking "Get Started" you agree to Shareholic's <a href="{{ tosUrl }}" target="_new">Terms of Service</a> and <a href="{{ privacyPolicyUrl }}" target="_new">Privacy Policy</a>.{% endtrans %}
+        </small>
+      </p>
+    </div>
+  </div>
+</div>

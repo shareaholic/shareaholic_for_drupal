@@ -21,10 +21,10 @@ https://drupal.org/project/shareaholic
 
 This project assumes you have:
 
-* Drupal 7.x
-* PHP version 5.2.5 or higher
+* Drupal 8.x
+* PHP version 5.6 or higher
 
-Please follow the installation instructions for Drupal 7.x at the [Drupal site](https://drupal.org/documentation/install) to get started
+Please follow the installation instructions for Drupal 8.x at the [Drupal site](https://drupal.org/documentation/install) to get started
 
 Once you have the server setup with Drupal, clone this repository to your local workspace:
 
@@ -42,23 +42,6 @@ If you have this repository cloned into your local workspace, you can create a s
 If you do not prefer this method, you can move this repository over to the Drupal modules path or use some other method. Otherwise, Drupal will not recognize the module.
 
 Then go to your Drupal site signed in as admin, go to Modules and enable the Shareaholic for Drupal module. You should not receive errors and be all set to use/develop the module
-
-
-### Testing
-
-There are a couple of testing frameworks that can be used with Drupal module development but for now we will simply use the built in testing module provided by Drupal core.
-
-You would simply need to enable the module by going to "Modules" and looking for "Testing" module under Drupal core.
-If you get a memory limit error, increase your memory limit in your php.ini file and restart the server (128MB is the preferred setting).
-
-To run the tests, enable the Shareaholic for Drupal module,  go to Configuration->Development->Testing and run some or all the tests for Shareaholic for Drupal.
-
-
-### Deploying to Drupal.org
-
-
-Please refer to the [Shareaholic Developer Wiki](https://github.com/shareaholic/infrastructure/wiki/Drupal) for deployment instructions.
-
 
 ## Credits
 

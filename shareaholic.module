@@ -1,211 +1,459 @@
 <?php
 
-/**
- * @file
- * Allows site owner to add share buttons/recommendations on their website
- */
-
-define('SHAREAHOLIC_DIR', drupal_get_path('module', 'shareaholic'));
-define('SHAREAHOLIC_ASSET_DIR', $GLOBALS['base_url'] . '/' . SHAREAHOLIC_DIR . '/assets/');
-define('SHAREAHOLIC_DEBUG', getenv('SHAREAHOLIC_DEBUG'));
-
-// Caching
-if( !defined( 'SHARE_COUNTS_CHECK_CACHE_LENGTH' ) ) define( 'SHARE_COUNTS_CHECK_CACHE_LENGTH', 180 ); // 180 seconds
-
-// Required global files
-module_load_include('php', 'shareaholic', 'utilities');
-module_load_include('php', 'shareaholic', 'admin');
-module_load_include('php', 'shareaholic', 'public');
-module_load_include('php', 'shareaholic', 'content_manager');
-module_load_include('php', 'shareaholic', 'content_settings');
-module_load_include('php', 'shareaholic', 'cache');
-
-// Include files
-module_load_include('php', 'shareaholic', 'includes/node');
-module_load_include('php', 'shareaholic', 'includes/shareaholic_tos_modal');
-module_load_include('php', 'shareaholic', 'includes/shareaholic_failure_modal');
-module_load_include('php', 'shareaholic', 'includes/shareaholic_advanced_settings_form');
-module_load_include('php', 'shareaholic', 'includes/shareaholic_reset_plugin_form');
-module_load_include('php', 'shareaholic', 'includes/shareaholic_apps_configuration_form');
-
-/**
- * Implements hook_init()
- * This gets called at the beginning of a non-cached page request
- * Ideal for setting response headers
- *
- * Force edge mode for IE so that our apps will look nicer
- *
- */
-function shareaholic_init() {
-  ShareaholicPublic::set_xua_compatible_header();
-  if(!ShareaholicUtilities::is_admin_page()) {
-    ShareaholicPublic::insert_dns_snippet();
-    ShareaholicPublic::insert_content_meta_tags();
-    ShareaholicPublic::insert_script_tag();
-    ShareaholicPublic::insert_og_tags();
-  } else {
-    // execute post install functions
-    ShareaholicAdmin::post_install();
-  }
-}
-
-/**
- * Implementation of hook_menu()
- *
- * Establishes "routes" for the Shareaholic module
- *
- * @return The menu structure containing link to settings page
- */
-function shareaholic_menu() {
-
-  // this creates the block for shareaholic in config page
-  $menu['admin/config/shareaholic'] = array(
-    'title' => 'Shareaholic',
-    'description' => 'Shareaholic Module Settings',
-    'weight' => 1,
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file' => 'system.admin.inc',
-    'file path' => drupal_get_path('module', 'system'),
-    'position' => 'left',
-  );
-
-  // Path to the shareaholic advanced page
-  $menu['admin/config/shareaholic/advanced'] = array(
-    'title' => 'Shareaholic Advanced Settings',
-    'description' => 'Advanced settings for the Shareaholic module',
-    'page callback' => 'shareaholic_admin_advanced',
-    'access arguments' => array('administer site configuration'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 2
-  );
-
-  // Path to the shareaholic app manager page
-  $menu['admin/config/shareaholic/settings'] = array(
-    'title' => 'Shareaholic App Manager',
-    'description' => 'Manage various Social Tools like Share Buttons and Related Posts',
-    'page callback' => 'shareaholic_admin_settings',
-    'access arguments' => array('administer site configuration'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 1
-  );
-
-  // Path for the shareaholic share count API
-  $menu['shareaholic/api/share_counts/v1'] = array(
-    'page callback' => 'shareaholic_share_counts_api',
-    'type' => MENU_CALLBACK,
-    'access callback' => TRUE,
-  );
-
-  return $menu;
-}
-
-
-/**
- * Renders page for shareaholic advanced settings
- *
- * @return The theme to render the advanced settings page
- */
-function shareaholic_admin_advanced() {
-  // check for module update
-  ShareaholicAdmin::update_check();
-  return theme('shareaholic_admin_advanced');
-}
-
-/**
- * Renders page for shareaholic app manager settings
- *
- * @return The theme to render the app manager page
- */
-function shareaholic_admin_settings() {
-  // check for module update
-  ShareaholicAdmin::update_check();
-  ShareaholicUtilities::share_counts_api_connectivity_check();
-  return theme('shareaholic_admin_settings');
-}
 
 
 /**
  * Implements hook_theme().
- *
- * Defines the themes for each template in this module
- *
- * @return array An array that includes themes implemented for shareaholic
- * templates
  */
 function shareaholic_theme() {
-  return array(
-    'shareaholic_admin_advanced' => array(
-      'path' => SHAREAHOLIC_DIR . '/templates',
-      'template' => 'shareaholic_admin_advanced',
-    ),
-    'shareaholic_admin_settings' => array(
-      'path' => SHAREAHOLIC_DIR . '/templates',
-      'template' => 'shareaholic_admin_settings',
-    ),
-    'shareaholic_tos_modal' => array(
-      'render element' => 'form',
-      'path' => SHAREAHOLIC_DIR . '/templates',
-      'template' => 'shareaholic_tos_modal',
-    ),
-    'shareaholic_failure_modal' => array(
-      'render element' => 'form',
-      'path' => SHAREAHOLIC_DIR . '/templates',
-      'template' => 'shareaholic_failure_modal',
-    ),
-    'shareaholic_apps_configuration' => array(
-      'render element' => 'form',
-      'path' => SHAREAHOLIC_DIR . '/templates',
-      'template' => 'shareaholic_apps_configuration'
-    ),
-    'shareaholic_verify_api_key' => array(
-      'path' => SHAREAHOLIC_DIR . '/templates',
-      'template' => 'shareaholic_verify_api_key',
-    ),
-  );
+  return [
+    'shareaholic_tos' => [
+      'variables' => [
+        'path' => '',
+        'destination' => NULL,
+      ],
+    ],
+    'shareaholic_settings' => [
+      'variables' => [
+        'apiKey' => '',
+        'jwtToken' => '',
+        'apiHost' => '',
+        'serviceHost' => '',
+        'assetHost' => '',
+        'language' => '',
+      ],
+    ],
+    'shareaholic_script' => [
+      'variables' => [
+        'jsUrl' => '',
+        'baseSettings' => '',
+        'apiKey' => '',
+        'overrides' => '',
+      ],
+    ],
+    'shareaholic_widget' => [
+      'variables' => [
+        'id' => '',
+        'locationType' => '',
+        'title' => '',
+        'url' => '',
+        'summary' => '',
+      ],
+    ],
+  ];
 }
 
-
-
 /**
- * Implements hook_process_html()
- *
- * Add the ToS notice to the page in admin pages only
+ * Implements hook_preprocess_HOOK().
  */
-function shareaholic_process_html(&$vars) {
-  ShareaholicAdmin::show_terms_of_service_notice($vars);
-  ShareaholicAdmin::show_pending_update_notice($vars);
-}
+function shareaholic_preprocess_page(&$variables) {
 
+  if (\Drupal::service('router.admin_context')->isAdminRoute()) {
 
-/**
- * Prepares the form for use in the templates
- * by storing the form as strings in the $variables object
- * that can be printed in the template
- */
-function _prepare_template_form_variables(&$variables, $form_id) {
-  $variables[$form_id] = array();
-  $hidden = array();
-  foreach (element_children($variables['form']) as $key) {
-    $type = $variables['form'][$key]['#type'];
-    if ($type == 'hidden' || $type == 'token') {
-      $hidden[] = drupal_render($variables['form'][$key]);
-    }
-    else {
-      $variables[$form_id][$key] = drupal_render($variables['form'][$key]);
+    $path = '/admin/config/shareaholic/settings';
+    $render_message = \Drupal\Core\Render\Markup::create(
+      '<strong>Action required: </strong> You\'ve installed Shareaholic for Drupal. We\'re ready when you are. <a href="' . $path . '">Get Started Now</a>.',
+      [':status' => $path]
+    );
+
+    $settings = \Drupal::config('shareaholic.settings');
+    $api_key = $settings->get('api_key');
+
+    if (!$api_key) {
+      \Drupal::messenger()->addMessage($render_message, 'warning');
     }
   }
-  $variables[$form_id]['hidden'] = implode($hidden);
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function shareaholic_page_attachments(array &$attachments) {
+
+  /** @var \Drupal\Core\Config\ImmutableConfig $config */
+  $config = \Drupal::service('shareaholic.config');
+  $apiKey = $config->get('api_key');
+
+  if (!$apiKey || \Drupal::service('router.admin_context')->isAdminRoute()) {
+    return;
+  }
+
+  $siteName = \Drupal::config('system.site')->get('name');
+  $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'site_name', $siteName);
+
+  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'language', $langcode);
+
+  $siteId = $config->get('api_key');
+  $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'site_id', $siteId);
+
+  $moduleVersion = system_get_info('module', 'shareaholic')['version'];
+  $attachments['#attached']['html_head'][] = shareaholic_generate_metatag_array('page', 'drupal_version', $moduleVersion);
+
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#type' => 'theme',
+      '#theme' => 'shareaholic_script',
+      '#apiKey' => $config->get('api_key'),
+      '#jsUrl' => Drupal\Core\Site\Settings::get('shareaholic_assets_host', 'https://cdn.shareaholic.net/') . 'assets/pub/shareaholic.js',
+      '#baseSettings' => '',
+      '#overrides' => Drupal\Core\Site\Settings::get('shareaholic_script_overrides', ''),
+    ],
+    'shareaholic_shareaholic',
+  ];
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function shareaholic_entity_extra_field_info() {
+  $extra = [];
+
+  /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
+  $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
+
+  /** @var \Drupal\Core\Entity\EntityStorageInterface $nodeTypeStorage */
+  $nodeTypeStorage = Drupal::service('entity_type.manager')->getStorage('node_type');
+  $nodeTypes = $nodeTypeStorage->loadMultiple();
+  foreach ($nodeTypes as $nodeType) {
+    $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
+    foreach ($locationTypes as $locationType) {
+
+      $locations = $shareaholicEntityManager->extractLocations($locationType, $nodeType);
+      foreach ($locations as $location) {
+        $extra['node'][$nodeType->id()]['display']["shareaholic_widget_${locationType}_$location"] = [
+          'label' => t("Shareaholic widget of type '@widgetType'. ID: '@location'", ['@location' => $location, '@widgetType' => $locationType]),
+          'description' => t('Widgets by Shareaholic'),
+          'weight' => 5,
+          'visible' => FALSE,
+        ];
+      }
+    }
+  }
+
+  return $extra;
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function shareaholic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  $nodeTypeId = $entity->getType();
+  $nodeType = \Drupal\node\Entity\NodeType::load($nodeTypeId);
+
+  /** @var \Drupal\shareaholic\Helper\ShareaholicEntityManager $shareaholicEntityManager */
+  $shareaholicEntityManager = Drupal::service('shareaholic.entity_manager');
+  $contentSettings = $shareaholicEntityManager->getContentSettings($entity);
+
+  $locationTypes = Drupal\shareaholic\Form\ContentSettingsForm::getLocationTypes();
+
+  foreach ($locationTypes as $locationType) {
+    if ($locationType === 'recommendations' && (int) $contentSettings['hide_recommendations'] === 1) {
+      continue;
+    }
+
+    if ($locationType === 'share_buttons' && (int) $contentSettings['hide_share_buttons'] === 1) {
+      continue;
+    }
+
+    $locations = $shareaholicEntityManager->extractLocations($locationType, $nodeType);
+    foreach ($locations as $location) {
+      if ($display->getComponent("shareaholic_widget_${locationType}_$location")) {
+
+        $build["shareaholic_widget_${locationType}_$location"] = [
+          '#theme' => 'shareaholic_widget',
+          '#id' => $location,
+          '#locationType' => $locationType,
+          '#title' => $entity->getTitle(),
+          '#url' => Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()], ['absolute' => TRUE])->toString(),
+          '#summary' => '',
+        ];
+      }
+    }
+  }
+
+  if ($view_mode !== 'full') {
+    return;
+  }
+
+  $config = \Drupal::service('shareaholic.config');
+
+  /*
+   * URL
+   */
+  $url = Drupal\Core\Url::fromRoute('<current>')->toString();
+  $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'url', $url);
+
+  /*
+   * Published time
+   */
+  // TODO Actually this is misleading as creation time is not the same as publishing time.
+  // Publication time is not stored in core.
+  $publishedTime = date('c', $entity->getCreatedTime());
+  $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'article_published_time', $publishedTime);
+
+  /*
+   * Modification time
+   */
+  $modifiedTime = date('c', $entity->getChangedTime());
+  $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'article_modified_time', $modifiedTime);
+
+  /*
+   * Author
+   */
+  $author = $entity->getOwner();
+
+  // TODO There is no guarantee that these fields are text fields!
+  // TODO There is also no guarantee these values won't be empty even if fields
+  // exist.
+  $username = NULL;
+  if($author->hasField('field_fullname')) {
+    $username = $author->get('field_fullname')->getString();
+  }
+
+  if (!$username && $author->hasField('field_full_name')) {
+    $username = $author->get('field_full_name')->getString();
+  }
+
+  if (!$username) {
+    $firstName = $author->hasField('field_firstname') ? $author->get('field_firstname')->getString() : NULL;
+    if (!$firstName) {
+      $firstName = $author->hasField('field_first_name') ? $author->get('field_first_name')->getString() : NULL;
+    }
+
+    $lastName = $author->hasField('field_lastname') ? $author->get('field_lastname')->getString() : NULL;
+    if (!$firstName) {
+      $lastName = $author->hasField('field_last_name') ? $author->get('field_last_name')->getString() : NULL;
+    }
+
+    if ($firstName && $lastName) {
+      $username = "$firstName $lastName";
+    }
+  }
+
+  if ($username) {
+    $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'article_author_name', $username);
+  }
+
+  /*
+   * Keywords
+   */
+  $keywords = [];
+
+  if (Drupal::database()->schema()->tableExists('taxonomy_index')) {
+    $query = Drupal::database()->query('SELECT tid FROM {taxonomy_index} WHERE nid = :nid', [':nid' => $entity->id()]);
+    $results = $query->fetchAll();
+    foreach ($results as $result) {
+      $term = Drupal\taxonomy\Entity\Term::load($result->tid);
+      if (empty($term)) continue;
+
+      $keywords[] = Drupal\Component\Utility\Html::escape($term->getName());
+
+      $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($term->getVocabularyId());
+      if (empty($vocabulary)) continue;
+
+      $terms[] = Drupal\Component\Utility\Html::escape($vocabulary->label());
+    }
+
+    $keywords = array_unique($keywords);
+  }
+  if (!empty($keywords)) {
+    $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'keywords', implode(', ', $keywords));
+  }
+
+  /*
+   * Image
+   */
+  $image = shareaholic_extract_image_url_from_entity($entity);
+  if (!empty($image)) {
+    $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'image', $image);
+  }
+
+  /*
+   * Visibility
+   */
+  $articleVisibility = NULL;
+
+
+  if(!$entity->isPublished()) {
+    $articleVisibility = 'draft';
+  }
+
+  if ((int) $contentSettings['exclude_from_recommendations'] === 1) {
+    $articleVisibility = 'private';
+  }
+
+  $anonymousUser = Drupal\user\Entity\User::getAnonymousUser();
+  if (!$entity->access('view', $anonymousUser)) {
+    $articleVisibility = 'private';
+  }
+
+  if (!empty($articleVisibility)) {
+    $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'article_visibility', $articleVisibility);
+  }
+
+  /*
+   * Shareable
+   */
+  $shareablePage = NULL;
+
+  $anonymousUser = Drupal\user\Entity\User::getAnonymousUser();
+  if (!$entity->isPublished() || !$entity->access('view', $anonymousUser)) {
+    $shareablePage = 'false';
+  }
+
+  if (!empty($shareablePage)) {
+    $build['#attached']['html_head'][] = shareaholic_generate_metatag_array('node', 'shareable_page', $shareablePage);
+  }
+
+  /*
+   * OpenGraph
+   */
+  if ((int) $contentSettings['exclude_og_tags'] === 0 && $config->get('enable_og_tags')) {
+    $image = shareaholic_extract_image_url_from_entity($entity);
+
+    if (!empty($image)) {
+      $ogtag = [
+        '#tag' => 'meta',
+        '#attributes' => [
+          'name' => "og:image",
+          'content' => $image,
+        ],
+      ];
+
+      $build['#attached']['html_head'][] = [$ogtag, 'shareaholic_node:og:image'];
+    }
+  }
+}
+
+
+function shareaholic_generate_metatag_array($section, $name, $content) {
+  return [
+    [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'name' => "shareaholic:$name",
+        'content' => $content,
+      ],
+    ],
+    "shareaholic_$section:$name",
+  ];
+}
+
+function shareaholic_extract_image_url_from_entity(\Drupal\Core\Entity\ContentEntityInterface $entity) {
+
+  $image = NULL;
+
+  // TODO
+  // This may result in an error if this is not a typical image field, but
+  // for example a Media one!
+  // TODO Also we can have a hanging reference here!
+  if ($entity->hasField('field_image') && $entity->field_image->entity) {
+    $image = file_create_url($entity->field_image->entity->getFileUri());
+  } elseif ($entity->hasField('field_simage') && $entity->field_image->entity) {
+    $image = file_create_url($entity->field_simage->entity->getFileUri());
+  } elseif ($entity->hasField('body')) {
+    $body = $entity->get('body')->getString();
+    preg_match_all('/<img.*?src=[\'"](.*?)[\'"].*?>/i', $body, $matches);
+    if(isset($matches) && isset($matches[1][0]) ) {
+      // Exclude base64 images; meta tags require full URLs
+      if (strpos($matches[1][0], 'data:') === false) {
+        // file_create_url function doesn't convert paths starting with "/" so check for "/" and trim it off if present
+        if (substr($matches[1][0], 0, 1) === "/") {
+          $image = file_create_url(substr($matches[1][0], 1));
+        } else {
+          $image = file_create_url($matches[1][0]);
+        }
+      }
+    }
+  }
+
+  return $image;
+}
+
+/**
+ * Helper function.
+ *
+ * @return array
+ *   Returns an array ready to be added to head section of the page.
+ */
+function shareaholic_get_chat_for_head(): array {
+  return [
+     [
+       '#tag' => 'script',
+       '#attributes' => [
+         'src' => "https://dsms0mj1bbhn4.cloudfront.net/assets/pub/shareaholic-chat.js",
+         'async' => 'async',
+       ],
+     ],
+     "shareaholic_chat",
+   ];
 }
 
 
 /**
- * Returns the share counts for the given url and services
- * Requires the url and services to be passed into GET params
- *
- * @return String json response of services => share counts
+ * Implements hook_entity_insert().
  */
-function shareaholic_share_counts_api() {
-  ShareaholicPublic::share_counts_api();
+function shareaholic_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\shareaholic\Api\ShareaholicCMApi $cmApi */
+  $cmApi = Drupal::service('shareaholic.api.cm');
+  $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
+  $cmApi->singlePageRefresh($url);
 }
 
+/**
+ * Implements hook_entity_update().
+ */
+function shareaholic_entity_update(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\shareaholic\Api\ShareaholicCMApi $cmApi */
+  $cmApi = Drupal::service('shareaholic.api.cm');
+  $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
+  $cmApi->singlePageRefresh($url);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function shareaholic_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\shareaholic\Api\ShareaholicCMApi $cmApi */
+  $cmApi = Drupal::service('shareaholic.api');
+  $url = Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $entity->id()])->toString();
+  $cmApi->singlePageRefresh($url);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shareaholic_cron() {
+  /** @var \Drupal\Core\Config\Config $config */
+  $config = \Drupal::service('shareaholic.editable_config');
+  $currentVersion = system_get_info('module', 'shareaholic')['version'];
+  $registeredVersion = $config->get('module_version') ?? $currentVersion;
+
+  if ($currentVersion !== $registeredVersion) {
+    /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
+    $eventLogger = \Drupal::service('shareaholic.api.event_logger');
+    $eventLogger->logUpgrade($eventLogger::EVENT_UPGRADE, $registeredVersion);
+    $config->set('module_version', $currentVersion)->save();
+  }
+}

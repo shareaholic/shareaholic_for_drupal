@@ -1,0 +1,21 @@
+<!-- Header - start -->
+<div id="shr-header-container"></div>
+<script class="shr-app-loader shr-app-loader__header" src="{{ assetHost }}ui-header/loader.js"></script>
+<!-- Header - end -->
+<div class='wrap'>
+  <script>
+  window.ShareaholicConfig = {
+    apiKey: "{{ apiKey }}",
+    verificationKey: "{{ jwtToken }}",
+    apiHost: "{{ apiHost }}",
+    serviceHost: "{{ serviceHost }}",
+    assetHost: "{{ assetHost }}",
+    assetFolders: true,
+    origin: "drupal",
+    language: "{{ language }}"
+  };
+  </script>
+  <div id="root" class="shr-site-settings"></div>
+  <script class="shr-app-loader__site-settings" src="{{ assetHost }}ui-site-settings/loader.js"></script>
+  <script src="https://dsms0mj1bbhn4.cloudfront.net/assets/pub/loader-reachable.js" async></script>
+</div>
