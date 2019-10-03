@@ -6,7 +6,7 @@
 function shareaholic_install() {
   /** @var \Drupal\Core\Config\Config $config */
   $config = \Drupal::service('shareaholic.editable_config');
-  $currentVersion = system_get_info('module', 'shareaholic');
+  $currentVersion = system_get_info('module', 'shareaholic')['version'];
   $config->set('module_version', $currentVersion)->save();
 
   /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
