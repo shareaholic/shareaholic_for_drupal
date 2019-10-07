@@ -1,19 +1,21 @@
 parameters:
   shareaholic.settings.id: shareaholic.settings
-
 services:
+  shareaholic.diagnostics_provider:
+    class: Drupal\shareaholic\Helper\DiagnosticsProvider
+    arguments: ['@module_handler', '@theme.manager']
   shareaholic.api.http_client:
     class: Drupal\shareaholic\Api\HttpClient
     arguments: ['@http_client']
   shareaholic.api:
     class: Drupal\shareaholic\Api\ShareaholicApi
-    arguments: ['@shareaholic.api.http_client', '@shareaholic.config', '@shareaholic.logger', '@shareaholic.api.cm', '@shareaholic.api.event_logger']
+    arguments: ['@shareaholic.api.http_client', '@shareaholic.config', '@shareaholic.logger', '@shareaholic.api.cm', '@shareaholic.api.event_logger', '@shareaholic.statistics_provider', '@shareaholic.diagnostics_provider']
   shareaholic.api.cm:
     class: Drupal\shareaholic\Api\ShareaholicCMApi
     arguments: ['@shareaholic.api.http_client', '@shareaholic.logger']
   shareaholic.api.event_logger:
     class: Drupal\shareaholic\Api\EventLogger
-    arguments: ['@module_handler', '@theme.manager', '@database', '@shareaholic.config', '@shareaholic.api.http_client', '@shareaholic.logger', '@shareaholic.entity_manager']
+    arguments: ['@theme.manager', '@shareaholic.config', '@shareaholic.api.http_client', '@shareaholic.logger', '@shareaholic.entity_manager', '@shareaholic.diagnostics_provider']
   shareaholic.logger:
     parent: logger.channel_base
     arguments: ['shareaholic']
@@ -31,3 +33,6 @@ services:
   shareaholic.entity_manager:
     class: Drupal\shareaholic\Helper\ShareaholicEntityManager
     arguments: ['@entity_type.manager', '@entity_field.manager']
+  shareaholic.statistics_provider:
+    class: Drupal\shareaholic\Helper\StatisticsProvider
+    arguments: ['@database']

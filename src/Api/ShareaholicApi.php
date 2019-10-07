@@ -3,6 +3,10 @@
 namespace Drupal\shareaholic\Api;
 
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
+use Drupal\shareaholic\Helper\DiagnosticsProvider;
+use Drupal\shareaholic\Helper\StatisticsProvider;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
 
@@ -12,6 +16,7 @@ class ShareaholicApi {
   const HEALTH_CHECK_URL = self::API_URL . '/haproxy_health_check';
   const KEY_GENERATING_URL = self::API_URL . '/publisher_tools/anonymous';
   const SESSIONS_URL = self::API_URL . '/api/v3/sessions';
+  const HEARTBEAT_URL = self::API_URL . '/api/plugin_heartbeats';
 
   /** @var HttpClient */
   private $httpClient;
@@ -28,12 +33,20 @@ class ShareaholicApi {
   /** @var EventLogger */
   private $eventLogger;
 
-  public function __construct(HttpClient $httpClient, ImmutableConfig $shareaholicConfig, LoggerInterface $logger, ShareaholicCMApi $shareaholicCMApi, EventLogger $eventLogger) {
+  /** @var StatisticsProvider */
+  private $statsProvider;
+
+  /** @var DiagnosticsProvider */
+  private $diagnosticsProvider;
+
+  public function __construct(HttpClient $httpClient, ImmutableConfig $shareaholicConfig, LoggerInterface $logger, ShareaholicCMApi $shareaholicCMApi, EventLogger $eventLogger, StatisticsProvider $statsProvider, DiagnosticsProvider $diagnosticsProvider) {
     $this->httpClient = $httpClient;
     $this->shareaholicConfig = $shareaholicConfig;
     $this->logger = $logger;
     $this->shareaholicCMApi = $shareaholicCMApi;
     $this->eventLogger = $eventLogger;
+    $this->statsProvider = $statsProvider;
+    $this->diagnosticsProvider = $diagnosticsProvider;
   }
 
   /**
@@ -150,7 +163,7 @@ class ShareaholicApi {
    *
    * @return bool
    */
-  public function sync($shareButtonsLocations, $recommendationsLocations): bool {
+  public function sync(array $shareButtonsLocations, array $recommendationsLocations): bool {
 
     try {
       $response = $this->httpClient->post($this->getSyncURL(), [
@@ -179,12 +192,12 @@ class ShareaholicApi {
   }
 
   /**
-   * @param $shareButtonsLocations
-   * @param $recommendationsLocations
+   * @param array $shareButtonsLocations
+   * @param array $recommendationsLocations
    *
    * @return bool|null
    */
-  public function syncStatus($shareButtonsLocations, $recommendationsLocations) {
+  public function syncStatus(array $shareButtonsLocations, array $recommendationsLocations) {
     try {
       $response = $this->httpClient->post($this->getSyncStatusURL(), [
         'verification_key' => $this->shareaholicConfig->get('verification_key'),
@@ -216,9 +229,48 @@ class ShareaholicApi {
   }
 
   /**
+   * This method is sending more hefty diagnostics data to Shareaholic.
+   */
+  public function heartbeat() {
+    $data = [
+      'platform' => 'drupal',
+      'plugin_name' => 'shareaholic',
+      'plugin_version' => system_get_info('module', 'shareaholic')['version'],
+      'api_key' => $this->shareaholicConfig->get('api_key'),
+      'verification_key' => $this->shareaholicConfig->get('verification_key'),
+      'domain' => \Drupal::request()->getHost(),
+      'language' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
+      'stats' => $this->statsProvider->getStats(),
+      'diagnostics' => [
+        'tos_status' => $this->shareaholicConfig->get('has_accepted_tos'),
+        'shareaholic_server_reachable' => $this->connectivityCheck(),
+        'php_version' => PHP_VERSION,
+        'drupal_version' => \Drupal::VERSION,
+        'theme' => $this->diagnosticsProvider->getActiveTheme(),
+        'multisite' => $this->diagnosticsProvider->isMultisite(),
+        'plugins' => [
+          'active' => $this->diagnosticsProvider->getActivePlugins(),
+        ],
+      ],
+      'advanced_settings' => [
+        'disable_og_tags' => !$this->shareaholicConfig->get('enable_og_tags'),
+      ],
+    ];
+
+    try {
+      $this->httpClient->post($this::HEARTBEAT_URL, $data);
+    } catch (\Exception $exception) {
+      $code = $exception->getCode();
+      $message = $exception->getMessage();
+      $this->logger->critical("Couldn't send heartbeat to Shareaholic. Exception code: $code. Message: $message");
+      return;
+    }
+  }
+
+  /**
    * @return bool
    */
-  public function connectivityCheck() {
+  public function connectivityCheck(): bool {
     $health_check_url = self::HEALTH_CHECK_URL;
     try {
       $response = $this->httpClient->get($health_check_url);
@@ -229,7 +281,12 @@ class ShareaholicApi {
     return $response->getStatusCode() === 200;
   }
 
-  private function prepareLocationsArray($locations) {
+  /**
+   * @param $locations
+   *
+   * @return array
+   */
+  private function prepareLocationsArray($locations): array {
     $result = [];
     foreach ($locations as $location) {
       $result[] = ['name' => $location, 'enabled' => TRUE];
@@ -238,7 +295,13 @@ class ShareaholicApi {
     return $result;
   }
 
-  private function prepareLocationsHash($locations) {
+  /**
+   * Prepare associative array of locations, and their parameters.
+   *
+   * @param $locations
+   * @return array
+   */
+  private function prepareLocationsHash(array $locations): array {
     $result = [];
     foreach ($locations as $location) {
       $result[$location] = ['enabled' => TRUE];
@@ -250,9 +313,11 @@ class ShareaholicApi {
   /**
    * Converts langcode into numeric id
    *
+   * @param string $langcode
+   *
    * @return int|NULL
    */
-  private function getLanguageId($langcode) {
+  private function getLanguageId(string $langcode) {
     $language_id_map = [
       "ar" => 1, // Arabic
       "bg" => 2, // Bulgarian
