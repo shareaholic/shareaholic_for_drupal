@@ -6,6 +6,7 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
+use Drupal\shareaholic\Helper\DiagnosticsProvider;
 use Drupal\shareaholic\Helper\ShareaholicEntityManager;
 use Psr\Log\LoggerInterface;
 
@@ -20,14 +21,8 @@ class EventLogger {
   const EVENT_FAILED_TO_CREATE_API_KEY = 'FailedToCreateApiKey';
   const EVENT_UPDATED_SETTINGS = 'UpdatedSettings';
 
-  /** @var ModuleHandlerInterface */
-  private $moduleHandler;
-
   /** @var ThemeManagerInterface */
   private $themeManager;
-
-  /** @var Connection */
-  private $connection;
 
   /** @var ImmutableConfig */
   private $config;
@@ -41,14 +36,16 @@ class EventLogger {
   /** @var ShareaholicEntityManager */
   private $shareaholicEntityManager;
 
-  public function __construct(ModuleHandlerInterface $moduleHandler, ThemeManagerInterface $themeManager, Connection $connection, ImmutableConfig $config, HttpClient $httpClient, LoggerInterface $logger, ShareaholicEntityManager $shareaholicEntityManager) {
-    $this->moduleHandler = $moduleHandler;
+  /** @var DiagnosticsProvider */
+  private $diagnosticsProvider;
+
+  public function __construct(ThemeManagerInterface $themeManager, ImmutableConfig $config, HttpClient $httpClient, LoggerInterface $logger, ShareaholicEntityManager $shareaholicEntityManager, DiagnosticsProvider $diagnosticsProvider) {
     $this->themeManager = $themeManager;
-    $this->connection = $connection;
     $this->config = $config;
     $this->httpClient = $httpClient;
     $this->logger = $logger;
     $this->shareaholicEntityManager = $shareaholicEntityManager;
+    $this->diagnosticsProvider = $diagnosticsProvider;
   }
 
   /**
@@ -95,13 +92,11 @@ class EventLogger {
       'plugin_version' => system_get_info('module', 'shareaholic')['version'],
       'api_key' => $this->config->get('api_key'),
       'domain' => \Drupal::request()->getHost(),
-      'language' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
-      'stats' => $this->getStats(),
       'diagnostics' => [
         'php_version' => PHP_VERSION,
         'drupal_version' => \Drupal::VERSION,
         'theme' => $this->themeManager->getActiveTheme()->getName(),
-        'active_plugins' => array_keys($this->moduleHandler->getModuleList()),
+        'multisite' => $this->diagnosticsProvider->isMultisite(),
       ],
       'features' => [
         'share_buttons' => $shareButtonsLocations,
@@ -129,38 +124,5 @@ class EventLogger {
     if ($responseStatus !== 200) {
       $this->logger->critical("Couldn't send event to the Shareaholic. Server not available. Response's status code: $responseStatus");
     }
-  }
-
-  /**
-   * Get the total number of comments for this site
-   *
-   * @return integer
-   *   The total number of comments
-   */
-  public function totalComments() {
-    if (!$this->connection->schema()->tableExists('comment')) {
-      return 0;
-    }
-
-    return $this->connection->query("SELECT count(cid) FROM {comment}")->fetchField();
-  }
-
-  /**
-   * Get the stats for this website
-   * Stats include: total number of pages by type, total comments, total users
-   *
-   * @return array an associative array of stats => counts
-   */
-  public function getStats() {
-    $stats = [];
-    // Query the database for content types and add to stats
-    $result = $this->connection->query("SELECT type, count(*) as count FROM {node} GROUP BY type");
-    foreach ($result as $record) {
-      $stats[$record->type . '_total'] = $record->count;
-    }
-
-    // Get the total comments
-    $stats['comments_total'] = $this->totalComments();
-    return $stats;
   }
 }

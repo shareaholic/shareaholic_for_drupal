@@ -445,15 +445,33 @@ function shareaholic_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
  * Implements hook_cron().
  */
 function shareaholic_cron() {
-  /** @var \Drupal\Core\Config\Config $config */
-  $config = \Drupal::service('shareaholic.editable_config');
+  /*
+   * We are logging every module upgrade here.
+   */
+  /** @var \Drupal\Core\Config\Config $editableConfig */
+  $editableConfig = \Drupal::service('shareaholic.editable_config');
   $currentVersion = system_get_info('module', 'shareaholic')['version'];
-  $registeredVersion = $config->get('module_version') ?? $currentVersion;
+  $registeredVersion = $editableConfig->get('module_version') ?? $currentVersion;
 
   if ($currentVersion !== $registeredVersion) {
     /** @var \Drupal\shareaholic\Api\EventLogger $eventLogger */
     $eventLogger = \Drupal::service('shareaholic.api.event_logger');
     $eventLogger->logUpgrade($eventLogger::EVENT_UPGRADE, $registeredVersion);
-    $config->set('module_version', $currentVersion)->save();
+    $editableConfig->set('module_version', $currentVersion)->save();
+  }
+
+  /*
+   * Heartbeat
+   *
+   * It's supposed to be run every day.
+   */
+  $lastHeartbeat = $editableConfig->get('last_heartbeat_time');
+  $requestTime = \Drupal::time()->getRequestTime();
+  $secondsInDay = 86400;
+  if ((empty($lastHeartbeat) || $lastHeartbeat+$secondsInDay < $requestTime) && !empty($editableConfig->get('api_key')) && !empty($editableConfig->get('verification_key'))) {
+    /** @var \Drupal\shareaholic\Api\ShareaholicApi $api */
+    $api = \Drupal::service('shareaholic.api');
+    $api->heartbeat();
+    $editableConfig->set('last_heartbeat_time', $requestTime)->save();
   }
 }

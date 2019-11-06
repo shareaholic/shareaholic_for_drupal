@@ -107,6 +107,8 @@ class SettingsController extends ControllerBase {
   public function generateKey() {
     $verification_key = md5(mt_rand());
 
+    $this->TOSManager->acceptTermsOfService();
+
     $siteName = $this->config('system.site')->get('name');
     $langcode = $this->languageManager()->getCurrentLanguage()->getId();
 
@@ -126,11 +128,8 @@ class SettingsController extends ControllerBase {
         'api_key' => $apiKey,
         'verification_key' => $verification_key,
       ]);
-
-      $this->TOSManager->acceptTermsOfService();
     } else {
       $this->messenger()->addMessage("Couldn't generate API key. See log.", MessengerInterface::TYPE_ERROR);
-
     }
 
     $destination = \Drupal::request()->get('destination');
