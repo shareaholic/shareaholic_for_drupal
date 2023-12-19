@@ -51,6 +51,8 @@ shareaholic_for_drupal is owned and maintained by [Shareaholic, Inc](https://sha
 
 Thank you to all [the contributors](https://github.com/shareaholic/shareaholic_for_drupal/contributors)!
 
+This project is tested with BrowserStack.
+
 ## License
 
-shareaholic_for_drupal is Copyright © Shareaholic Inc. It is free software, and may be redistributed under the terms specified in the [LICENSE](https://github.com/shareaholic/shareaholic_for_drupal/blob/master/LICENSE)
+shareaholic_for_drupal is Copyright © Shareaholic Inc. It is free software, and may be redistributed under [GPL](https://github.com/shareaholic/shareaholic_for_drupal/blob/master/LICENSE)
